@@ -1,21 +1,15 @@
-from microservicioRedundanteLogin3 import create_app
+from gestionPruebas import create_app
 from flask_restful import Resource,Api
-from flask import Flask,request
-import requests, json
-from sqlalchemy.exc import IntegrityError
-
-from datetime import date, datetime
-
-
-from modelos import db, Usuario, UsuarioSchema, logValidadorSchema, logValidador
+from flask import request
+from flask import jsonify
+from .modelos import db, ResultadoPrueba, ResultadoPruebaSchema
    
-usuario_schema = UsuarioSchema()
-log_validador_schema = logValidadorSchema()
+resultado_prueba_schema = ResultadoPruebaSchema()
 
 app = create_app('default')
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:/maestria/proyectoABC-arq-agiles/proyectoABC/monitoreoABC.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../monitoreoABC.db'
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:Uniandes123@proyecto1bd.c9mkfgyc1tlh.us-east-1.rds.amazonaws.com:5432/postgres'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../monitoreoABC.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'frase-secreta'
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -28,27 +22,19 @@ db.create_all()
 
 api = Api(app)
 
-class VistaMicroservicio3(Resource):
+class VistaGestionPruebas(Resource):
     def get(self):
-
-
-        fechaActual = datetime.now()
-        usuario = Usuario.query.filter(Usuario.usuario == request.json["usuario"],
-                                       Usuario.contrasena == request.json["contrasena"]).first()
+        resultadoPrueba = ResultadoPrueba.query.filter(ResultadoPrueba.idUsuario == request.args.get('idUsuario')).first()
         db.session.commit()
 
-        if usuario is None:
-            log = logValidador(microservicio="Microservicio Redundante 3 ", mensaje="El usuario no existe", fecha=fechaActual)
-            db.session.add(log)
-            db.session.commit()
-            return "El usuario no existe", 404
-        else:      
-            log = logValidador(microservicio="Microservicio Redundante 3 ", mensaje="Inicio de sesión exitoso desde microservicio", fecha=fechaActual)
-            db.session.add(log)
-            db.session.commit()      
+        print(resultadoPrueba)
+        if resultadoPrueba:
+            # Crea una instancia del esquema y serializa el objeto
+            resultado_schema = ResultadoPruebaSchema()
+            resultado_json = resultado_schema.dump(resultadoPrueba)
+            return jsonify(resultado_json)
+        else:
+            # Si no se encontró ningún resultado, puedes devolver un mensaje de error o un JSON vacío
+            return "NO se encontró ninguna prueba", 204
 
-            return {"mensaje": "Inicio de sesión exitoso desde microservicio"}
-        
-
-
-api.add_resource(VistaMicroservicio3,'/login3')
+api.add_resource(VistaGestionPruebas,'/pruebas')

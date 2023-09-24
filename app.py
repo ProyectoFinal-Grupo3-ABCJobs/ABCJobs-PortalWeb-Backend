@@ -4,7 +4,6 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
 from modelos import db
-from vistas import VistaLogIn
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///monitoreoABC.db'
@@ -22,7 +21,7 @@ cors = CORS(app)
 
 api = Api(app)
 
-api.add_resource(VistaLogIn, '/apigateway')
+#api.add_resource(VistaLogIn, '/apigateway')
 
 
 jwt = JWTManager(app)

@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 import requests
 import time
 
-from modelos import db, Usuario, UsuarioSchema
+
    
 usuario_schema = UsuarioSchema()
 

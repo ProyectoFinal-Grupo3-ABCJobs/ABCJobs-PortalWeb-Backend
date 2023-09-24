@@ -1,4 +1,4 @@
-from microservicioRedundanteLogin2 import create_app
+from gestionAutenticacionAutorizacion import create_app
 from flask_restful import Resource,Api
 from flask import Flask,request
 import requests, json
@@ -7,15 +7,14 @@ from sqlalchemy.exc import IntegrityError
 from datetime import date, datetime
 
 
-from modelos import db, Usuario, UsuarioSchema, logValidadorSchema, logValidador
+from .modelos import db, Usuario, UsuarioSchema
    
 usuario_schema = UsuarioSchema()
-log_validador_schema = logValidadorSchema()
 
 app = create_app('default')
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/JECAR/OneDrive/Documentos/MISO/Ciclo3/Arquitectura Agil/Experimento1/proyectoABC/monitoreoABC.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../monitoreoABC.db'
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:Uniandes123@proyecto1bd.c9mkfgyc1tlh.us-east-1.rds.amazonaws.com:5432/postgres'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../monitoreoABC.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'frase-secreta'
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -28,7 +27,7 @@ db.create_all()
 
 api = Api(app)
 
-class VistaMicroservicio2(Resource):
+class VistaAutenticacionAutorizacion(Resource):
     def get(self):
 
         print(request.json["usuario"])
@@ -38,18 +37,4 @@ class VistaMicroservicio2(Resource):
                                        Usuario.contrasena == request.json["contrasena"]).first()
         db.session.commit()
 
-        if usuario is None:
-            log = logValidador(microservicio="Microservicio Redundante 2 ", mensaje="El usuario no existe", fecha=fechaActual)
-            db.session.add(log)
-            db.session.commit()
-            return "El usuario no existe", 404
-        else:      
-            log = logValidador(microservicio="Microservicio Redundante 2 ", mensaje="Inicio de sesión exitoso desde microservicio", fecha=fechaActual)
-            db.session.add(log)
-            db.session.commit()      
-
-            return {"mensaje": "Inicio de sesión exitoso desde microservicio"}
-        
-
-
-api.add_resource(VistaMicroservicio2,'/login2')
+api.add_resource(VistaAutenticacionAutorizacion,'/login')

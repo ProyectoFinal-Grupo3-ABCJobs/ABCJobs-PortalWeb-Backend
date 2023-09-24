@@ -23,14 +23,11 @@ db.create_all()
 api = Api(app)
 
 
-class VistAutorizador(Resource):
+class VistAutorizadorDisponibilidad(Resource):
     semaphore = threading.Semaphore(1)
 
     def post(self):
-
         with self.semaphore:
-            print("IP Autorizador: " + request.json["ip"])
-            print("Usuario Autorizador: " + request.json["usuario"])
             fecha_actual = str(datetime.now().strftime("%Y%m%d"))
             hora_actual = int(str(datetime.now().strftime("%H%M")))
             ipBloqueada = IpBloqueada.query.filter(
@@ -38,38 +35,89 @@ class VistAutorizador(Resource):
             print(ipBloqueada)
             if ipBloqueada:
                 return "IP bloqueada", 401
-            logAutorizador = LogAutorizador.query.filter(
+            
+            print("USUARIO:" + request.json["usuario"])
+            logAutorizadorIP = LogAutorizador.query.filter(
                 LogAutorizador.ip == request.json["ip"], LogAutorizador.fecha == fecha_actual, LogAutorizador.hora == hora_actual).with_for_update().first()
 
-            if logAutorizador:
-                print("Usuario registrado")
-                if logAutorizador.fecha == fecha_actual:
-                    if logAutorizador.hora == hora_actual:
-                        if logAutorizador.intentos == 100:
+            if logAutorizadorIP:
+                print("IP registrada")
+                if logAutorizadorIP.fecha == fecha_actual:
+                    if logAutorizadorIP.hora == hora_actual:
+                        if logAutorizadorIP.intentos == 20:
                             ipBloqueada = IpBloqueada(
                                 ip=request.json["ip"])
                             db.session.add(ipBloqueada)
                         else:
-                            logAutorizador.intentos = logAutorizador.intentos + 1
+                            logAutorizadorIP.intentos = logAutorizadorIP.intentos + 1
                     else:
-                        logAutorizador.hora = hora_actual
-                        logAutorizador.intentos = 0
+                        logAutorizadorIP.hora = hora_actual
+                        logAutorizadorIP.intentos = 0
                 else:
-                    logAutorizador.fecha = fecha_actual
-                    logAutorizador.hora = hora_actual
-                    logAutorizador.intentos = 0
+                    logAutorizadorIP.fecha = fecha_actual
+                    logAutorizadorIP.hora = hora_actual
+                    logAutorizadorIP.intentos = 0
                 db.session.commit()
                 return "IP autorizada", 200
             else:
-                print("Usuario NO registrado")
-                logAutorizador = LogAutorizador(
+                print("IP NO registrada")
+                logAutorizadorIP = LogAutorizador(
                     ip=request.json["ip"],
+                    usuario=None,
+                    fecha=fecha_actual,
+                    hora=hora_actual,
+                    intentos=1, 
+                    experimento=2)
+                db.session.add(logAutorizadorIP)
+            db.session.commit()
+            return "IP autorizada", 200
+class VistAutorizadorConfidencialidad(Resource):
+    semaphore = threading.Semaphore(1)
+
+    def post(self):
+        with self.semaphore:
+            fecha_actual = str(datetime.now().strftime("%Y%m%d"))
+            hora_actual = int(str(datetime.now().strftime("%H%M")))
+            ipBloqueada = IpBloqueada.query.filter(
+                IpBloqueada.ip == request.json["ip"]).with_for_update().first()
+            print(ipBloqueada)
+            if ipBloqueada:
+                return "IP bloqueada", 401
+            
+            print("USUARIO:" + request.json["usuario"])
+            logAutorizadorUsuario = LogAutorizador.query.filter(
+                LogAutorizador.usuario == request.json["usuario"], LogAutorizador.fecha == fecha_actual, LogAutorizador.hora == hora_actual).with_for_update().first()
+        
+            if logAutorizadorUsuario:
+                print("Usuario registrado")
+                if logAutorizadorUsuario.fecha == fecha_actual:
+                    if logAutorizadorUsuario.hora == hora_actual:
+                        if logAutorizadorUsuario.intentos > 2:
+                            return "ALERTA Detección ataque fuerza bruta", 401
+                        else:
+                            logAutorizadorUsuario.intentos = logAutorizadorUsuario.intentos + 1
+                    else:
+                        logAutorizadorUsuario.hora = hora_actual
+                        logAutorizadorUsuario.intentos = 0
+                else:
+                    logAutorizadorUsuario.fecha = fecha_actual
+                    logAutorizadorUsuario.hora = hora_actual
+                    logAutorizadorUsuario.intentos = 0
+                db.session.commit()
+                return "Usuario autorizado", 200
+            else:
+                print("Usuario NO registrado")
+                logAutorizadorUsuario = LogAutorizador(
+                    ip=None,
                     usuario=request.json["usuario"],
                     fecha=fecha_actual,
                     hora=hora_actual,
-                    intentos=1)
-                db.session.add(logAutorizador)
+                    intentos=1,
+                    experimento=1)
+                db.session.add(logAutorizadorUsuario)
             db.session.commit()
-            return "IP autorizada", 200
+            return "Usuario autorizado", 200
 
-api.add_resource(VistAutorizador, '/autorizador')
+
+api.add_resource(VistAutorizadorDisponibilidad, '/autorizadorDisponibilidad')
+api.add_resource(VistAutorizadorConfidencialidad, '/autorizadorConfidencialidad')

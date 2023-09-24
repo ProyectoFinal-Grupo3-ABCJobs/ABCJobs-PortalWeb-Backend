@@ -11,6 +11,7 @@ class LogAutorizador(db.Model):
     fecha = db.Column(db.String(8))
     hora = db.Column(db.Integer())
     intentos = db.Column(db.Integer())
+    experimento = db.Column(db.Integer())
     
     __table_args__ = (
         Index('idx_ip_fecha_hora', 'ip', 'fecha', 'hora'),

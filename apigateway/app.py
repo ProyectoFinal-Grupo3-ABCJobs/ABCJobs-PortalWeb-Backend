@@ -13,7 +13,7 @@ app_context = app.app_context()
 app_context.push()
 api = Api(app)
 
-class VistApiGateway(Resource):
+class VistApiGatewayDisponibilidad(Resource):
     def get(self):
         ip_cliente = request.remote_addr
         print("ip_cliente: " + ip_cliente)
@@ -30,8 +30,42 @@ class VistApiGateway(Resource):
         print("params" + str(params))
 
         # Realiza la solicitud GET
-        response = requests.post('http://localhost:5001/autorizador', json=params)
+        response = requests.post('http://localhost:5001/autorizadorDisponibilidad', json=params)
         print("response AUTORIZADOR: " + str(response))
+
+        # Verifica si la solicitud fue exitosa (código de respuesta 200)
+        if response.status_code == 200:
+            # Imprime la respuesta JSON recibida
+            data = response.json()
+            print(data)
+            
+            autorizacion = request.headers['Authorization']            
+            headers = {'Authorization': autorizacion}
+            response_login = requests.get('http://localhost:5002/login', headers=headers)
+            print("response LOGIN: " + str(response_login))
+            return response_login.json()
+        else:
+            return "IP Bloqueada", 401
+        
+class VistApiGatewayConfidencialidad(Resource):
+    def get(self):        
+        ip_cliente = request.remote_addr
+        print("ip_cliente: " + ip_cliente)
+        
+        authorization = request.headers['Authorization']
+        authorization = authorization[len('Basic '):]
+        usuario_contraseña = base64.b64decode(authorization).decode('utf-8')
+
+        # Divide el usuario y la contraseña
+        usuario, contraseña = usuario_contraseña.split(':')
+        print("usuario" + str(usuario))
+        params = {"usuario": usuario,
+                "ip": ip_cliente}
+        print("params" + str(params))
+
+        # Realiza la solicitud GET
+        response = requests.post('http://localhost:5001/autorizadorConfidencialidad', json=params)
+        print("response AUTORIZADOR CONFIDENCIALIDAD: " + str(response))
 
         # Verifica si la solicitud fue exitosa (código de respuesta 200)
         if response.status_code == 200:
@@ -51,9 +85,8 @@ class VistApiGateway(Resource):
                 return response_pruebas.json()
             else:
                 return "Usuario No autorizado", 401    
-            
-            
         else:
-            return "IP Bloqueada", 401
+            return "ALERTA Detección ataque fuerza bruta", 401
 
-api.add_resource(VistApiGateway,'/apigateway/pruebas')
+api.add_resource(VistApiGatewayDisponibilidad,'/apigateway/login')
+api.add_resource(VistApiGatewayConfidencialidad,'/apigateway/pruebas')

@@ -54,6 +54,6 @@ class VistApiGateway(Resource):
             
             
         else:
-            print(f'Error en la solicitud: Código de respuesta {response.status_code}')
+            return "IP Bloqueada", 401
 
 api.add_resource(VistApiGateway,'/apigateway/pruebas')

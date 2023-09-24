@@ -1,11 +1,10 @@
 from gestionAutenticacionAutorizacion import create_app
 from flask_restful import Resource,Api
 from flask import Flask,request
-import requests, json
+from flask import jsonify
 from sqlalchemy.exc import IntegrityError
-
 from datetime import date, datetime
-
+import base64
 
 from .modelos import db, Usuario, UsuarioSchema
    
@@ -30,11 +29,21 @@ api = Api(app)
 class VistaAutenticacionAutorizacion(Resource):
     def get(self):
 
-        print(request.json["usuario"])
-        print(request.json["contrasena"])
-        fechaActual = datetime.now()
-        usuario = Usuario.query.filter(Usuario.usuario == request.json["usuario"],
-                                       Usuario.contrasena == request.json["contrasena"]).first()
+        authorization = request.headers['Authorization']
+        authorization = authorization[len('Basic '):]
+        usuario_contraseña = base64.b64decode(authorization).decode('utf-8')
+        # Divide el usuario y la contraseña
+        usuario, contraseña = usuario_contraseña.split(':')
+
+        usuario = Usuario.query.filter(Usuario.usuario == usuario,
+                                       Usuario.contrasena == contraseña).first()
         db.session.commit()
+        
+        print(usuario)
+        if usuario:
+            return jsonify({"id": usuario.id})
+        else:
+            # Si no se encontró ningún resultado, puedes devolver un mensaje de error o un JSON vacío
+            return "NO se encontró ningún usuario", 204
 
 api.add_resource(VistaAutenticacionAutorizacion,'/login')

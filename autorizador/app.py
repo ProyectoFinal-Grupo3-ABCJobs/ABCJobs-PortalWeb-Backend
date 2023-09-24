@@ -29,6 +29,8 @@ class VistAutorizador(Resource):
     def post(self):
 
         with self.semaphore:
+            print("IP Autorizador: " + request.json["ip"])
+            print("Usuario Autorizador: " + request.json["usuario"])
             fecha_actual = str(datetime.now().strftime("%Y%m%d"))
             hora_actual = int(str(datetime.now().strftime("%H%M")))
             ipBloqueada = IpBloqueada.query.filter(
@@ -68,7 +70,6 @@ class VistAutorizador(Resource):
                     intentos=1)
                 db.session.add(logAutorizador)
             db.session.commit()
-            return "IP autorizada", 201
-
+            return "IP autorizada", 200
 
 api.add_resource(VistAutorizador, '/autorizador')

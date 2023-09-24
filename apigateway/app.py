@@ -17,8 +17,6 @@ class VistApiGateway(Resource):
     def get(self):
         ip_cliente = request.remote_addr
         print("ip_cliente: " + ip_cliente)
-        #ip_cliente2 = request.headers.get('X-Forwarded-For')
-        #print("ip_cliente2: " + str(ip_cliente2))
         
         authorization = request.headers['Authorization']
         authorization = authorization[len('Basic '):]
@@ -27,19 +25,35 @@ class VistApiGateway(Resource):
         # Divide el usuario y la contraseña
         usuario, contraseña = usuario_contraseña.split(':')
         print("usuario" + str(usuario))
-        params = {'usuario': usuario,
-                'ip': ip_cliente}
+        params = {"usuario": usuario,
+                "ip": ip_cliente}
+        print("params" + str(params))
 
         # Realiza la solicitud GET
-        response = requests.post('http://localhost:5001/autorizador', params=params)
-        print("response" + str(response))
+        response = requests.post('http://localhost:5001/autorizador', json=params)
+        print("response AUTORIZADOR: " + str(response))
 
         # Verifica si la solicitud fue exitosa (código de respuesta 200)
         if response.status_code == 200:
             # Imprime la respuesta JSON recibida
             data = response.json()
             print(data)
+            
+            autorizacion = request.headers['Authorization']            
+            headers = {'Authorization': autorizacion}
+            response_login = requests.get('http://localhost:5002/login', headers=headers)
+            print("response LOGIN: " + str(response_login))
+            
+            if response.status_code == 200:
+                data = response_login.json()
+                id = data.get('id')
+                response_pruebas = requests.get(f'http://localhost:5003/pruebas?idUsuario={id}')
+                return response_pruebas.json()
+            else:
+                return "Usuario No autorizado", 401    
+            
+            
         else:
             print(f'Error en la solicitud: Código de respuesta {response.status_code}')
 
-api.add_resource(VistApiGateway,'/apigateway')
+api.add_resource(VistApiGateway,'/apigateway/pruebas')

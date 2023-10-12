@@ -1,0 +1,6 @@
+[
+    {
+      "name": "container_candidatos",
+      "imageUri": "728325293128.dkr.ecr.us-east-2.amazonaws.com/container_candidatos:latest"
+    }
+]

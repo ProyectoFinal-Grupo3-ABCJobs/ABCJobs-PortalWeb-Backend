@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 728325293128.dkr.ecr.us-east-2.amazonaws.com
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker login -u gcastrot82@hotmail.com -p Ger@rd0123           
+      - docker build -t container_autenticacion gestion_autenticacion/.
+      - docker tag container_autenticacion:latest 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_autenticacion:latest
+      - docker build -t container_candidatos gestion_candidatos/.
+      - docker tag container_candidatos:latest 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_candidatos:latest
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_autenticacion:latest
+      - docker push 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_candidatos:latest
+artifacts:
+  files:
+    - '**/*'

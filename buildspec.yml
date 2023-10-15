@@ -14,6 +14,8 @@ phases:
       - docker tag container_autenticacion:latest 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_autenticacion:latest
       - docker build -t container_candidatos gestion_candidatos/.
       - docker tag container_candidatos:latest 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_candidatos:latest
+      - docker build -t container_empresas gestion_empresas/.
+      - docker tag container_empresas:latest 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_empresas:latest
 
   post_build:
     commands:
@@ -21,6 +23,7 @@ phases:
       - echo Pushing the Docker image...
       - docker push 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_autenticacion:latest
       - docker push 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_candidatos:latest
+      - docker push 728325293128.dkr.ecr.us-east-2.amazonaws.com/container_empresas:latest
 artifacts:
   files:
     - '**/*'

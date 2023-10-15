@@ -1,0 +1,1 @@
+from .vista_candidato import *

@@ -1,6 +1,6 @@
 import unittest, json
 
-from gestion_autenticacion.app import app
+from app import app
 
 class TestApp(unittest.TestCase):
     def setUp(self):

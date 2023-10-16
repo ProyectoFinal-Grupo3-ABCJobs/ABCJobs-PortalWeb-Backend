@@ -61,7 +61,7 @@ class VistaGenerarToken(Resource):
           # Usuario autenticado
           mensaje:dict = {"id": usuario.id, "tipoUsuario": usuario.tipoUsuario,"token": token_de_acceso}
           respuesta = jsonify(mensaje)
-          respuesta.status_code = 401
+          respuesta.status_code = 200
           return respuesta
  
 

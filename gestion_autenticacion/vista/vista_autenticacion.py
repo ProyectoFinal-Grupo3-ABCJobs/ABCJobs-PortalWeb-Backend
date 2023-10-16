@@ -4,7 +4,7 @@ from flask_jwt_extended import create_access_token
 from flask import jsonify
 import hashlib, os, json
 
-from modelo import Usuarios, UsuariosSchema
+from gestion_autenticacion.modelo import Usuarios, UsuariosSchema
 user_schema = UsuariosSchema()
 
 

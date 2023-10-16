@@ -1,13 +1,15 @@
-FROM alpine:3.14
+FROM python
 
-RUN apk add py3-pip \
-    && pip install --upgrade pip
+RUN mkdir /app
 
 WORKDIR /app
-COPY . /app/
-    
-RUN pip install -r src/requirements.txt
+
+COPY . .
+
+RUN pip install --upgrade pip
+
+RUN pip install -r requirements.txt
 
 EXPOSE 5002
 
-CMD ["python3", "src/application.py"]
+CMD ["flask","run","-h","0.0.0.0","-p","5002"]

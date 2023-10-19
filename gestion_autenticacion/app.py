@@ -5,7 +5,7 @@ from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
 from gestion_autenticacion.vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio
-from modelo import db, UsuariosSchema
+from gestion_autenticacion.modelo import db, UsuariosSchema
 import os
 
 user_schema = UsuariosSchema()

@@ -4,8 +4,8 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
-from vista.vista_empresas import VistaSaludServicio
-from modelo import db, EmpresaSchema
+from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa
+from gestion_empresas.modelo import db, EmpresaSchema
 import os
 
 empresa_schema = EmpresaSchema()
@@ -13,7 +13,7 @@ empresa_schema = EmpresaSchema()
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///proyectoABDJobs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_ALGORITHM"] = "HS256"
@@ -30,6 +30,7 @@ cors = CORS(app)
 
 api = Api(app)
 
-api.add_resource(VistaSaludServicio,'/empresas/ping')
+api.add_resource(VistaSaludServicio,'/company/ping')
+api.add_resource(VistaRegistroEmpresa,'/company/register')
 
 jwt = JWTManager(app)

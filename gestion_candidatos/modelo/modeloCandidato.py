@@ -13,17 +13,20 @@ class Candidato(db.Model):
     telefono            = db.Column(db.Integer)
     profesion           = db.Column(db.String(150))
     aniosExperiencia    = db.Column(db.String(150))
-    email               = db.Column(db.String(150))
     idCiudad            = db.Column(db.String(100))
     idDepartamento      = db.Column(db.String(100))
+    idPais              = db.Column(db.String(100))
     ultimoEstudio       = db.Column(db.String(150))
     institucion         = db.Column(db.String(150))
     anioGrado           = db.Column(db.Integer)
+    idCiudadInst        = db.Column(db.String(100))
+    idDepartamentoInst  = db.Column(db.String(100))
     cargoUltimoEmpleo   = db.Column(db.String(150))
     empresa             = db.Column(db.String(150))
     anioIngreso         = db.Column(db.Integer)
     anioRetiro          = db.Column(db.Integer)
     estado              = db.Column(db.Boolean, default=False)
+    palabrasClave       = db.Column(db.String(300))
 
 class CandidatoSchema(SQLAlchemyAutoSchema):
     class Meta:

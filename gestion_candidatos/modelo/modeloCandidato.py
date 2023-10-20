@@ -18,11 +18,11 @@ class Candidato(db.Model):
     idDepartamento      = db.Column(db.String(100))
     ultimoEstudio       = db.Column(db.String(150))
     institucion         = db.Column(db.String(150))
-    anioGrado           = db.Column(db.DateTime())
+    anioGrado           = db.Column(db.Integer)
     cargoUltimoEmpleo   = db.Column(db.String(150))
     empresa             = db.Column(db.String(150))
-    anioIngreso         = db.Column(db.DateTime())
-    anioRetiro          = db.Column(db.DateTime())
+    anioIngreso         = db.Column(db.Integer)
+    anioRetiro          = db.Column(db.Integer)
     estado              = db.Column(db.Boolean, default=False)
 
 class CandidatoSchema(SQLAlchemyAutoSchema):

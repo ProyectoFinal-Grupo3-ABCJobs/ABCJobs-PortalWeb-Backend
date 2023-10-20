@@ -15,7 +15,7 @@ class Candidato(db.Model):
     aniosExperiencia    = db.Column(db.String(150))
     email               = db.Column(db.String(150))
     idCiudad            = db.Column(db.String(100))
-    contrasena          = db.Column(db.String(50))
+    idDepartamento      = db.Column(db.String(100))
     ultimoEstudio       = db.Column(db.String(150))
     institucion         = db.Column(db.String(150))
     anioGrado           = db.Column(db.DateTime())

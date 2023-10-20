@@ -4,7 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
-from gestion_candidatos.vista.vista_candidato import VistaRegistroCandidato, VistaSaludServicio
+from gestion_candidatos.vista.vista_candidato import VistaRegistroInfoCandidato, VistaSaludServicio
 from gestion_candidatos.modelo import db, CandidatoSchema
 import os
 
@@ -30,7 +30,7 @@ cors = CORS(app)
 
 api = Api(app)
 
-api.add_resource(VistaRegistroCandidato,'/candidate/register')
+api.add_resource(VistaRegistroInfoCandidato,'/candidate/registerInfo')
 api.add_resource(VistaSaludServicio,'/candidate/ping')
 
 jwt = JWTManager(app)

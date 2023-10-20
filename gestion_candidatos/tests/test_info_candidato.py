@@ -1,10 +1,16 @@
 import unittest, json
 
 from gestion_candidatos.app import app
+from gestion_candidatos.modelo import db
 
 class TestApp(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
+
+    def tearDown(self):
+        meta = db.metadata
+        for table in reversed(meta.sorted_tables):
+            db.session.execute(table.delete())
     
     def test_response_status_200(self):
         response = self.app.get('/candidate/ping')

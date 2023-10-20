@@ -5,7 +5,7 @@ from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
 from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa
-from modelo import db, EmpresaSchema
+from gestion_empresas.modelo import db, EmpresaSchema
 import os
 
 empresa_schema = EmpresaSchema()

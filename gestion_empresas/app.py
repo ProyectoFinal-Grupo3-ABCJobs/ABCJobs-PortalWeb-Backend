@@ -4,7 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
-from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa
+from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa
 from modelo import db, EmpresaSchema
 import os
 

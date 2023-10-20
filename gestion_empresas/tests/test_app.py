@@ -13,12 +13,12 @@ class TestApp(unittest.TestCase):
             db.session.execute(table.delete())
     
     def test_response_status_200(self):
-        response = self.app.get('/empresas/ping')
+        response = self.app.get('/company/ping')
         self.assertEqual(response.status_code, 200)
 
 
     def test_response_json(self):
-        response = self.app.get('/empresas/ping')
+        response = self.app.get('/company/ping')
         data:dict = {
             "mensaje": "healthcheck OK"
             }
@@ -35,7 +35,7 @@ class TestApp(unittest.TestCase):
             "idCiudad": "12"
         }
 
-        solicitud_nueva_empresa = self.client.post("/company/register",
+        solicitud_nueva_empresa = self.app.post("/company/register",
                                                      data=json.dumps(
                                                          nueva_empresa),
                                                      headers={'Content-Type': 'application/json'})
@@ -52,7 +52,7 @@ class TestApp(unittest.TestCase):
             "idCiudad": "12"
         }
 
-        solicitud_nueva_empresa = self.client.post("/company/register",
+        solicitud_nueva_empresa = self.app.post("/company/register",
                                                      data=json.dumps(
                                                          nueva_empresa),
                                                      headers={'Content-Type': 'application/json'})
@@ -65,7 +65,7 @@ class TestApp(unittest.TestCase):
             "idCiudad": "12"
         }
 
-        solicitud_nueva_empresa = self.client.post("/company/register",
+        solicitud_nueva_empresa = self.app.post("/company/register",
                                                      data=json.dumps(
                                                          nueva_empresa),
                                                      headers={'Content-Type': 'application/json'})
@@ -82,7 +82,7 @@ class TestApp(unittest.TestCase):
             "idCiudad": "12"
         }
 
-        solicitud_nueva_empresa = self.client.post("/company/register",
+        solicitud_nueva_empresa = self.app.post("/company/register",
                                                      data=json.dumps(
                                                          nueva_empresa),
                                                      headers={'Content-Type': 'application/json'})
@@ -95,7 +95,7 @@ class TestApp(unittest.TestCase):
             "idCiudad": "12"
         }
 
-        solicitud_nueva_empresa = self.client.post("/company/register",
+        solicitud_nueva_empresa = self.app.post("/company/register",
                                                      data=json.dumps(
                                                          nueva_empresa),
                                                      headers={'Content-Type': 'application/json'})

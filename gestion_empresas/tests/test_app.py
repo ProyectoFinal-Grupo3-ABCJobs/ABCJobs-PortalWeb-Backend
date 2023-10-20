@@ -1,7 +1,7 @@
 import unittest, json
 
 from gestion_empresas.app import app
-from modelo import db
+from gestion_empresas.modelo import db
 
 class TestApp(unittest.TestCase):
     def setUp(self):

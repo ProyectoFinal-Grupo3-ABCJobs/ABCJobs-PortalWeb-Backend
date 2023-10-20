@@ -40,7 +40,7 @@ class TestApp(unittest.TestCase):
                                                          nueva_empresa),
                                                      headers={'Content-Type': 'application/json'})
 
-        self.assertEqual(solicitud_nueva_empresa.status_code, 200)
+        self.assertEqual(solicitud_nueva_empresa.status_code, 201)
 
     def test_create_company_name_exists(self):
 
@@ -89,7 +89,7 @@ class TestApp(unittest.TestCase):
 
         nueva_empresa = {
             "razonSocial":"EmpresaPrueba2",
-            "nit": "45588855878",
+            "nit": "455889855878",
             "direccion": "calle 20",
             "telefono": "89965656565",
             "idCiudad": "12"

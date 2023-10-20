@@ -4,8 +4,8 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
-from vista.vista_candidato import VistaRegistroCandidato, VistaSaludServicio
-from modelo import db, CandidatoSchema
+from gestion_candidatos.vista.vista_candidato import VistaRegistroCandidato, VistaSaludServicio
+from gestion_candidatos.modelo import db, CandidatoSchema
 import os
 
 candidate_schema = CandidatoSchema()

@@ -21,7 +21,7 @@ jobs:
         python-version: 3.9
 
     - name: Instalar dependencias
-      run: pip install -r requirements.txt
+      run: pip install -r gestion_candidatos/requirements.txt
 
     - name: Ejecutar pruebas unitarias
       run: python -m unittest discover gestion_candidatos/tests

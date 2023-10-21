@@ -31,8 +31,5 @@ jobs:
         coverage run -m unittest discover -s gestion_autenticacion/tests -p 'test_*.py'
         coverage report -m --fail-under=88
 
-    - name: Ver reporte de coverage
-      run: coverage report -m 
-
     - name: Finalizar flujo de trabajo
       run: echo "El flujo de trabajo se ha completado exitosamente."

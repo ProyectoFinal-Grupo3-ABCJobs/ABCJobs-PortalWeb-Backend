@@ -3,7 +3,7 @@ import unittest, json, os
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
-if carpeta_actual=='gestion_autenticacion':
+if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
     from app import app
 else:
     from gestion_autenticacion.app import app

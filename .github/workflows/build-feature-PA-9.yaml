@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - feature/PA-9
+      - feature/PA-116
  
 # Definir los Jobs
 jobs:

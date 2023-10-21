@@ -36,16 +36,19 @@ class TestApp(unittest.TestCase):
                 "telefono": "89965656565",
                 "profesion": "ingeniero",
                 "aniosExperiencia": "5",
-                "email": "prueba@email.com",
                 "idCiudad": "12",
                 "idDepartamento": "1",
+                "idPais": "1",
                 "ultimoEstudio": "Maestria",
                 "institucion": "Universidad Nacional",
                 "anioGrado": "2019",
+                "idCiudadInst": "12",
+                "idDepartamentoInst": "1",
                 "cargoUltimoEmpleo": "ingeniero",
                 "empresa": "EmpresaPrueba",
                 "anioIngreso": "2019",
                 "anioRetiro": "2020",
+                "palabrasClave": "palabra1, palabra2, palabra3"
             }
 
             solicitud_nuevo_candidato = self.app.post("/candidate/registerInfo",
@@ -55,7 +58,7 @@ class TestApp(unittest.TestCase):
             
             self.assertEqual(solicitud_nuevo_candidato.status_code, 201)
 
-    def test_campos_vacios(self):
+    def test_campos_obligatorios_vacios(self):
          
             nuevo_candidato = {
                 "tipoIdentificacion": "CC",
@@ -65,16 +68,19 @@ class TestApp(unittest.TestCase):
                 "telefono": "",
                 "profesion": "ingeniero",
                 "aniosExperiencia": "",
-                "email": "",
                 "idCiudad": "12",
                 "idDepartamento": "1",
+                "idPais": "1",
                 "ultimoEstudio": "Pregrado",
                 "institucion": "Universidad Piloto",
                 "anioGrado": "",
+                "idCiudadInst": "12",
+                "idDepartamentoInst": "1",
                 "cargoUltimoEmpleo": "",
-                "empresa": "",
+                "empresa": "Empresa1",
                 "anioIngreso": "",
                 "anioRetiro": "",
+                "palabrasClave": "palabra1, palabra2, palabra3"
             }
 
             solicitud_nuevo_candidato = self.app.post("/candidate/registerInfo",
@@ -84,61 +90,6 @@ class TestApp(unittest.TestCase):
             
             self.assertEqual(solicitud_nuevo_candidato.status_code, 400)
 
-    def test_email_exists(self):
-         
-            nuevo_candidato1 = {
-                "tipoIdentificacion": "CC",
-                "identificacion": "123123123",
-                "nombre": "CandidatoPrueba1",
-                "direccion": "calle 20",
-                "telefono": "89965656565",
-                "profesion": "ingeniero",
-                "aniosExperiencia": "5",
-                "email": "correo1@email.com",  
-                "idCiudad": "12",
-                "idDepartamento": "1",
-                "ultimoEstudio": "Maestria",
-                "institucion": "Universidad Nacional",
-                "anioGrado": "2019",
-                "cargoUltimoEmpleo": "ingeniero",
-                "empresa": "EmpresaPrueba",
-                "anioIngreso": "2019",
-                "anioRetiro": "2020",
-            }
-
-            solicitud_nuevo_candidato1 = self.app.post("/candidate/registerInfo",
-                                                            data=json.dumps(
-                                                                nuevo_candidato1),
-                                                            headers={'Content-Type': 'application/json'})
-            
-            nuevo_candidato2 = {
-                "tipoIdentificacion": "CC",
-                "identificacion": "345345345",
-                "nombre": "CandidatoPrueba2",
-                "direccion": "calle 20",
-                "telefono": "89965656565",
-                "profesion": "ingeniero",
-                "aniosExperiencia": "5",
-                "email": "correo1@email.com",  
-                "idCiudad": "12",
-                "idDepartamento": "1",
-                "ultimoEstudio": "Maestria",
-                "institucion": "Universidad Nacional",
-                "anioGrado": "2019",
-                "cargoUltimoEmpleo": "ingeniero",
-                "empresa": "EmpresaPrueba",
-                "anioIngreso": "2019",
-                "anioRetiro": "2020",
-            }
-
-            solicitud_nuevo_candidato2 = self.app.post("/candidate/registerInfo",
-                                                            data=json.dumps(
-                                                                nuevo_candidato2),
-                                                            headers={'Content-Type': 'application/json'})
-            
-            self.assertEqual(solicitud_nuevo_candidato2.status_code, 400)
-
-        
     def test_identificacion_exists(self):
          
             nuevo_candidato1 = {
@@ -149,16 +100,19 @@ class TestApp(unittest.TestCase):
                 "telefono": "89965656565",
                 "profesion": "ingeniero",
                 "aniosExperiencia": "5",
-                "email": "test1@email.com",
                 "idCiudad": "12",
                 "idDepartamento": "1",
+                "idPais": "1",
                 "ultimoEstudio": "Maestria",
                 "institucion": "Universidad Nacional",
                 "anioGrado": "2019",
+                "idCiudadInst": "12",
+                "idDepartamentoInst": "1",
                 "cargoUltimoEmpleo": "ingeniero",
                 "empresa": "EmpresaPrueba",
                 "anioIngreso": "2019",
-                "anioRetiro": "2020",
+                "anioRetiro": "",
+                "palabrasClave": "palabra1, palabra2, palabra3"
             }
 
             solicitud_nuevo_candidato1 = self.app.post("/candidate/registerInfo",
@@ -174,16 +128,19 @@ class TestApp(unittest.TestCase):
                 "telefono": "89965656565",
                 "profesion": "ingeniero",
                 "aniosExperiencia": "5",
-                "email": "test2@email.com",
                 "idCiudad": "12",
                 "idDepartamento": "1",
+                "idPais": "1",
                 "ultimoEstudio": "Maestria",
                 "institucion": "Universidad Nacional",
                 "anioGrado": "2019",
+                "idCiudadInst": "12",
+                "idDepartamentoInst": "1",
                 "cargoUltimoEmpleo": "ingeniero",
                 "empresa": "EmpresaPrueba",
                 "anioIngreso": "2019",
                 "anioRetiro": "2020",
+                "palabrasClave": "palabra1, palabra2, palabra3"
             }
 
             solicitud_nuevo_candidato2 = self.app.post("/candidate/registerInfo",

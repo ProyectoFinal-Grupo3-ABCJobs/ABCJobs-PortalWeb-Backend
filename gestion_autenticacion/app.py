@@ -4,9 +4,17 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
-from gestion_autenticacion.vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio
-from gestion_autenticacion.modelo import db, UsuariosSchema
 import os
+
+directorio_actual = os.getcwd()
+carpeta_actual = os.path.basename(directorio_actual)
+
+if carpeta_actual=='gestion_autenticacion':
+    from vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio
+    from modelo import db, UsuariosSchema
+else:    
+    from gestion_autenticacion.vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio
+    from gestion_autenticacion.modelo import db, UsuariosSchema
 
 user_schema = UsuariosSchema()
 

@@ -4,7 +4,17 @@ from flask_jwt_extended import create_access_token
 from flask import jsonify
 import hashlib, os, json
 
-from gestion_autenticacion.modelo import Usuarios, UsuariosSchema
+
+directorio_actual = os.getcwd()
+carpeta_actual = os.path.basename(directorio_actual)
+
+if carpeta_actual=='gestion_autenticacion':
+     from modelo import Usuarios, UsuariosSchema
+else:
+     from gestion_autenticacion.modelo import Usuarios, UsuariosSchema
+
+
+
 user_schema = UsuariosSchema()
 
 

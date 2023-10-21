@@ -54,7 +54,7 @@ class VistaRegistroInfoCandidato(Resource):
           db.session.commit()
 
           candidato_creado = Candidato.query.filter(
-               Candidato.email == request.json["email"]
+               Candidato.identificacion == request.json["identificacion"]
           ).first()
 
           return {

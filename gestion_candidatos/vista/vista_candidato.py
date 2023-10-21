@@ -17,14 +17,6 @@ class VistaRegistroInfoCandidato(Resource):
           except:
                 return "Code 400: Hay campos obligatorios vacíos", 400
 
-          # Validar que el email no exista
-          candidatoEmail = Candidato.query.filter(
-               Candidato.email == request.json["email"]
-          ).first()
-          
-          if candidatoEmail:
-               return "Code 400: El email ya existe", 400
-          
           # Validar que la identificación no exista
           candidatoIdentificacion = Candidato.query.filter(
                Candidato.identificacion == request.json["identificacion"]
@@ -42,16 +34,19 @@ class VistaRegistroInfoCandidato(Resource):
                telefono=request.json["telefono"],
                profesion=request.json["profesion"],
                aniosExperiencia=request.json["aniosExperiencia"],
-               email=request.json["email"],
                idCiudad=request.json["idCiudad"],
                idDepartamento=request.json["idDepartamento"],
+               idPais=request.json["idPais"],
                ultimoEstudio=request.json["ultimoEstudio"],
                institucion=request.json["institucion"],
                anioGrado=request.json["anioGrado"],
+               idCiudadInst=request.json["idCiudadInst"],
+               idDepartamentoInst=request.json["idDepartamentoInst"],
                cargoUltimoEmpleo=request.json["cargoUltimoEmpleo"],
                empresa=request.json["empresa"],
                anioIngreso=request.json["anioIngreso"],
                anioRetiro=request.json["anioRetiro"],
+               palabrasClave=request.json["palabrasClave"],
                estado=False,
           )
 
@@ -65,7 +60,7 @@ class VistaRegistroInfoCandidato(Resource):
           return {
                "id": candidato_creado.idCandidato,
                "nombre": candidato_creado.nombre,
-               "email": candidato_creado.email,
+               "identificacion": candidato_creado.identificacion
           }, 201
 
 class VistaSaludServicio(Resource):

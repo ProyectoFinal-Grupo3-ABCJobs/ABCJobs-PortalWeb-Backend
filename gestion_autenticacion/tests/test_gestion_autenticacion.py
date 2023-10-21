@@ -1,7 +1,13 @@
-import unittest, json
+import unittest, json, os
 
-from gestion_autenticacion.app import app
-#  from app import app
+directorio_actual = os.getcwd()
+carpeta_actual = os.path.basename(directorio_actual)
+
+if carpeta_actual=='gestion_autenticacion':
+    from app import app
+else:
+    from gestion_autenticacion.app import app
+
 
 class TestApp(unittest.TestCase):
     def setUp(self):

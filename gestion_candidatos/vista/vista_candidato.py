@@ -4,7 +4,7 @@ from flask_jwt_extended import create_access_token
 from flask import jsonify
 import hashlib, os, json
 
-from gestion_candidatos.modelo import db, Candidato, CandidatoSchema
+from modelo import db, Candidato, CandidatoSchema
 
 candidate_schema = CandidatoSchema()
 

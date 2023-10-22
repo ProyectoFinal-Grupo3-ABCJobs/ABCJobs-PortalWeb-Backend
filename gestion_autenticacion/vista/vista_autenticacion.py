@@ -8,8 +8,13 @@ import hashlib, os, json
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
+<<<<<<< HEAD
+if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
+     from modelo import Usuarios, UsuariosSchema
+=======
 if carpeta_actual=='gestion_autenticacion':
      from modelo import Usuarios, UsuariosSchema, db
+>>>>>>> 9a5ee8370da301c8601683aa7062749547b2b1ad
 else:
      from gestion_autenticacion.modelo import Usuarios, UsuariosSchema, db
 

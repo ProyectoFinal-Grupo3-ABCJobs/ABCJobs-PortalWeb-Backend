@@ -10,10 +10,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_autenticacion':
-    from vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio
+    from vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio, VistaRegistroUsuario
     from modelo import db, UsuariosSchema
 else:    
-    from gestion_autenticacion.vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio
+    from gestion_autenticacion.vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio, VistaRegistroUsuario
     from gestion_autenticacion.modelo import db, UsuariosSchema
 
 user_schema = UsuariosSchema()
@@ -40,5 +40,6 @@ api = Api(app)
 
 api.add_resource(VistaGenerarToken,'/users/auth')
 api.add_resource(VistaSaludServicio,'/users/ping')
+api.add_resource(VistaRegistroUsuario,'/users/register')
 
 jwt = JWTManager(app)

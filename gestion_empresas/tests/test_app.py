@@ -1,7 +1,15 @@
 import unittest, json
+import os
 
-from gestion_empresas.app import app
-from gestion_empresas.modelo import db
+directorio_actual = os.getcwd()
+carpeta_actual = os.path.basename(directorio_actual)
+
+if carpeta_actual=='gestion_empresas':
+    from app import app
+    from modelo import db
+else:
+    from gestion_empresas.app import app
+    from gestion_empresas.modelo import db
 
 class TestApp(unittest.TestCase):
     def setUp(self):

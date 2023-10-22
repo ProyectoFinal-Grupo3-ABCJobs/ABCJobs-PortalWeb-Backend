@@ -1,7 +1,7 @@
 import unittest, json
 
-from gestion_candidatos.app import app
-from gestion_candidatos.modelo import db
+from app import app
+from modelo import db
 
 
 class TestApp(unittest.TestCase):

@@ -8,10 +8,15 @@ import hashlib, os, json
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
+<<<<<<< HEAD
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
      from modelo import Usuarios, UsuariosSchema
+=======
+if carpeta_actual=='gestion_autenticacion':
+     from modelo import Usuarios, UsuariosSchema, db
+>>>>>>> 9a5ee8370da301c8601683aa7062749547b2b1ad
 else:
-     from gestion_autenticacion.modelo import Usuarios, UsuariosSchema
+     from gestion_autenticacion.modelo import Usuarios, UsuariosSchema, db
 
 
 
@@ -81,3 +86,39 @@ class VistaSaludServicio(Resource):
           respuesta = jsonify(mensaje)
           respuesta.status_code = 200
           return respuesta
+    
+
+class VistaRegistroUsuario(Resource):
+    def post(self):
+
+          try:
+                if len(request.json["usuario"].strip())==0 or len(request.json["contrasena"].strip())==0 or len(request.json["tipoUsuario"].strip())==0 :
+                    return "Code 400: Hay campos obligatorios vacíos", 400
+          except:
+                return "Code 400: Hay campos obligatorios vacíos", 400
+          
+          usuario = Usuarios.query.filter(
+            Usuarios.usuario == request.json["usuario"]).first()          
+          if not usuario is None:
+            return "No se puede crear el usuario. El correo ya se encuentra registrado", 409
+     
+          nuevo_usuario = Usuarios(
+               usuario=request.json["usuario"],
+               contrasena=request.json["contrasena"],
+               tipoUsuario=request.json["tipoUsuario"]
+          )
+
+          db.session.add(nuevo_usuario)
+          db.session.commit()
+
+          usuario_creado = Usuarios.query.filter(
+               Usuarios.usuario == request.json["usuario"]
+          ).first()
+
+          return {
+               "id": usuario_creado.id,
+               "usuario": usuario_creado.usuario,
+               "contrasena": usuario_creado.contrasena,
+               "tipoUsuario": usuario_creado.tipoUsuario,
+          }, 201
+

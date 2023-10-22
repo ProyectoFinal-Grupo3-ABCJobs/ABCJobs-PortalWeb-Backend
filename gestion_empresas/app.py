@@ -4,9 +4,19 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
-from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa
-from gestion_empresas.modelo import db, EmpresaSchema
+
 import os
+
+directorio_actual = os.getcwd()
+carpeta_actual = os.path.basename(directorio_actual)
+
+if carpeta_actual=='gestion_empresas':
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa
+    from modelo import db, EmpresaSchema
+else:    
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa
+    from gestion_empresas.modelo import db, EmpresaSchema
+
 
 empresa_schema = EmpresaSchema()
 

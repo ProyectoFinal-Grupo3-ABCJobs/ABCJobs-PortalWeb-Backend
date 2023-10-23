@@ -10,7 +10,7 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
-    from vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio
+    from vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio, VistaRegistroUsuario
     from modelo import db, UsuariosSchema
 else:    
     from gestion_autenticacion.vista.vista_autenticacion import VistaGenerarToken, VistaSaludServicio, VistaRegistroUsuario

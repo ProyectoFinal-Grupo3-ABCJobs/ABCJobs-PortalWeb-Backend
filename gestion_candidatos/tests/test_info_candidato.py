@@ -1,7 +1,15 @@
-import unittest, json
+import unittest, json, os
 
-from app import app
-from modelo import db
+directorio_actual = os.getcwd()
+carpeta_actual = os.path.basename(directorio_actual)
+
+if carpeta_actual=='gestion_candidatos' or carpeta_actual=='app':
+    from app import app
+    from modelo import db
+else:
+    from gestion_candidatos.app import app
+    from gestion_candidatos.modelo import db
+
 
 
 class TestApp(unittest.TestCase):

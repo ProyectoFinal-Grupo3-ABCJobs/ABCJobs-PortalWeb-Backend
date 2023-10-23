@@ -4,7 +4,13 @@ from flask_jwt_extended import create_access_token
 from flask import jsonify
 import hashlib, os, json
 
-from modelo import db, Candidato, CandidatoSchema
+directorio_actual = os.getcwd()
+carpeta_actual = os.path.basename(directorio_actual)
+
+if carpeta_actual=='gestion_candidatos' or carpeta_actual=='app':
+     from modelo import db, Candidato, CandidatoSchema
+else:
+     from gestion_candidatos.modelo import db, Candidato, CandidatoSchema
 
 candidate_schema = CandidatoSchema()
 

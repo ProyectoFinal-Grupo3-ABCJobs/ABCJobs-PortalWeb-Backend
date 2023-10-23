@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
+import os
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)

@@ -9,7 +9,7 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
-     from modelo import Usuarios, UsuariosSchema
+     from modelo import Usuarios, UsuariosSchema, db
 else:
      from gestion_autenticacion.modelo import Usuarios, UsuariosSchema, db
 

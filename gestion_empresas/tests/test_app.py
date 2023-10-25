@@ -4,7 +4,7 @@ import os
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
-if carpeta_actual=='gestion_empresas':
+if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
     from app import app
     from modelo import db
 else:

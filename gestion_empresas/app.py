@@ -10,7 +10,7 @@ import os
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
-if carpeta_actual=='gestion_empresas':
+if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
     from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa
     from modelo import db, EmpresaSchema
 else:    
@@ -23,7 +23,7 @@ empresa_schema = EmpresaSchema()
 load_dotenv()
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///proyectoABDJobs.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///proyectoABDJobs.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
@@ -38,10 +38,23 @@ db.init_app(app)
 db.create_all()
 
 cors = CORS(app)
-
-api = Api(app)
-
-api.add_resource(VistaSaludServicio,'/company/ping')
-api.add_resource(VistaRegistroEmpresa,'/company/register')
-
 jwt = JWTManager(app)
+
+# api = Api(app)
+
+# api.add_resource(VistaSaludServicio,'/company/ping')
+# api.add_resource(VistaRegistroEmpresa,'/company/register')
+
+@app.route('/company/ping',methods=['GET'])
+def VistaSaludServicio_():
+    resultado = VistaSaludServicio()
+    return resultado
+
+@app.route('/company/register',methods=['POST'])
+def VistaRegistroEmpresa_():
+    resultado = VistaRegistroEmpresa()
+    return resultado
+
+if __name__ == "__main__":
+    app.run(host = "0.0.0.0", port = 5002, debug = True)
+

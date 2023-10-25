@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5002
 
-CMD ["python", "app.py"]
+CMD ["flask","run","-h","0.0.0.0","-p","5002"]

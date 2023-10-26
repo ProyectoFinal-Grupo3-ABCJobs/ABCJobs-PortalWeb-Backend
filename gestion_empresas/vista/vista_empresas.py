@@ -14,7 +14,6 @@ else:
 
 empresa_schema = EmpresaSchema()
 
-
 class VistaSaludServicio(Resource):
     def get(self):
           mensaje:dict = {'mensaje':"healthcheck OK"}

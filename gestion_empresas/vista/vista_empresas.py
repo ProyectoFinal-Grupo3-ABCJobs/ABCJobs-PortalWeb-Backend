@@ -21,6 +21,7 @@ class VistaSaludServicio(Resource):
           respuesta.status_code = 200
           return respuesta
     
+    
 
 class VistaRegistroEmpresa(Resource):
     def post(self):

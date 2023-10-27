@@ -16,4 +16,3 @@ class EmpresaSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Empresa
         load_instance = True
-        

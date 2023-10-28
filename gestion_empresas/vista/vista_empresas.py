@@ -62,3 +62,11 @@ class VistaRegistroEmpresa(Resource):
                "razonSocial": empresa_creada.razonSocial,
                "nit": empresa_creada.nit,
           }, 201
+    
+
+class VistaConsultaProyectoPorEmpresa(Resource):
+    def get(self,id_empresa):
+          mensaje:dict = {'mensaje':"Consultando proyectos!!!"}
+          respuesta = jsonify(mensaje)
+          respuesta.status_code = 200
+          return respuesta

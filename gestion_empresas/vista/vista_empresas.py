@@ -68,9 +68,8 @@ class VistaConsultaProyectoPorEmpresa(Resource):
      @jwt_required()
      def get(self,id_empresa):
 
-          current_user = get_jwt_identity()
-
-          if current_user.upper() == 'EMPRESA':
+          tokenPayload = get_jwt_identity()
+          if tokenPayload['tipoUsuario'].upper() == 'EMPRESA':
                proyectos_empresa = Proyecto.query.filter(
                Proyecto.empresa_id == id_empresa
           ).all()

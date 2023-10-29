@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token,get_jwt_identity
 from flask import jsonify
 import hashlib, os, json
 
@@ -64,7 +64,13 @@ class VistaGenerarToken(Resource):
                respuesta.status_code = 400
                return respuesta
 
-          token_de_acceso = create_access_token(identity=usuario.tipoUsuario)
+          data = {
+               'idUsuario': usuario.id,
+               'usuario':usuario.usuario,
+               'tipoUsuario': usuario.usuario.upper()
+          }
+
+          token_de_acceso = create_access_token(identity=data)
           # Genero Token de acceso
           usuario.token = token_de_acceso
 

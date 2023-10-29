@@ -9,14 +9,12 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
-     from modelo import Usuarios, UsuariosSchema, db
+     from modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
 else:
-     from gestion_autenticacion.modelo import Usuarios, UsuariosSchema, db
+     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
 
-
-
-user_schema = UsuariosSchema()
-
+user_schema = UsuarioSchema()
+company_schema = EmpresaSchema()
 
 class VistaGenerarToken(Resource):
     def post(self):
@@ -55,8 +53,7 @@ class VistaGenerarToken(Resource):
           saltedword = os.getenv("SALTEDWORD")
           pwdhasehd = request.json['contrasena'] + saltedword
           hashpwd = hashlib.sha256(pwdhasehd.encode()).hexdigest()
-          print("El has es: ", hashpwd)
-          usuario = Usuarios.query.filter(Usuarios.usuario == request.json['usuario'], Usuarios.contrasena == hashpwd).first()
+          usuario = Usuario.query.filter(Usuario.usuario == request.json['usuario'], Usuario.contrasena == hashpwd).first()
 
           if usuario is None:
                mensaje:dict = {'error 5050':"El usuario no pudo ser autenticado"}
@@ -64,10 +61,19 @@ class VistaGenerarToken(Resource):
                respuesta.status_code = 400
                return respuesta
 
+          empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
+
+          if usuario is None:
+               empresa:dict = {'error 400':"El usuario no tiene empresa Asociada"}
+               respuesta = jsonify(mensaje)
+               respuesta.status_code = 400
+               return respuesta
+
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,
-               'tipoUsuario': usuario.usuario.upper()
+               'tipoUsuario': usuario.usuario.upper(),
+               'idPerfil':empresa.idEmpresa
           }
 
           token_de_acceso = create_access_token(identity=data)
@@ -79,7 +85,6 @@ class VistaGenerarToken(Resource):
           respuesta = jsonify(mensaje)
           respuesta.status_code = 200
           return respuesta
- 
 
 class VistaSaludServicio(Resource):
     def get(self):
@@ -88,22 +93,20 @@ class VistaSaludServicio(Resource):
           respuesta.status_code = 200
           return respuesta
     
-
 class VistaRegistroUsuario(Resource):
     def post(self):
-
           try:
                 if len(request.json["usuario"].strip())==0 or len(request.json["contrasena"].strip())==0 or len(request.json["tipoUsuario"].strip())==0 :
                     return "Code 400: Hay campos obligatorios vacíos", 400
           except:
                 return "Code 400: Hay campos obligatorios vacíos", 400
           
-          usuario = Usuarios.query.filter(
-            Usuarios.usuario == request.json["usuario"]).first()          
+          usuario = Usuario.query.filter(
+            Usuario.usuario == request.json["usuario"]).first()          
           if not usuario is None:
             return "No se puede crear el usuario. El correo ya se encuentra registrado", 409
      
-          nuevo_usuario = Usuarios(
+          nuevo_usuario = Usuario(
                usuario=request.json["usuario"],
                contrasena=request.json["contrasena"],
                tipoUsuario=request.json["tipoUsuario"]
@@ -112,8 +115,8 @@ class VistaRegistroUsuario(Resource):
           db.session.add(nuevo_usuario)
           db.session.commit()
 
-          usuario_creado = Usuarios.query.filter(
-               Usuarios.usuario == request.json["usuario"]
+          usuario_creado = Usuario.query.filter(
+               Usuario.usuario == request.json["usuario"]
           ).first()
 
           return {

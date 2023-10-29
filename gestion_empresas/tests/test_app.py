@@ -39,7 +39,7 @@ class TestApp(unittest.TestCase):
             "razonSocial":"EmpresaPrueba",
             "nit": "455889899",
             "direccion": "calle 20",
-            "telefono": "89965656565",
+            "telefono": "8996565",
             "idCiudad": "12"
         }
 
@@ -56,7 +56,7 @@ class TestApp(unittest.TestCase):
             "razonSocial":"EmpresaPrueba",
             "nit": "4558898558",
             "direccion": "calle 20",
-            "telefono": "89965656565",
+            "telefono": "8996565",
             "idCiudad": "12"
         }
 
@@ -69,7 +69,7 @@ class TestApp(unittest.TestCase):
             "razonSocial":"EmpresaPrueba",
             "nit": "455888558",
             "direccion": "calle 20",
-            "telefono": "89965656565",
+            "telefono": "8996565",
             "idCiudad": "12"
         }
 
@@ -86,7 +86,7 @@ class TestApp(unittest.TestCase):
             "razonSocial":"EmpresaPrueba1",
             "nit": "455889855878",
             "direccion": "calle 20",
-            "telefono": "89965656565",
+            "telefono": "8996565",
             "idCiudad": "12"
         }
 
@@ -99,7 +99,7 @@ class TestApp(unittest.TestCase):
             "razonSocial":"EmpresaPrueba2",
             "nit": "455889855878",
             "direccion": "calle 20",
-            "telefono": "89965656565",
+            "telefono": "8996565",
             "idCiudad": "12"
         }
 
@@ -116,7 +116,7 @@ class TestApp(unittest.TestCase):
             "razonSocial":"EmpresaPrueba",
             "nit": "4558898991",
             "direccion": "calle 20",
-            "telefono": "89965656565",
+            "telefono": "8996565",
             "idCiudad": "12"
         }
 
@@ -145,7 +145,7 @@ class TestApp(unittest.TestCase):
             "razonSocial":"EmpresaPrueba",
             "nit": "4558898992",
             "direccion": "calle 20",
-            "telefono": "89965656565",
+            "telefono": "8996565",
             "idCiudad": "12"
         }
 
@@ -186,7 +186,7 @@ class TestApp(unittest.TestCase):
             "razonSocial":"EmpresaPrueba",
             "nit": "4558898993",
             "direccion": "calle 20",
-            "telefono": "89965656565",
+            "telefono": "8996565",
             "idCiudad": "12"
         }
 

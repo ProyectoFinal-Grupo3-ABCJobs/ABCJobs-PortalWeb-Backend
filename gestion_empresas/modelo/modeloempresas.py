@@ -9,7 +9,7 @@ class Empresa(db.Model):
     razonSocial = db.Column(db.String(100))
     nit         = db.Column(db.String(20))
     direccion   = db.Column(db.String(100))
-    telefono    = db.Column(db.Integer)
+    telefono    = db.Column(db.String(20))
     idCiudad    = db.Column(db.Integer)
     # proyectos   = db.relationship('Proyecto', cascade='all, delete, delete-orphan')   
     

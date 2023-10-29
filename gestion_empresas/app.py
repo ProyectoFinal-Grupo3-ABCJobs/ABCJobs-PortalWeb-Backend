@@ -46,7 +46,7 @@ api = Api(app)
 api.add_resource(VistaRegistroEmpresa,'/company/register')
 api.add_resource(VistaConsultaProyectoPorEmpresa,'/company/projects/<int:id_empresa>')
 api.add_resource(VistaSaludServicio,'/company/ping')
-api.add_resource(VistaCreacionProyecto,'/company/proyectos/<int:id_empresa>')
+api.add_resource(VistaCreacionProyecto,'/company/projects/<int:id_empresa>')
 
 jwt = JWTManager(app)
 

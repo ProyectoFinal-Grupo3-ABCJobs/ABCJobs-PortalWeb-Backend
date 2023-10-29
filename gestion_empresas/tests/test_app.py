@@ -132,7 +132,7 @@ class TestApp(unittest.TestCase):
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto = self.app.post("/company/registerProject",
+        solicitud_nuevo_proyecto = self.app.post("/company/projects/<int:id_empresa>",
                                                      data=json.dumps(
                                                          nuevo_proyecto),
                                                      headers={'Content-Type': 'application/json'})
@@ -153,7 +153,7 @@ class TestApp(unittest.TestCase):
                                                      data=json.dumps(
                                                          nueva_empresa),
                                                      headers={'Content-Type': 'application/json'})
-
+        
         nuevo_proyecto1 = {
             "nombreProyecto":"ProyectoPrueba",
             "numeroColaboradores": "",
@@ -161,7 +161,7 @@ class TestApp(unittest.TestCase):
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto1 = self.app.post("/company/registerProject",
+        solicitud_nuevo_proyecto1 = self.app.post("/company/projects/<int:id_empresa>",
                                                      data=json.dumps(
                                                          nuevo_proyecto1),
                                                      headers={'Content-Type': 'application/json'})
@@ -173,7 +173,7 @@ class TestApp(unittest.TestCase):
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto2 = self.app.post("/company/registerProject",
+        solicitud_nuevo_proyecto2 = self.app.post("/company/projects/<int:id_empresa>",
                                                      data=json.dumps(
                                                          nuevo_proyecto2),
                                                      headers={'Content-Type': 'application/json'})
@@ -202,7 +202,7 @@ class TestApp(unittest.TestCase):
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto = self.app.post("/company/registerProject",
+        solicitud_nuevo_proyecto = self.app.post("/company/projects/<int:id_empresa>",
                                                      data=json.dumps(
                                                          nuevo_proyecto),
                                                      headers={'Content-Type': 'application/json'})

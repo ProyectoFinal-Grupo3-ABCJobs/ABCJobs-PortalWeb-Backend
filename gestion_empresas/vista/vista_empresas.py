@@ -95,9 +95,8 @@ class VistaCreacionProyecto(Resource):
      @jwt_required()
      def post(self,id_empresa):
 
-          current_user = get_jwt_identity()
-
-          if current_user.upper() == 'EMPRESA':
+          tokenPayload = get_jwt_identity()
+          if tokenPayload['tipoUsuario'].upper() == 'EMPRESA':
                
                print("La empresa tiene proyectos")
                try:

@@ -54,26 +54,24 @@ class VistaGenerarToken(Resource):
           pwdhasehd = request.json['contrasena'] + saltedword
           hashpwd = hashlib.sha256(pwdhasehd.encode()).hexdigest()
           usuario = Usuario.query.filter(Usuario.usuario == request.json['usuario'], Usuario.contrasena == hashpwd).first()
-
+          idEmpCanFunc:str='';
           if usuario is None:
                mensaje:dict = {'error 5050':"El usuario no pudo ser autenticado"}
                respuesta = jsonify(mensaje)
                respuesta.status_code = 400
                return respuesta
 
-          # empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
+          empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
 
-          # if usuario is None:
-          #      empresa:dict = {'error 400':"El usuario no tiene empresa Asociada"}
-          #      respuesta = jsonify(mensaje)
-          #      respuesta.status_code = 400
-          #      return respuesta
+          if empresa:
+               idEmpCanFunc = empresa.idEmpresa
+
 
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,
                'tipoUsuario': usuario.usuario.upper(),
-               # 'idPerfil':empresa.idEmpresa
+               'idEmpCanFunc':idEmpCanFunc
           }
 
           token_de_acceso = create_access_token(identity=data)

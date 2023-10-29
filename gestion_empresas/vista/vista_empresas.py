@@ -16,7 +16,6 @@ else:
 empresa_schema = EmpresaSchema()
 proyecto_schema= ProyectoSchema()
 
-
 class VistaSaludServicio(Resource):
     def get(self):
           mensaje:dict = {'mensaje':"healthcheck OK"}
@@ -24,7 +23,6 @@ class VistaSaludServicio(Resource):
           respuesta.status_code = 200
           return respuesta
     
-
 class VistaRegistroEmpresa(Resource):
     def post(self):
 
@@ -65,7 +63,6 @@ class VistaRegistroEmpresa(Resource):
                "nit": empresa_creada.nit,
           }, 201
     
-
 class VistaConsultaProyectoPorEmpresa(Resource):
 
      @jwt_required()
@@ -80,19 +77,15 @@ class VistaConsultaProyectoPorEmpresa(Resource):
 
                if len(proyectos_empresa)==0:
                     
-                    mensaje:dict = {'mensaje':"La empresa no tiene proyectos creados"}
+                    mensaje:dict = {'mensaje 1212':"La empresa no tiene proyectos creados"}
                     respuesta = jsonify(mensaje)
                     respuesta.status_code = 200
                     return respuesta
                else:
-                    print("La empresa tiene proyectos")
-                    mensaje:dict = {'mensaje':"Consultando proyectos!!!"}
-                    respuesta = jsonify(mensaje)
-                    respuesta.status_code = 200
-                    return [proyecto_schema.dump(tr) for tr in proyectos_empresa]
 
+                    return [proyecto_schema.dump(tr) for tr in proyectos_empresa]
           else:
-               mensaje:dict = {'mensaje':"El token enviado no corresponde al perfil del usuario"}
+               mensaje:dict = {'mensaje 1313':"El token enviado no corresponde al perfil del usuario"}
                respuesta = jsonify(mensaje)
                respuesta.status_code = 401
                return respuesta

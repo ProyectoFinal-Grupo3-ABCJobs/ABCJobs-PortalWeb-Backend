@@ -12,10 +12,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto
     from modelo import db, EmpresaSchema
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa,VistaCreacionProyecto
     from gestion_empresas.modelo import db, EmpresaSchema
 
 
@@ -46,6 +46,7 @@ api = Api(app)
 api.add_resource(VistaRegistroEmpresa,'/company/register')
 api.add_resource(VistaConsultaProyectoPorEmpresa,'/company/projects/<int:id_empresa>')
 api.add_resource(VistaSaludServicio,'/company/ping')
+api.add_resource(VistaCreacionProyecto,'/company/proyectos/<int:id_empresa>')
 
 jwt = JWTManager(app)
 

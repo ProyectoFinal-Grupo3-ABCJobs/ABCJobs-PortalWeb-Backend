@@ -91,4 +91,50 @@ class VistaConsultaProyectoPorEmpresa(Resource):
                return respuesta
 
 
+class VistaCreacionProyecto(Resource):
 
+     @jwt_required()
+     def post(self,id_empresa):
+
+          current_user = get_jwt_identity()
+
+          if current_user.upper() == 'EMPRESA':
+               
+               print("La empresa tiene proyectos")
+               try:
+                    if len(request.json["nombreProyecto"].strip())==0 or len(str(request.json["fechaInicio"]).strip())==0:
+                         return "Code 400: Hay campos obligatorios vacíos", 400
+               except:
+                    return "Code 400: Hay campos obligatorios vacíos", 400
+               
+               proyectoNombre = Proyecto.query.filter(
+               Proyecto.nombreProyecto == request.json["nombreProyecto"]).first()          
+               if not proyectoNombre is None:
+                    return "Ya se encuentra un proyecto con ese nombre registrado", 409
+               
+               nuevo_proyecto = Proyecto(
+                    nombreProyecto=request.json["nombreProyecto"],
+                    fechaInicio=request.json["fechaInicio"],
+                    empresa_id=id_empresa
+               )
+
+               db.session.add(nuevo_proyecto)
+               db.session.commit()
+
+               proyecto_creado = Proyecto.query.filter(
+                    Proyecto.nombreProyecto == request.json["nombreProyecto"]
+               ).first()
+
+               return {
+                    "id": proyecto_creado.idProyecto,
+                    "nombreProyecto": proyecto_creado.nombreProyecto,
+                    "fechaInicio": proyecto_creado.fechaInicio,
+               }, 201
+          
+
+
+          else:
+               mensaje:dict = {'mensaje':"El token enviado no corresponde al perfil del usuario"}
+               respuesta = jsonify(mensaje)
+               respuesta.status_code = 401
+               return respuesta

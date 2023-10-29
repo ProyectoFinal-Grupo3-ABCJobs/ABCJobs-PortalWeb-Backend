@@ -64,7 +64,7 @@ class VistaGenerarToken(Resource):
                respuesta.status_code = 400
                return respuesta
 
-          token_de_acceso = create_access_token(identity=request.json["usuario"])
+          token_de_acceso = create_access_token(identity=usuario.tipoUsuario)
           # Genero Token de acceso
           usuario.token = token_de_acceso
 

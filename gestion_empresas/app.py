@@ -1,9 +1,10 @@
-from flask import Flask
+from flask import Flask,jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from datetime import timedelta
 from dotenv import load_dotenv
+from jwt.exceptions import InvalidTokenError
 
 import os
 
@@ -47,3 +48,4 @@ api.add_resource(VistaConsultaProyectoPorEmpresa,'/company/proyectos/<int:id_emp
 api.add_resource(VistaSaludServicio,'/company/ping')
 
 jwt = JWTManager(app)
+

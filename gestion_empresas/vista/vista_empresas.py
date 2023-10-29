@@ -1,18 +1,20 @@
 from flask_restful import Resource
 from flask import request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required,get_jwt_identity
 from flask import jsonify
-import hashlib, os, json
+import hashlib, os, json,jwt
+from jwt.exceptions import InvalidTokenError
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-     from modelo import db, Empresa, EmpresaSchema
+     from modelo import db, Empresa, EmpresaSchema, Proyecto, ProyectoSchema
 else:
-     from gestion_empresas.modelo import db, Empresa, EmpresaSchema
+     from gestion_empresas.modelo import db, Empresa, EmpresaSchema, Proyecto, ProyectoSchema
 
 empresa_schema = EmpresaSchema()
+proyecto_schema= ProyectoSchema()
 
 
 class VistaSaludServicio(Resource):
@@ -65,8 +67,35 @@ class VistaRegistroEmpresa(Resource):
     
 
 class VistaConsultaProyectoPorEmpresa(Resource):
-    def get(self,id_empresa):
-          mensaje:dict = {'mensaje':"Consultando proyectos!!!"}
-          respuesta = jsonify(mensaje)
-          respuesta.status_code = 200
-          return respuesta
+
+     @jwt_required()
+     def get(self,id_empresa):
+
+          current_user = get_jwt_identity()
+
+          if current_user.upper() == 'EMPRESA':
+               proyectos_empresa = Proyecto.query.filter(
+               Proyecto.empresa_id == id_empresa
+          ).all()
+
+               if len(proyectos_empresa)==0:
+                    
+                    mensaje:dict = {'mensaje':"La empresa no tiene proyectos creados"}
+                    respuesta = jsonify(mensaje)
+                    respuesta.status_code = 200
+                    return respuesta
+               else:
+                    print("La empresa tiene proyectos")
+                    mensaje:dict = {'mensaje':"Consultando proyectos!!!"}
+                    respuesta = jsonify(mensaje)
+                    respuesta.status_code = 200
+                    return [proyecto_schema.dump(tr) for tr in proyectos_empresa]
+
+          else:
+               mensaje:dict = {'mensaje':"El token enviado no corresponde al perfil del usuario"}
+               respuesta = jsonify(mensaje)
+               respuesta.status_code = 401
+               return respuesta
+
+
+

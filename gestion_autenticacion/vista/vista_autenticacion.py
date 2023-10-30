@@ -61,19 +61,19 @@ class VistaGenerarToken(Resource):
                respuesta.status_code = 400
                return respuesta
 
-          empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
+          # empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
 
-          if usuario is None:
-               empresa:dict = {'error 400':"El usuario no tiene empresa Asociada"}
-               respuesta = jsonify(mensaje)
-               respuesta.status_code = 400
-               return respuesta
+          # if usuario is None:
+          #      empresa:dict = {'error 400':"El usuario no tiene empresa Asociada"}
+          #      respuesta = jsonify(mensaje)
+          #      respuesta.status_code = 400
+          #      return respuesta
 
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,
                'tipoUsuario': usuario.usuario.upper(),
-               'idPerfil':empresa.idEmpresa
+               # 'idPerfil':empresa.idEmpresa
           }
 
           token_de_acceso = create_access_token(identity=data)

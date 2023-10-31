@@ -61,8 +61,8 @@ class VistaGenerarToken(Resource):
                respuesta.status_code = 400
                return respuesta
 
+          # Bloque para agregar el Id de empresa, candidato, funcionario al  token, repetir las tres lineas para cada instancia. Emrpesa Ok
           empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
-
           if empresa:
                idEmpCanFunc = empresa.idEmpresa
 

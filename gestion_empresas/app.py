@@ -12,20 +12,17 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha
     from modelo import db, EmpresaSchema
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa,VistaCreacionProyecto
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa,VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha
     from gestion_empresas.modelo import db, EmpresaSchema
-
-
-empresa_schema = EmpresaSchema()
 
 load_dotenv()
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///proyectoABDJobs.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///proyectoABCJobs.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_ALGORITHM"] = "HS256"
@@ -47,6 +44,9 @@ api.add_resource(VistaRegistroEmpresa,'/company/register')
 api.add_resource(VistaConsultaProyectoPorEmpresa,'/company/<int:id_empresa>/projects')
 api.add_resource(VistaSaludServicio,'/company/ping')
 api.add_resource(VistaCreacionProyecto,'/company/projects/<int:id_empresa>')
+api.add_resource(VistaConsultaEmpladoInterno,'/company/<int:id_empresa>/internalEmployee/')
+api.add_resource(VistaConsultaPerfil,'/company/projects/<int:id_proyecto>/profile/')
+api.add_resource(VistaCrearFicha,'/company/projects/<int:id_proyecto>/file/')
 
 jwt = JWTManager(app)
 

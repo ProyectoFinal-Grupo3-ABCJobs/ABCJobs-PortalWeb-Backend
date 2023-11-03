@@ -46,7 +46,11 @@ api = Api(app)
 api.add_resource(VistaRegistroEmpresa,'/company/register')
 api.add_resource(VistaConsultaProyectoPorEmpresa,'/company/projects/<int:id_empresa>')
 api.add_resource(VistaSaludServicio,'/company/ping')
-api.add_resource(VistaCreacionProyecto,'/company/projects/<int:id_empresa>')
+api.add_resource(VistaCreacionProyecto,'/company/<int:id_empresa>/projectCreate')
+api.add_resource(VistaConsultaEmpladoInterno,'/company/<int:id_empresa>/internalEmployee/')
+api.add_resource(VistaConsultaPerfil,'/company/projects/<int:id_proyecto>/profile/')
+api.add_resource(VistaCrearFicha,'/company/projects/<int:id_proyecto>/file/')
+
 
 jwt = JWTManager(app)
 

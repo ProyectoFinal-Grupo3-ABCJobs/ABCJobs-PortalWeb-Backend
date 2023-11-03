@@ -1,5 +1,7 @@
 import unittest, json
 import os
+import requests
+import json
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
@@ -110,10 +112,35 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(solicitud_nueva_empresa.status_code, 409)    
 
+    def obtener_token_acceso(self):
+
+        url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
+
+        payload = json.dumps({
+        "usuario": "empresa",
+        "contrasena": "empresa"
+        })
+        headers = {
+        'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        print(response.text)
+
+        return response.json()['token']
+
     def test_create_project(self):
 
+        token_acceso = self.obtener_token_acceso()
+
+        encabezados_con_autorizacion = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {token_acceso}'
+        }
+
         nueva_empresa = {
-            "razonSocial":"EmpresaPrueba",
+            "razonSocial":"EmpresaTest1",
             "nit": "4558898991",
             "direccion": "calle 20",
             "telefono": "8996565",
@@ -123,26 +150,34 @@ class TestApp(unittest.TestCase):
         solicitud_nueva_empresa = self.app.post("/company/register",
                                                      data=json.dumps(
                                                          nueva_empresa),
-                                                     headers={'Content-Type': 'application/json'})
+                                                     headers=encabezados_con_autorizacion)
+        
 
         nuevo_proyecto = {
-            "nombreProyecto":"ProyectoNuevo",
+            "nombreProyecto":"ProyectoTest1",
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto = self.app.post("/company/projects/<int:id_empresa>",
+        solicitud_nuevo_proyecto = self.app.post(f"/company/1/projectCreate",
                                                      data=json.dumps(
                                                          nuevo_proyecto),
-                                                     headers={'Content-Type': 'application/json'})
+                                                     headers=encabezados_con_autorizacion)
 
         self.assertEqual(solicitud_nuevo_proyecto.status_code, 201)
 
     def test_create_project_name_exists(self):
 
+        token_acceso = self.obtener_token_acceso()
+
+        encabezados_con_autorizacion = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {token_acceso}'
+        }
+
         nueva_empresa = {
-            "razonSocial":"EmpresaPrueba",
+            "razonSocial":"EmpresaTest2",
             "nit": "4558898992",
             "direccion": "calle 20",
             "telefono": "8996565",
@@ -152,38 +187,45 @@ class TestApp(unittest.TestCase):
         solicitud_nueva_empresa = self.app.post("/company/register",
                                                      data=json.dumps(
                                                          nueva_empresa),
-                                                     headers={'Content-Type': 'application/json'})
+                                                     headers=encabezados_con_autorizacion)
         
         nuevo_proyecto1 = {
-            "nombreProyecto":"ProyectoPrueba",
+            "nombreProyecto":"ProyectoPrueba22",
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto1 = self.app.post("/company/projects/<int:id_empresa>",
+        solicitud_nuevo_proyecto1 = self.app.post("/company/1/projectCreate",
                                                      data=json.dumps(
                                                          nuevo_proyecto1),
-                                                     headers={'Content-Type': 'application/json'})
+                                                     headers=encabezados_con_autorizacion)
 
         nuevo_proyecto2 = {
-            "nombreProyecto":"ProyectoPrueba",
+            "nombreProyecto":"ProyectoPrueba22",
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto2 = self.app.post("/company/projects/<int:id_empresa>",
+        solicitud_nuevo_proyecto2 = self.app.post("/company/1/projectCreate",
                                                      data=json.dumps(
                                                          nuevo_proyecto2),
-                                                     headers={'Content-Type': 'application/json'})
+                                                     headers=encabezados_con_autorizacion)
 
         self.assertEqual(solicitud_nuevo_proyecto2.status_code, 409)
 
     def test_create_project_empty_fields(self):
 
+        token_acceso = self.obtener_token_acceso()
+
+        encabezados_con_autorizacion = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {token_acceso}'
+        }
+
         nueva_empresa = {
-            "razonSocial":"EmpresaPrueba",
+            "razonSocial":"EmpresaTest3",
             "nit": "4558898993",
             "direccion": "calle 20",
             "telefono": "8996565",
@@ -193,7 +235,7 @@ class TestApp(unittest.TestCase):
         solicitud_nueva_empresa = self.app.post("/company/register",
                                                      data=json.dumps(
                                                          nueva_empresa),
-                                                     headers={'Content-Type': 'application/json'})
+                                                     headers=encabezados_con_autorizacion)
 
         nuevo_proyecto = {
             "nombreProyecto":"",
@@ -202,10 +244,10 @@ class TestApp(unittest.TestCase):
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto = self.app.post("/company/projects/<int:id_empresa>",
+        solicitud_nuevo_proyecto = self.app.post("/company/1/projectCreate",
                                                      data=json.dumps(
                                                          nuevo_proyecto),
-                                                     headers={'Content-Type': 'application/json'})
+                                                     headers=encabezados_con_autorizacion)
 
         self.assertEqual(solicitud_nuevo_proyecto.status_code, 400)
 

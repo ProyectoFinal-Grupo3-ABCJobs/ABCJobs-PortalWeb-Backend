@@ -1,5 +1,7 @@
 import unittest, json
 import os
+import requests
+import json
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
@@ -112,24 +114,40 @@ class TestApp(unittest.TestCase):
 
     def obtener_token_acceso(self):
 
-        credenciales_empresa = {
-            "usuario":"empresa",
-            "contrasena":"empresa"
+        # credenciales_empresa = {
+        #     "usuario":"empresa",
+        #     "contrasena":"empresa"
+        # }
+        # respuesta_login = self.app.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth",
+        #                         data=json.dumps(credenciales_empresa),
+        #                         headers={'Content-Type': 'application/json'})
+
+        # print('Respuesta cruda del login:', respuesta_login.data)
+
+        # assert respuesta_login.status_code == 200, "El login falló o no devolvió un código de estado 200"
+
+        # try:
+        #     data_respuesta = json.loads(respuesta_login.data.decode())
+        #     return data_respuesta['access_token']
+        # except json.decoder.JSONDecodeError as e:
+        #     print(f"Error al decodificar la respuesta JSON: {e}")
+        #     raise
+
+        url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
+
+        payload = json.dumps({
+        "usuario": "empresa",
+        "contrasena": "empresa"
+        })
+        headers = {
+        'Content-Type': 'application/json'
         }
-        respuesta_login = self.app.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth",
-                                data=json.dumps(credenciales_empresa),
-                                headers={'Content-Type': 'application/json'})
 
-        print('Respuesta cruda del login:', respuesta_login.data)
+        response = requests.request("POST", url, headers=headers, data=payload)
 
-        assert respuesta_login.status_code == 200, "El login falló o no devolvió un código de estado 200"
+        print(response.text)
 
-        try:
-            data_respuesta = json.loads(respuesta_login.data.decode())
-            return data_respuesta['access_token']
-        except json.decoder.JSONDecodeError as e:
-            print(f"Error al decodificar la respuesta JSON: {e}")
-            raise
+        return response.json()['access_token']
 
     def test_create_project(self):
 

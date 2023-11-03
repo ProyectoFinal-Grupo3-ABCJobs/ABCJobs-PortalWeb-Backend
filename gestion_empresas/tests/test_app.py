@@ -111,14 +111,22 @@ class TestApp(unittest.TestCase):
         self.assertEqual(solicitud_nueva_empresa.status_code, 409)    
 
     def obtener_token_acceso(self):
-            # Suponiendo que tengas una función de autenticación para obtener un token
-            # Esta es una función de ejemplo, necesitarás reemplazarla con tu lógica de autenticación real
-            credenciales_empresa = {"usuario": "empresa", "contrasena": "empresa"}
-            respuesta_login = self.app.post("/users/auth",
-                                            data=json.dumps(credenciales_empresa),
-                                            headers={'Content-Type': 'application/json'})
+
+        credenciales_empresa = {"usuario": "empresa", "contrasena": "empresa"}
+        respuesta_login = self.app.post("/auth/login",
+                                data=json.dumps(credenciales_empresa),
+                                headers={'Content-Type': 'application/json'})
+
+        print('Respuesta cruda del login:', respuesta_login.data)
+
+        assert respuesta_login.status_code == 200, "El login falló o no devolvió un código de estado 200"
+
+        try:
             data_respuesta = json.loads(respuesta_login.data.decode())
             return data_respuesta['access_token']
+        except json.decoder.JSONDecodeError as e:
+            print(f"Error al decodificar la respuesta JSON: {e}")
+            raise
 
     def test_create_project(self):
 

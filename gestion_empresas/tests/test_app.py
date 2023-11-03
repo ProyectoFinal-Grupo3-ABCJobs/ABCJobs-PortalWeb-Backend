@@ -118,7 +118,7 @@ class TestApp(unittest.TestCase):
                                             data=json.dumps(credenciales_empresa),
                                             headers={'Content-Type': 'application/json'})
             data_respuesta = json.loads(respuesta_login.data.decode())
-            return data_respuesta['token']
+            return data_respuesta['access_token']
 
     def test_create_project(self):
 

@@ -5,47 +5,36 @@ from sqlalchemy import Date
 db = SQLAlchemy()
 
 class Empresa(db.Model):
-    idEmpresa = db.Column(db.Integer, primary_key=True)
+    idEmpresa   = db.Column(db.Integer, primary_key = True)
     razonSocial = db.Column(db.String(100))
     nit         = db.Column(db.String(20))
     direccion   = db.Column(db.String(100))
     telefono    = db.Column(db.String(20))
     idCiudad    = db.Column(db.Integer)
-    idUsuario = db.Column(db.Integer)
+    idUsuario = db.Column(db.Integer, db.ForeignKey('usuario.id'), unique=True, nullable=True)
+    usuario = db.relationship('Usuario', back_populates='empresa', uselist=False)
+    
 
 class Proyecto(db.Model):
-    idProyecto = db.Column(db.Integer, primary_key=True)
-    nombreProyecto = db.Column(db.String(100))
+    idProyecto          = db.Column(db.Integer, primary_key = True)
+    nombreProyecto      = db.Column(db.String(100))
     numeroColaboradores = db.Column(db.String(20))
-    fechaInicio = db.Column(Date)
-    empresa_id = db.Column(db.Integer)
+    fechaInicio         = db.Column(Date)
+    empresa_id          = db.Column(db.Integer, db.ForeignKey("empresa.idEmpresa"), nullable=False)
 
-class EmpleadoInterno(db.Model):
-    idEmpleado = db.Column(db.Integer, primary_key=True)
-    tipoIdentificacion = db.Column(db.String(100))
-    identificacion = db.Column(db.String(20))
-    nombre = db.Column(db.String(100))
-    cargo = db.Column(db.String(100))
-    idEmpresa = db.Column(db.Integer)
-
-class Perfil(db.Model):
-    idPerfil = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(100))
-    descripcion = db.Column(db.String(200))
-    idProyecto = db.Column(db.Integer)
-
-class Ficha(db.Model):
-    idFicha = db.Column(db.Integer, primary_key=True)
-    idProyecto = db.Column(db.Integer)
-    
-class FichaEmpleadoInterno(db.Model):
-    idFicha = db.Column(db.Integer, db.ForeignKey('ficha.idFicha'), primary_key=True)
-    idEmpleado = db.Column(db.Integer, db.ForeignKey('empleado_interno.idEmpleado'), primary_key=True)
+class Usuario(db.Model):
+    id          = db.Column(db.Integer, primary_key = True)
+    usuario     = db.Column(db.String(50))
+    contrasena  = db.Column(db.String(90))
+    tipoUsuario = db.Column(db.String(100))
+    empresa = db.relationship('Empresa', back_populates='usuario', uselist=False)
 
     
-class FichaPerfil(db.Model):
-    idFicha = db.Column(db.Integer, primary_key=True)
-    idPerfil = db.Column(db.Integer, primary_key=True)
+
+# Establecer la relación uno a uno entre Usuario y Empresa
+Usuario.empresa = db.relationship('Empresa', back_populates='usuario', uselist=False)
+Empresa.usuario = db.relationship('Usuario', back_populates='empresa')
+
 
 class EmpresaSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -56,28 +45,8 @@ class ProyectoSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Proyecto
         load_instance = True
-        
-class EmpleadoInternoSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = EmpleadoInterno
-        load_instance = True
-        
-class PerfilSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = Perfil
-        load_instance = True
 
-class FichaSchema(SQLAlchemyAutoSchema):
+class UsuarioSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = Ficha
-        load_instance = True
-        
-class FichaEmpleadoInternoSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = FichaEmpleadoInterno
-        load_instance = True
-        
-class FichaPerfilSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = FichaPerfil
+        model = Usuario
         load_instance = True

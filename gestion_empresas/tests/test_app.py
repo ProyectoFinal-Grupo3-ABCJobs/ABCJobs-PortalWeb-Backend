@@ -147,7 +147,7 @@ class TestApp(unittest.TestCase):
 
         print(response.text)
 
-        return response.json()['access_token']
+        return response.json()['token']
 
     def test_create_project(self):
 

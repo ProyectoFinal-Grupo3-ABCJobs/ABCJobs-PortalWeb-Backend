@@ -113,7 +113,7 @@ class TestApp(unittest.TestCase):
     def obtener_token_acceso(self):
 
         credenciales_empresa = {"usuario": "empresa", "contrasena": "empresa"}
-        respuesta_login = self.app.post("/auth/login",
+        respuesta_login = self.app.post("/users/auth",
                                 data=json.dumps(credenciales_empresa),
                                 headers={'Content-Type': 'application/json'})
 

@@ -114,25 +114,6 @@ class TestApp(unittest.TestCase):
 
     def obtener_token_acceso(self):
 
-        # credenciales_empresa = {
-        #     "usuario":"empresa",
-        #     "contrasena":"empresa"
-        # }
-        # respuesta_login = self.app.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth",
-        #                         data=json.dumps(credenciales_empresa),
-        #                         headers={'Content-Type': 'application/json'})
-
-        # print('Respuesta cruda del login:', respuesta_login.data)
-
-        # assert respuesta_login.status_code == 200, "El login falló o no devolvió un código de estado 200"
-
-        # try:
-        #     data_respuesta = json.loads(respuesta_login.data.decode())
-        #     return data_respuesta['access_token']
-        # except json.decoder.JSONDecodeError as e:
-        #     print(f"Error al decodificar la respuesta JSON: {e}")
-        #     raise
-
         url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
 
         payload = json.dumps({

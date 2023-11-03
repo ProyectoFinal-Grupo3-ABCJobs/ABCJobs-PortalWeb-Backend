@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import jsonify
 import hashlib, os, json, jwt
 from jwt.exceptions import InvalidTokenError
+from datetime import datetime
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
@@ -159,10 +160,17 @@ class VistaCreacionProyecto(Resource):
             ).first()
             if not proyectoNombre is None:
                 return "Ya se encuentra un proyecto con ese nombre registrado", 409
+            
+            fecha_inicio_str = request.json["fechaInicio"]
+
+            try:
+                fecha_inicio = datetime.strptime(fecha_inicio_str, "%Y-%m-%d").date()
+            except ValueError:
+                return "Formato de fecha inválido. Usa YYYY-MM-DD", 400
 
             nuevo_proyecto = Proyecto(
                 nombreProyecto=request.json["nombreProyecto"],
-                fechaInicio=request.json["fechaInicio"],
+                fechaInicio=fecha_inicio,
                 empresa_id=id_empresa,
             )
 
@@ -173,10 +181,12 @@ class VistaCreacionProyecto(Resource):
                 Proyecto.nombreProyecto == request.json["nombreProyecto"]
             ).first()
 
+            fecha_str = proyecto_creado.fechaInicio.strftime('%Y-%m-%d') if proyecto_creado.fechaInicio else None
+
             return {
                 "id": proyecto_creado.idProyecto,
                 "nombreProyecto": proyecto_creado.nombreProyecto,
-                "fechaInicio": proyecto_creado.fechaInicio,
+                "fechaInicio": fecha_str
             }, 201
 
         else:

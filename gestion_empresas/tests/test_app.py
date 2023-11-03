@@ -110,10 +110,20 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(solicitud_nueva_empresa.status_code, 409)    
 
+    def obtener_token_acceso(self):
+            # Suponiendo que tengas una función de autenticación para obtener un token
+            # Esta es una función de ejemplo, necesitarás reemplazarla con tu lógica de autenticación real
+            credenciales_empresa = {"usuario": "empresa", "contrasena": "empresa"}
+            respuesta_login = self.app.post("/users/auth",
+                                            data=json.dumps(credenciales_empresa),
+                                            headers={'Content-Type': 'application/json'})
+            data_respuesta = json.loads(respuesta_login.data.decode())
+            return data_respuesta['token']
+
     def test_create_project(self):
 
         nueva_empresa = {
-            "razonSocial":"EmpresaPrueba",
+            "razonSocial":"EmpresaTest1",
             "nit": "4558898991",
             "direccion": "calle 20",
             "telefono": "8996565",
@@ -124,15 +134,16 @@ class TestApp(unittest.TestCase):
                                                      data=json.dumps(
                                                          nueva_empresa),
                                                      headers={'Content-Type': 'application/json'})
+        
 
         nuevo_proyecto = {
-            "nombreProyecto":"ProyectoNuevo",
+            "nombreProyecto":"ProyectoTest1",
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto = self.app.post("/company/projects/<int:id_empresa>",
+        solicitud_nuevo_proyecto = self.app.post(f"/company/1/projectCreate",
                                                      data=json.dumps(
                                                          nuevo_proyecto),
                                                      headers={'Content-Type': 'application/json'})
@@ -142,7 +153,7 @@ class TestApp(unittest.TestCase):
     def test_create_project_name_exists(self):
 
         nueva_empresa = {
-            "razonSocial":"EmpresaPrueba",
+            "razonSocial":"EmpresaTest2",
             "nit": "4558898992",
             "direccion": "calle 20",
             "telefono": "8996565",
@@ -155,25 +166,25 @@ class TestApp(unittest.TestCase):
                                                      headers={'Content-Type': 'application/json'})
         
         nuevo_proyecto1 = {
-            "nombreProyecto":"ProyectoPrueba",
+            "nombreProyecto":"ProyectoPrueba22",
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto1 = self.app.post("/company/projects/<int:id_empresa>",
+        solicitud_nuevo_proyecto1 = self.app.post("/company/1/projectCreate",
                                                      data=json.dumps(
                                                          nuevo_proyecto1),
                                                      headers={'Content-Type': 'application/json'})
 
         nuevo_proyecto2 = {
-            "nombreProyecto":"ProyectoPrueba",
+            "nombreProyecto":"ProyectoPrueba22",
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto2 = self.app.post("/company/projects/<int:id_empresa>",
+        solicitud_nuevo_proyecto2 = self.app.post("/company/1/projectCreate",
                                                      data=json.dumps(
                                                          nuevo_proyecto2),
                                                      headers={'Content-Type': 'application/json'})
@@ -183,7 +194,7 @@ class TestApp(unittest.TestCase):
     def test_create_project_empty_fields(self):
 
         nueva_empresa = {
-            "razonSocial":"EmpresaPrueba",
+            "razonSocial":"EmpresaTest3",
             "nit": "4558898993",
             "direccion": "calle 20",
             "telefono": "8996565",
@@ -202,7 +213,7 @@ class TestApp(unittest.TestCase):
             "empresa_id": "1"
         }
 
-        solicitud_nuevo_proyecto = self.app.post("/company/projects/<int:id_empresa>",
+        solicitud_nuevo_proyecto = self.app.post("/company/1/projectCreate",
                                                      data=json.dumps(
                                                          nuevo_proyecto),
                                                      headers={'Content-Type': 'application/json'})

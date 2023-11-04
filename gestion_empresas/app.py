@@ -12,10 +12,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha, VistaAsignacionEmpleado
     from modelo import db, EmpresaSchema
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa,VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa,VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha, VistaAsignacionEmpleado
     from gestion_empresas.modelo import db, EmpresaSchema
 
 load_dotenv()
@@ -47,6 +47,7 @@ api.add_resource(VistaCreacionProyecto,'/company/<int:id_empresa>/projectCreate'
 api.add_resource(VistaConsultaEmpladoInterno,'/company/<int:id_empresa>/internalEmployee/')
 api.add_resource(VistaConsultaPerfil,'/company/projects/<int:id_proyecto>/profile/')
 api.add_resource(VistaCrearFicha,'/company/projects/<int:id_proyecto>/file/')
+api.add_resource(VistaAsignacionEmpleado,'/company/<int:id_empresa>/assignEmployee')
 
 jwt = JWTManager(app)
 

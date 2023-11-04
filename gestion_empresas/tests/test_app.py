@@ -3,8 +3,10 @@ import os
 import requests
 import json
 
+
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
+
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
     from app import app
@@ -15,6 +17,35 @@ else:
 
 class TestApp(unittest.TestCase):
     def setUp(self):
+        
+        url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
+        
+        #url = "http://127.0.0.1:5000/users/auth"
+
+        payload = json.dumps({
+        "usuario": "empresa",
+        "contrasena": "empresa"
+        })
+        headers = {
+        'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        self.token = response.json()['token']
+    
+        
+        payloadCandidato = json.dumps({
+        "usuario": "candidato",
+        "contrasena": "candidato"
+        })
+        headers = {
+        'Content-Type': 'application/json'
+        }
+
+        responseCandidato = requests.request("POST", url, headers=headers, data=payloadCandidato)
+        self.tokenCandiato = responseCandidato.json()['token']
+
+
         self.app = app.test_client()
 
     def tearDown(self):
@@ -112,31 +143,12 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(solicitud_nueva_empresa.status_code, 409)    
 
-    def obtener_token_acceso(self):
-
-        url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
-
-        payload = json.dumps({
-        "usuario": "empresa",
-        "contrasena": "empresa"
-        })
-        headers = {
-        'Content-Type': 'application/json'
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
-        print(response.text)
-
-        return response.json()['token']
-
     def test_create_project(self):
-
-        token_acceso = self.obtener_token_acceso()
 
         encabezados_con_autorizacion = {
             'Content-Type': 'application/json',
-            'Authorization': f'Bearer {token_acceso}'
+            'Authorization': 'Bearer {}'.format(self.token)
+
         }
 
         nueva_empresa = {
@@ -157,10 +169,10 @@ class TestApp(unittest.TestCase):
             "nombreProyecto":"ProyectoTest1",
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
-            "empresa_id": "1"
+            "empresa_id": "235"
         }
 
-        solicitud_nuevo_proyecto = self.app.post(f"/company/1/projectCreate",
+        solicitud_nuevo_proyecto = self.app.post(f"/company/235/projectCreate",
                                                      data=json.dumps(
                                                          nuevo_proyecto),
                                                      headers=encabezados_con_autorizacion)
@@ -169,11 +181,12 @@ class TestApp(unittest.TestCase):
 
     def test_create_project_name_exists(self):
 
-        token_acceso = self.obtener_token_acceso()
+        # token_acceso = self.obtener_token_acceso()
 
         encabezados_con_autorizacion = {
             'Content-Type': 'application/json',
-            'Authorization': f'Bearer {token_acceso}'
+            'Authorization': f'Bearer {self.token}'
+
         }
 
         nueva_empresa = {
@@ -217,11 +230,10 @@ class TestApp(unittest.TestCase):
 
     def test_create_project_empty_fields(self):
 
-        token_acceso = self.obtener_token_acceso()
-
         encabezados_con_autorizacion = {
             'Content-Type': 'application/json',
-            'Authorization': f'Bearer {token_acceso}'
+            'Authorization': f'Bearer {self.token}'
+
         }
 
         nueva_empresa = {
@@ -250,6 +262,30 @@ class TestApp(unittest.TestCase):
                                                      headers=encabezados_con_autorizacion)
 
         self.assertEqual(solicitud_nuevo_proyecto.status_code, 400)
+
+
+    def test_search_projets_for_company_without_projets(self):
+
+        encabezados_con_autorizacion = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {self.token}'
+
+        }
+        resultado_proyectos_de_empresa = self.app.get("/company/416/projects",
+                                                     headers=encabezados_con_autorizacion)
+        self.assertEqual(resultado_proyectos_de_empresa.status_code, 200)
+
+
+    def test_search_projets_with_invalid_token(self):
+
+        encabezados_con_autorizacion = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {self.tokenCandiato}'
+        }
+
+        resultado_proyectos_de_empresa = self.app.get("/company/416/projects",
+                                                     headers=encabezados_con_autorizacion)
+        self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
 
 if __name__ == '__main__':
     unittest.main()

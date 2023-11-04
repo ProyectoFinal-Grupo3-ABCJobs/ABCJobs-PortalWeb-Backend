@@ -124,7 +124,7 @@ class VistaConsultaProyectoPorEmpresa(Resource):
 
             if len(proyectos_empresa) == 0:
                 mensaje: dict = {
-                    "mensaje 1212": "La empresa no tiene proyectos creados"
+                    "mensaje_1212": "La empresa no tiene proyectos creados"
                 }
                 respuesta = jsonify(mensaje)
                 respuesta.status_code = 200

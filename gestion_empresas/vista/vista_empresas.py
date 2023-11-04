@@ -339,3 +339,31 @@ class VistaAsignacionEmpleado(Resource):
             respuesta = jsonify(mensaje)
             respuesta.status_code = 401
             return respuesta
+        
+
+class VistaMotorEmparejamiento(Resource):
+    @jwt_required()
+    def get(self):
+        tokenPayload = get_jwt_identity()
+        print("El payload del Token es: ",tokenPayload)
+        # if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+        #     perfiles_proyecto = Perfil.query.filter(
+        #         Perfil.idProyecto == id_proyecto
+        #     ).all()
+
+        #     if len(perfiles_proyecto) == 0:
+        #         mensaje: dict = {
+        #             "mensaje 1212": "El proyecto no tiene perfiles asociados"
+        #         }
+        #         respuesta = jsonify(mensaje)
+        #         respuesta.status_code = 200
+        #         return respuesta
+        #     else:
+        #         return [perfil_schema.dump(tr) for tr in perfiles_proyecto]
+        # else:
+        #     mensaje: dict = {
+        #         "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
+        #     }
+        #     respuesta = jsonify(mensaje)
+        #     respuesta.status_code = 401
+        #     return respuesta

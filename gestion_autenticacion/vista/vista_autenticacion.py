@@ -11,10 +11,11 @@ carpeta_actual = os.path.basename(directorio_actual)
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
      from modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
 else:
-     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
+     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa,EmpresaSchema
 
 user_schema = UsuarioSchema()
-company_schema = EmpresaSchema()
+empresa_schema = EmpresaSchema()
+
 
 class VistaGenerarToken(Resource):
     def post(self):
@@ -61,11 +62,10 @@ class VistaGenerarToken(Resource):
                respuesta.status_code = 400
                return respuesta
 
-          # Bloque para agregar el Id de empresa, candidato, funcionario al  token, repetir las tres lineas para cada instancia. Emrpesa Ok
           empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
+
           if empresa:
                idEmpCanFunc = empresa.idEmpresa
-
 
           data = {
                'idUsuario': usuario.id,
@@ -74,7 +74,9 @@ class VistaGenerarToken(Resource):
                'idEmpCanFunc':idEmpCanFunc
           }
 
+          #token_de_acceso_temp = create_access_token(identity=dataTemp)
           token_de_acceso = create_access_token(identity=data)
+
           # Genero Token de acceso
           usuario.token = token_de_acceso
 

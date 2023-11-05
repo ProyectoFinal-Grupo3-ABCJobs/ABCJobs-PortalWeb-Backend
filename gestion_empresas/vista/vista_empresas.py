@@ -124,7 +124,7 @@ class VistaConsultaProyectoPorEmpresa(Resource):
 
             if len(proyectos_empresa) == 0:
                 mensaje: dict = {
-                    "mensaje 1212": "La empresa no tiene proyectos creados"
+                    "mensaje_1212": "La empresa no tiene proyectos creados"
                 }
                 respuesta = jsonify(mensaje)
                 respuesta.status_code = 200
@@ -164,6 +164,34 @@ class VistaConsultaProyectoPorEmpresa(Resource):
             respuesta = jsonify(mensaje)
             respuesta.status_code = 401
             return respuesta
+
+class VistaObtenerEmpresaPorIdUsuario(Resource):
+    @jwt_required()
+    def post(self):
+        tokenPayload = get_jwt_identity()
+
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            usuario_empresa = Empresa.query.filter(
+                Empresa.idUsuario == tokenPayload["idUsuario"]
+            ).first()
+
+        if usuario_empresa:
+           mensaje: dict = {
+                "Mensaje": "El usuario con empresa asignada",
+                "idEmpresa": usuario_empresa.idEmpresa
+            }
+           respuesta = jsonify(mensaje)
+           respuesta.status_code = 200
+           return respuesta
+        else:
+           mensaje: dict = {
+                "Mensaje 201": "El usuario no tiene empresa asignada",
+                "idEmpresa": 'Sin Empresa'
+            }
+           respuesta = jsonify(mensaje)
+           respuesta.status_code = 200
+           return respuesta
+
 
 class VistaCreacionProyecto(Resource):
     @jwt_required()
@@ -318,3 +346,92 @@ class VistaFicha(Resource):
                 return "El token enviado no corresponde al perfil del usuario", 401
         except Exception as e:
             return "Ha ocurrido un error inesperado" + str(e), 500
+                return "La ficha se creo correctamente", 201
+        else:
+            mensaje: dict = {
+                "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
+
+class VistaAsignacionEmpleado(Resource):
+    @jwt_required()
+    def post(self, id_empresa):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            print("La empresa tiene empleados")
+            try:
+                if (
+                    len(request.json["tipoIdentificacion"].strip()) == 0
+                    or len(str(request.json["identificacion"]).strip()) == 0
+                    or len(str(request.json["nombre"]).strip()) == 0
+                    or len(str(request.json["cargo"]).strip()) == 0
+                ):
+                    return "Code 400: Hay campos obligatorios vacíos", 400
+            except:
+                return "Code 400: Hay campos obligatorios vacíos", 400
+
+            empleadoIdentificacion = EmpleadoInterno.query.filter(
+                EmpleadoInterno.identificacion == request.json["identificacion"]
+            ).first()
+            if not empleadoIdentificacion is None:
+                return "Ya se encuentra registrado un empleado con ese documento", 409
+            
+            nuevo_empleado = EmpleadoInterno(
+                tipoIdentificacion=request.json["tipoIdentificacion"],
+                identificacion=request.json["identificacion"],
+                nombre=request.json["nombre"],
+                cargo=request.json["cargo"],
+                idEmpresa=id_empresa,
+            )
+
+            db.session.add(nuevo_empleado)
+            db.session.commit()
+
+            empleado_creado = EmpleadoInterno.query.filter(
+                EmpleadoInterno.identificacion == request.json["identificacion"]
+            ).first()
+
+
+            return {
+                "id": empleado_creado.idEmpleado,
+                "nombre": empleado_creado.nombre,
+                "cargo": empleado_creado.cargo,
+            }, 201
+
+        else:
+            mensaje: dict = {
+                "mensaje": "El token enviado no corresponde al perfil del usuario"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
+        
+
+class VistaMotorEmparejamiento(Resource):
+    @jwt_required()
+    def post(self):
+        tokenPayload = get_jwt_identity()
+
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            perfiles_proyecto = Perfil.query.filter(
+                Perfil.idProyecto == id_proyecto
+            ).all()
+
+        #     if len(perfiles_proyecto) == 0:
+        #         mensaje: dict = {
+        #             "mensaje 1212": "El proyecto no tiene perfiles asociados"
+        #         }
+        #         respuesta = jsonify(mensaje)
+        #         respuesta.status_code = 200
+        #         return respuesta
+        #     else:
+        #         return [perfil_schema.dump(tr) for tr in perfiles_proyecto]
+        # else:
+        #     mensaje: dict = {
+        #         "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
+        #     }
+        #     respuesta = jsonify(mensaje)
+        #     respuesta.status_code = 401
+        #     return respuesta

@@ -55,7 +55,7 @@ class VistaGenerarToken(Resource):
           pwdhasehd = request.json['contrasena'] + saltedword
           hashpwd = hashlib.sha256(pwdhasehd.encode()).hexdigest()
           usuario = Usuario.query.filter(Usuario.usuario == request.json['usuario'], Usuario.contrasena == hashpwd).first()
-          idEmpCanFunc:str='';
+          
           if usuario is None:
                mensaje:dict = {'error 5050':"El usuario no pudo ser autenticado"}
                respuesta = jsonify(mensaje)
@@ -64,9 +64,13 @@ class VistaGenerarToken(Resource):
 
           empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
 
-          if empresa:
+          
+          if empresa is None:
+               idEmpCanFunc:str='';
+          else:
                idEmpCanFunc = empresa.idEmpresa
 
+          
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,

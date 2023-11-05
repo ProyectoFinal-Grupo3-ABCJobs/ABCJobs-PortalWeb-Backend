@@ -411,11 +411,13 @@ class VistaAsignacionEmpleado(Resource):
 class VistaMotorEmparejamiento(Resource):
     @jwt_required()
     def post(self):
+        print("El token es: ")
         tokenPayload = get_jwt_identity()
         clave_perfiles = 'perfiles'
         clave_ficha = 'idFicha'
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             encabezado_autorizacion = request.headers.get('Authorization')
+            
             datos_json = request.get_json()
 
             encabezados_con_autorizacion = {

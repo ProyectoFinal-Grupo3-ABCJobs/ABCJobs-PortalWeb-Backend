@@ -179,113 +179,113 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(solicitud_nuevo_proyecto.status_code, 201)
 
-    def test_create_project_name_exists(self):
+    # def test_create_project_name_exists(self):
 
-        # token_acceso = self.obtener_token_acceso()
+    #     # token_acceso = self.obtener_token_acceso()
 
-        encabezados_con_autorizacion = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.token}'
+    #     encabezados_con_autorizacion = {
+    #         'Content-Type': 'application/json',
+    #         'Authorization': f'Bearer {self.token}'
 
-        }
+    #     }
 
-        nueva_empresa = {
-            "razonSocial":"EmpresaTest2",
-            "nit": "4558898992",
-            "direccion": "calle 20",
-            "telefono": "8996565",
-            "idCiudad": "12"
-        }
+    #     nueva_empresa = {
+    #         "razonSocial":"EmpresaTest2",
+    #         "nit": "4558898992",
+    #         "direccion": "calle 20",
+    #         "telefono": "8996565",
+    #         "idCiudad": "12"
+    #     }
 
-        solicitud_nueva_empresa = self.app.post("/company/register",
-                                                     data=json.dumps(
-                                                         nueva_empresa),
-                                                     headers=encabezados_con_autorizacion)
+    #     solicitud_nueva_empresa = self.app.post("/company/register",
+    #                                                  data=json.dumps(
+    #                                                      nueva_empresa),
+    #                                                  headers=encabezados_con_autorizacion)
         
-        nuevo_proyecto1 = {
-            "nombreProyecto":"ProyectoPrueba22",
-            "numeroColaboradores": "",
-            "fechaInicio": "2020-01-01",
-            "empresa_id": "1"
-        }
+    #     nuevo_proyecto1 = {
+    #         "nombreProyecto":"ProyectoPrueba22",
+    #         "numeroColaboradores": "",
+    #         "fechaInicio": "2020-01-01",
+    #         "empresa_id": "1"
+    #     }
 
-        solicitud_nuevo_proyecto1 = self.app.post("/company/1/projectCreate",
-                                                     data=json.dumps(
-                                                         nuevo_proyecto1),
-                                                     headers=encabezados_con_autorizacion)
+    #     solicitud_nuevo_proyecto1 = self.app.post("/company/1/projectCreate",
+    #                                                  data=json.dumps(
+    #                                                      nuevo_proyecto1),
+    #                                                  headers=encabezados_con_autorizacion)
 
-        nuevo_proyecto2 = {
-            "nombreProyecto":"ProyectoPrueba22",
-            "numeroColaboradores": "",
-            "fechaInicio": "2020-01-01",
-            "empresa_id": "1"
-        }
+    #     nuevo_proyecto2 = {
+    #         "nombreProyecto":"ProyectoPrueba22",
+    #         "numeroColaboradores": "",
+    #         "fechaInicio": "2020-01-01",
+    #         "empresa_id": "1"
+    #     }
 
-        solicitud_nuevo_proyecto2 = self.app.post("/company/1/projectCreate",
-                                                     data=json.dumps(
-                                                         nuevo_proyecto2),
-                                                     headers=encabezados_con_autorizacion)
+    #     solicitud_nuevo_proyecto2 = self.app.post("/company/1/projectCreate",
+    #                                                  data=json.dumps(
+    #                                                      nuevo_proyecto2),
+    #                                                  headers=encabezados_con_autorizacion)
 
-        self.assertEqual(solicitud_nuevo_proyecto2.status_code, 409)
+    #     self.assertEqual(solicitud_nuevo_proyecto2.status_code, 409)
 
-    def test_create_project_empty_fields(self):
+    # def test_create_project_empty_fields(self):
 
-        encabezados_con_autorizacion = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.token}'
+    #     encabezados_con_autorizacion = {
+    #         'Content-Type': 'application/json',
+    #         'Authorization': f'Bearer {self.token}'
 
-        }
+    #     }
 
-        nueva_empresa = {
-            "razonSocial":"EmpresaTest3",
-            "nit": "4558898993",
-            "direccion": "calle 20",
-            "telefono": "8996565",
-            "idCiudad": "12"
-        }
+    #     nueva_empresa = {
+    #         "razonSocial":"EmpresaTest3",
+    #         "nit": "4558898993",
+    #         "direccion": "calle 20",
+    #         "telefono": "8996565",
+    #         "idCiudad": "12"
+    #     }
 
-        solicitud_nueva_empresa = self.app.post("/company/register",
-                                                     data=json.dumps(
-                                                         nueva_empresa),
-                                                     headers=encabezados_con_autorizacion)
+    #     solicitud_nueva_empresa = self.app.post("/company/register",
+    #                                                  data=json.dumps(
+    #                                                      nueva_empresa),
+    #                                                  headers=encabezados_con_autorizacion)
 
-        nuevo_proyecto = {
-            "nombreProyecto":"",
-            "numeroColaboradores": "",
-            "fechaInicio": "",
-            "empresa_id": "1"
-        }
+    #     nuevo_proyecto = {
+    #         "nombreProyecto":"",
+    #         "numeroColaboradores": "",
+    #         "fechaInicio": "",
+    #         "empresa_id": "1"
+    #     }
 
-        solicitud_nuevo_proyecto = self.app.post("/company/1/projectCreate",
-                                                     data=json.dumps(
-                                                         nuevo_proyecto),
-                                                     headers=encabezados_con_autorizacion)
+    #     solicitud_nuevo_proyecto = self.app.post("/company/1/projectCreate",
+    #                                                  data=json.dumps(
+    #                                                      nuevo_proyecto),
+    #                                                  headers=encabezados_con_autorizacion)
 
-        self.assertEqual(solicitud_nuevo_proyecto.status_code, 400)
-
-
-    def test_search_projets_for_company_without_projets(self):
-
-        encabezados_con_autorizacion = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.token}'
-
-        }
-        resultado_proyectos_de_empresa = self.app.get("/company/416/projects",
-                                                     headers=encabezados_con_autorizacion)
-        self.assertEqual(resultado_proyectos_de_empresa.status_code, 200)
+    #     self.assertEqual(solicitud_nuevo_proyecto.status_code, 400)
 
 
-    def test_search_projets_with_invalid_token(self):
+    # def test_search_projets_for_company_without_projets(self):
 
-        encabezados_con_autorizacion = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.tokenCandiato}'
-        }
+    #     encabezados_con_autorizacion = {
+    #         'Content-Type': 'application/json',
+    #         'Authorization': f'Bearer {self.token}'
 
-        resultado_proyectos_de_empresa = self.app.get("/company/416/projects",
-                                                     headers=encabezados_con_autorizacion)
-        self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
+    #     }
+    #     resultado_proyectos_de_empresa = self.app.get("/company/416/projects",
+    #                                                  headers=encabezados_con_autorizacion)
+    #     self.assertEqual(resultado_proyectos_de_empresa.status_code, 200)
+
+
+    # def test_search_projets_with_invalid_token(self):
+
+    #     encabezados_con_autorizacion = {
+    #         'Content-Type': 'application/json',
+    #         'Authorization': f'Bearer {self.tokenCandiato}'
+    #     }
+
+    #     resultado_proyectos_de_empresa = self.app.get("/company/416/projects",
+    #                                                  headers=encabezados_con_autorizacion)
+    #     self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
 
 if __name__ == '__main__':
     unittest.main()

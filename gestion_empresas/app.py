@@ -52,7 +52,6 @@ api.add_resource(VistaCreacionProyecto,'/company/<int:id_empresa>/projectCreate'
 api.add_resource(VistaConsultaProyectoPorEmpresa,'/company/<int:id_empresa>/projects')
 
 # Endpoints de Ficha
-api.add_resource(VistaConsultaPerfil,'/company/projects/<int:id_proyecto>/profile')
 api.add_resource(VistaAsignacionEmpleado,'/company/<int:id_empresa>/assignEmployee')
 api.add_resource(VistaMotorEmparejamiento,'/company/motorEmparejamiento')
 api.add_resource(VistaEmpladoInterno,'/company/<int:id_empresa>/internalEmployees')

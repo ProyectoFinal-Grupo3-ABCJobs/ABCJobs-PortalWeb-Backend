@@ -12,10 +12,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario
     from modelo import db, EmpresaSchema
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa,VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa,VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario
     from gestion_empresas.modelo import db, EmpresaSchema
 
 load_dotenv()
@@ -44,6 +44,7 @@ api = Api(app)
 
 
 api.add_resource(VistaRegistroEmpresa,'/company/register')
+api.add_resource(VistaObtenerEmpresaPorIdUsuario,'/company/user')
 api.add_resource(VistaSaludServicio,'/company/ping')
 
 # Endpoints de Proyectos

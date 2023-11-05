@@ -140,6 +140,34 @@ class VistaConsultaProyectoPorEmpresa(Resource):
             return respuesta
 
 
+class VistaObtenerEmpresaPorIdUsuario(Resource):
+    @jwt_required()
+    def post(self):
+        tokenPayload = get_jwt_identity()
+
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            usuario_empresa = Empresa.query.filter(
+                Empresa.idUsuario == tokenPayload["idUsuario"]
+            ).first()
+
+        if usuario_empresa:
+           mensaje: dict = {
+                "Mensaje": "El usuario con empresa asignada",
+                "idEmpresa": usuario_empresa.idEmpresa
+            }
+           respuesta = jsonify(mensaje)
+           respuesta.status_code = 200
+           return respuesta
+        else:
+           mensaje: dict = {
+                "Mensaje 201": "El usuario no tiene empresa asignada",
+                "idEmpresa": 'Sin Empresa'
+            }
+           respuesta = jsonify(mensaje)
+           respuesta.status_code = 200
+           return respuesta
+
+
 class VistaCreacionProyecto(Resource):
     @jwt_required()
     def post(self, id_empresa):

@@ -28,6 +28,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_ALGORITHM"] = "HS256"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config['PROPAGATE_EXEPTIONS'] = True
+app.config['JWT_HEADER_TYPE'] = ''
 
 app_context = app.app_context()
 app_context.push()

@@ -67,7 +67,6 @@ class VistaGenerarToken(Resource):
           if empresa:
                idEmpCanFunc = empresa.idEmpresa
 
-
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,

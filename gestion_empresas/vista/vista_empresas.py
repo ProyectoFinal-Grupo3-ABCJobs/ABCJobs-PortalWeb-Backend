@@ -371,13 +371,13 @@ class VistaAsignacionEmpleado(Resource):
 
 class VistaMotorEmparejamiento(Resource):
     @jwt_required()
-    def get(self):
+    def post(self):
         tokenPayload = get_jwt_identity()
-        print("El payload del Token es: ",tokenPayload)
-        # if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-        #     perfiles_proyecto = Perfil.query.filter(
-        #         Perfil.idProyecto == id_proyecto
-        #     ).all()
+
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            perfiles_proyecto = Perfil.query.filter(
+                Perfil.idProyecto == id_proyecto
+            ).all()
 
         #     if len(perfiles_proyecto) == 0:
         #         mensaje: dict = {

@@ -440,7 +440,9 @@ class VistaMotorEmparejamiento(Resource):
 
 
                     
-                    jsonCandidatos = requests.get(f'{url_candidatos}/getAll', headers=encabezados_con_autorizacion)
+                    #jsonCandidatos = requests.get(f'{url_candidatos}getAll', headers=encabezados_con_autorizacion)
+                    jsonCandidatos = requests.get('http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll', headers=encabezados_con_autorizacion)
+                    
                     if(jsonCandidatos.status_code != 200):
 
                         mensaje: dict = {
@@ -495,7 +497,7 @@ class VistaMotorEmparejamiento(Resource):
                     # NOTA: Se crea EndPoint para el emparejamiento del candidato
                     listaCandidatos=[]
                     for cand_emparejado in candidato_perfil_ficha:
-                        resCandidato = requests.get(f'{url_candidatos}/{cand_emparejado.idCandidato}', headers=encabezados_con_autorizacion)
+                        resCandidato = requests.get(f'http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/{cand_emparejado.idCandidato}', headers=encabezados_con_autorizacion)
                         
                         jsonCandidato = resCandidato.json()
                         jsonCandidato['idPerfil'] = cand_emparejado.idPerfil

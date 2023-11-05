@@ -47,6 +47,13 @@ class FichaPerfil(db.Model):
     idFicha = db.Column(db.Integer, primary_key=True)
     idPerfil = db.Column(db.Integer, primary_key=True)
 
+class FichaCandidatoEmparejadoPerfil(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    idFicha = db.Column(db.Integer)
+    idCandidato = db.Column(db.Integer)
+    idPerfil = db.Column(db.Integer)
+    scoreEmparejamiento = db.Column(db.Integer)
+
 class EmpresaSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Empresa
@@ -80,4 +87,10 @@ class FichaEmpleadoInternoSchema(SQLAlchemyAutoSchema):
 class FichaPerfilSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = FichaPerfil
+        load_instance = True
+
+
+class FichaCandidatoEmparejadoPerfilSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = FichaCandidatoEmparejadoPerfil
         load_instance = True

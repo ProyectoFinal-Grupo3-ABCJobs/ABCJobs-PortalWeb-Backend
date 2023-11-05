@@ -346,14 +346,6 @@ class VistaFicha(Resource):
                 return "El token enviado no corresponde al perfil del usuario", 401
         except Exception as e:
             return "Ha ocurrido un error inesperado" + str(e), 500
-                return "La ficha se creo correctamente", 201
-        else:
-            mensaje: dict = {
-                "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
-            }
-            respuesta = jsonify(mensaje)
-            respuesta.status_code = 401
-            return respuesta
 
 class VistaAsignacionEmpleado(Resource):
     @jwt_required()

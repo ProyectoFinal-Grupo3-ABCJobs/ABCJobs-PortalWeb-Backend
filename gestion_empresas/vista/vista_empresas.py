@@ -138,7 +138,32 @@ class VistaConsultaProyectoPorEmpresa(Resource):
             respuesta = jsonify(mensaje)
             respuesta.status_code = 401
             return respuesta
+        
+class VistaConsultaProyectoPorEmpresa(Resource):
+    @jwt_required()
+    def get(self, id_empresa):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            proyectos_empresa = Proyecto.query.filter(
+                Proyecto.empresa_id == id_empresa
+            ).all()
 
+            if len(proyectos_empresa) == 0:
+                mensaje: dict = {
+                    "mensaje 1212": "La empresa no tiene proyectos creados"
+                }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 200
+                return respuesta
+            else:
+                return [proyecto_schema.dump(tr) for tr in proyectos_empresa]
+        else:
+            mensaje: dict = {
+                "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
 
 class VistaObtenerEmpresaPorIdUsuario(Resource):
     @jwt_required()
@@ -225,8 +250,7 @@ class VistaCreacionProyecto(Resource):
             respuesta.status_code = 401
             return respuesta
 
-
-class VistaConsultaEmpladoInterno(Resource):
+class VistaEmpladoInterno(Resource):
     @jwt_required()
     def get(self, id_empresa):
         tokenPayload = get_jwt_identity()
@@ -236,21 +260,11 @@ class VistaConsultaEmpladoInterno(Resource):
             ).all()
 
             if len(empleados_empresa) == 0:
-                mensaje: dict = {
-                    "mensaje 1212": "La empresa no tiene proyectos creados"
-                }
-                respuesta = jsonify(mensaje)
-                respuesta.status_code = 200
-                return respuesta
+                return "La empresa no tiene proyectos creados", 404
             else:
                 return [empleado_interno_schema.dump(tr) for tr in empleados_empresa]
         else:
-            mensaje: dict = {
-                "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
-            }
-            respuesta = jsonify(mensaje)
-            respuesta.status_code = 401
-            return respuesta
+            return "El token enviado no corresponde al perfil del usuario", 401
 
 
 class VistaConsultaPerfil(Resource):
@@ -263,49 +277,75 @@ class VistaConsultaPerfil(Resource):
             ).all()
 
             if len(perfiles_proyecto) == 0:
-                mensaje: dict = {
-                    "mensaje 1212": "El proyecto no tiene perfiles asociados"
-                }
-                respuesta = jsonify(mensaje)
-                respuesta.status_code = 200
-                return respuesta
+                return "El proyecto no tiene perfiles asociados", 404
             else:
                 return [perfil_schema.dump(tr) for tr in perfiles_proyecto]
         else:
-            mensaje: dict = {
-                "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
-            }
-            respuesta = jsonify(mensaje)
-            respuesta.status_code = 401
-            return respuesta
+            return "El token enviado no corresponde al perfil del usuario", 401
 
-
-class VistaCrearFicha(Resource):
+class VistaCreacionPerfil(Resource):
     @jwt_required()
     def post(self, id_proyecto):
         tokenPayload = get_jwt_identity()
+        print("######1")
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             proyecto = Proyecto.query.filter(Proyecto.idProyecto == id_proyecto).first()
             if proyecto is None:
+                print("######2")
                 return "El proyecto no existe", 404
             else:
-                ficha = Ficha(idProyecto=id_proyecto)
-                db.session.add(ficha)
-                db.session.commit()
-
+                print("######3")
                 data = request.get_json()
-                for empleado in data.get("empleados"):
-                    empleado = FichaEmpleadoInterno(
-                        idFicha=ficha.idFicha, idEmpleado=empleado["idEmpleado"]
-                    )
-                    db.session.add(empleado)
-
-                for perfil in data.get("perfiles"):
-                    perfil = FichaPerfil(
-                        idFicha=ficha.idFicha, idPerfil=perfil["idPerfil"]
-                    )
-                    db.session.add(perfil)
+                print("DATA: " + str(data))
+                perfil = Perfil(
+                    nombre=data.get("nombre"),
+                    descripcion=data.get("descripcion"),
+                    idProyecto=id_proyecto,
+                )
+                db.session.add(perfil)
                 db.session.commit()
+
+                return {
+                    "id": perfil.idPerfil,
+                    "nombre": perfil.nombre,
+                    "descripcion": perfil.descripcion,
+                }, 201
+
+class VistaFicha(Resource):
+    @jwt_required()
+    def post(self, id_proyecto):
+        try:
+            tokenPayload = get_jwt_identity()
+            if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+                proyecto = Proyecto.query.filter(
+                    Proyecto.idProyecto == id_proyecto
+                ).first()
+                if proyecto is None:
+                    return "El proyecto no existe", 404
+                else:
+                    ficha = Ficha(idProyecto=id_proyecto)
+                    db.session.add(ficha)
+                    db.session.commit()
+
+                    data = request.get_json()
+                    for empleado in data.get("empleados"):
+                        empleado = FichaEmpleadoInterno(
+                            idFicha=ficha.idFicha, idEmpleado=empleado["idEmpleado"]
+                        )
+                        db.session.add(empleado)
+
+                    for perfil in data.get("perfiles"):
+                        perfil = FichaPerfil(
+                            idFicha=ficha.idFicha, idPerfil=perfil["idPerfil"], nombre=perfil["nombre"], descripcion=perfil["descripcion"]
+                        )
+                        db.session.add(perfil)
+                        
+                    db.session.commit()
+                    return "La ficha se creo correctamente", 201
+            else:
+                return "El token enviado no corresponde al perfil del usuario", 401
+        except Exception as e:
+            return "Ha ocurrido un error inesperado" + str(e), 500
                 return "La ficha se creo correctamente", 201
         else:
             mensaje: dict = {

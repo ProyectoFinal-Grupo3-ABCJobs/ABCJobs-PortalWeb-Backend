@@ -12,10 +12,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario
     from modelo import db, EmpresaSchema
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa,VistaCreacionProyecto, VistaConsultaEmpladoInterno, VistaConsultaPerfil, VistaCrearFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario
     from gestion_empresas.modelo import db, EmpresaSchema
 
 load_dotenv()
@@ -52,12 +52,13 @@ api.add_resource(VistaCreacionProyecto,'/company/<int:id_empresa>/projectCreate'
 api.add_resource(VistaConsultaProyectoPorEmpresa,'/company/<int:id_empresa>/projects')
 
 # Endpoints de Ficha
-api.add_resource(VistaCrearFicha,'/company/projects/<int:id_proyecto>/file/')
-api.add_resource(VistaConsultaEmpladoInterno,'/company/<int:id_empresa>/internalEmployee')
 api.add_resource(VistaConsultaPerfil,'/company/projects/<int:id_proyecto>/profile')
 api.add_resource(VistaAsignacionEmpleado,'/company/<int:id_empresa>/assignEmployee')
 api.add_resource(VistaMotorEmparejamiento,'/company/motorEmparejamiento')
-
+api.add_resource(VistaEmpladoInterno,'/company/<int:id_empresa>/internalEmployees')
+api.add_resource(VistaConsultaPerfil,'/company/projects/<int:id_proyecto>/profiles')
+api.add_resource(VistaCreacionPerfil,'/company/projects/<int:id_proyecto>/profiles')
+api.add_resource(VistaFicha,'/company/projects/<int:id_proyecto>/files')
 
 jwt = JWTManager(app)
 

@@ -9,12 +9,12 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
-     from modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
+     from modelo import Usuario, UsuarioSchema, db
 else:
-     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
+     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db
 
 user_schema = UsuarioSchema()
-company_schema = EmpresaSchema()
+
 
 class VistaGenerarToken(Resource):
     def post(self):

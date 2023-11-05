@@ -5,6 +5,10 @@ from flask import jsonify
 import hashlib, os, json, jwt
 from jwt.exceptions import InvalidTokenError
 from datetime import datetime
+import requests
+import spacy
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
@@ -26,6 +30,8 @@ if carpeta_actual == "gestion_empresas" or carpeta_actual == "app":
         FichaEmpleadoInternoSchema,
         FichaPerfil,
         FichaPerfilSchema,
+        FichaCandidatoEmparejadoPerfil,
+        FichaCandidatoEmparejadoPerfilSchema
     )
 else:
     from gestion_empresas.modelo import (
@@ -44,6 +50,7 @@ else:
         FichaEmpleadoInternoSchema,
         FichaPerfil,
         FichaPerfilSchema,
+        FichaCandidatoEmparejadoPerfil
     )
 
 empresa_schema = EmpresaSchema()
@@ -51,7 +58,7 @@ proyecto_schema = ProyectoSchema()
 empleado_interno_schema = EmpleadoInternoSchema()
 perfil_schema = PerfilSchema()
 ficha_schema = FichaSchema()
-
+ficha_candidato_emparejado_perfil_schema = FichaCandidatoEmparejadoPerfilSchema()
 
 class VistaSaludServicio(Resource):
     def get(self):
@@ -405,25 +412,147 @@ class VistaMotorEmparejamiento(Resource):
     @jwt_required()
     def post(self):
         tokenPayload = get_jwt_identity()
-
+        clave_perfiles = 'perfiles'
+        clave_ficha = 'idFicha'
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-            perfiles_proyecto = Perfil.query.filter(
-                Perfil.idProyecto == id_proyecto
-            ).all()
+            encabezado_autorizacion = request.headers.get('Authorization')
+            datos_json = request.get_json()
 
-        #     if len(perfiles_proyecto) == 0:
-        #         mensaje: dict = {
-        #             "mensaje 1212": "El proyecto no tiene perfiles asociados"
-        #         }
-        #         respuesta = jsonify(mensaje)
-        #         respuesta.status_code = 200
-        #         return respuesta
-        #     else:
-        #         return [perfil_schema.dump(tr) for tr in perfiles_proyecto]
-        # else:
-        #     mensaje: dict = {
-        #         "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
-        #     }
-        #     respuesta = jsonify(mensaje)
-        #     respuesta.status_code = 401
-        #     return respuesta
+            encabezados_con_autorizacion = {
+                    'Content-Type': 'application/json',
+                    'Authorization': encabezado_autorizacion
+                    
+                    }
+            url_candidatos = os.getenv('MS_CANDIDATO')
+            
+            if clave_perfiles in datos_json and clave_ficha in datos_json:
+
+                if (len(datos_json[clave_perfiles])==0):
+                    mensaje: dict = {
+                    "Mensaje 200": "La peticion no tiene perfiles para emparejar"
+                    }
+                    respuesta = jsonify(mensaje)
+                    respuesta.status_code = 200
+                    return respuesta
+                else:
+
+
+                    
+                    jsonCandidatos = requests.get(f'{url_candidatos}/getAll', headers=encabezados_con_autorizacion)
+                    if(jsonCandidatos.status_code != 200):
+
+                        mensaje: dict = {
+                            "Mensaje 401": "El servicio de Candidato en el recurso getAll no esta respondiento"
+                        }
+                        respuesta = jsonify(mensaje)
+                        respuesta.status_code = 401
+                        return respuesta
+
+                    if(len(jsonCandidatos.json())==0):
+                        mensaje: dict = {
+                            "Mensaje 200": "No hay candidatos en la respuesta"
+                        }
+                        respuesta = jsonify(mensaje)
+                        respuesta.status_code = 200
+                        return respuesta
+                    else:
+
+                        lista_candidatos = jsonCandidatos.json()
+
+                        for candidato in lista_candidatos:
+                            listaPalabrasClaves = candidato['palabrasClave'].split(',')
+
+                            # Logica para recorrer la lista de perfiles
+                            for perfil in datos_json[clave_perfiles]:
+
+                                porcentajeEmparejamiento = self.motorEmparejamiento(perfil['Descripcion'], listaPalabrasClaves)
+
+                                if porcentajeEmparejamiento > 10:
+                                
+                                    candidato_perfil_ficha = FichaCandidatoEmparejadoPerfil.query.filter(
+                                        FichaCandidatoEmparejadoPerfil.idFicha == datos_json[clave_ficha], FichaCandidatoEmparejadoPerfil.idCandidato == candidato['idCandidato'], FichaCandidatoEmparejadoPerfil.idPerfil == perfil['idPerfil']).all()
+
+                                    # Valida si el persil no exite en la tabla 
+                                    if len(candidato_perfil_ficha)==0:
+
+                                        nuevo_candidato_emparejado = FichaCandidatoEmparejadoPerfil(
+                                            idFicha=datos_json[clave_ficha],
+                                            idCandidato=candidato['idCandidato'],
+                                            idPerfil=perfil['idPerfil'],
+                                            scoreEmparejamiento=porcentajeEmparejamiento,
+                                            )
+
+                                        db.session.add(nuevo_candidato_emparejado)
+                                        db.session.commit()
+
+                    
+                    # consulto en BD los candidatos emparejados en la ficha_
+                    candidato_perfil_ficha = FichaCandidatoEmparejadoPerfil.query.filter(
+                                        FichaCandidatoEmparejadoPerfil.idFicha == datos_json[clave_ficha]).all()
+
+                    # NOTA: Se crea EndPoint para el emparejamiento del candidato
+                    listaCandidatos=[]
+                    for cand_emparejado in candidato_perfil_ficha:
+                        resCandidato = requests.get(f'{url_candidatos}/{cand_emparejado.idCandidato}', headers=encabezados_con_autorizacion)
+                        
+                        jsonCandidato = resCandidato.json()
+                        jsonCandidato['idPerfil'] = cand_emparejado.idPerfil
+
+                        listaCandidatos.append(jsonCandidato)
+
+                    mensaje: dict = {
+                                        "idFicha": datos_json[clave_ficha],
+                                        "listadoCandidatos": listaCandidatos
+                                    }
+                    respuesta = jsonify(mensaje)
+                    respuesta.status_code = 200
+                    return respuesta                       
+
+          
+            else:
+                mensaje: dict = {
+                "Mensaje 401": "La peticion JSON no tiene Idperfiles o idficha o ambos"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
+            
+        else:
+            mensaje: dict = {
+                "Mensaje 401": "El token enviado no corresponde al perfil del usuario"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
+        
+
+    def motorEmparejamiento(self, perfil, listaPalabras):
+
+        # Cargar el modelo de lenguaje pre-entrenado
+        nlp = spacy.load("es_core_news_md")
+
+        # Texto en el que deseas buscar la concordancia
+        texto = perfil
+
+        # Lista de palabras para las que deseas calcular la concordancia
+        lista_palabras = listaPalabras
+
+        # Procesar el texto con spaCy
+        doc = nlp(texto)
+
+        # Calcular los vectores de las palabras en el texto
+        vectores_texto = [token.vector for token in doc if token.is_alpha]
+
+
+        # Calcular los vectores de las palabras en la lista
+        vectores_lista = [nlp(palabra).vector for palabra in lista_palabras]
+
+        # Calcular las similitudes de coseno entre los vectores de las palabras en la lista y el texto
+        similitudes = cosine_similarity(vectores_lista, vectores_texto)
+
+
+        # Calcular el promedio de las similitudes
+        porcentaje_concordancia = np.mean(similitudes) * 100
+
+
+        return round(porcentaje_concordancia, 2)

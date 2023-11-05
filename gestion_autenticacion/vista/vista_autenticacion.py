@@ -3,18 +3,18 @@ from flask import request
 from flask_jwt_extended import create_access_token,get_jwt_identity
 from flask import jsonify
 import hashlib, os, json
-import requests
 
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
-     from modelo import Usuario, UsuarioSchema, db
+     from modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
 else:
-     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db
+     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa,EmpresaSchema
 
 user_schema = UsuarioSchema()
+empresa_schema = EmpresaSchema()
 
 
 class VistaGenerarToken(Resource):
@@ -62,42 +62,24 @@ class VistaGenerarToken(Resource):
                respuesta.status_code = 400
                return respuesta
 
-          #url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
-          url = "http://localhost:5000/users/auth"
-          # empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
+          empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
 
-          # if empresa:
-          #      idEmpCanFunc = empresa.idEmpresa
+          if empresa:
+               idEmpCanFunc = empresa.idEmpresa
 
 
-          dataTemp = {
-               'idUsuario': usuario.id,
-               'usuario':usuario.usuario,
-               'tipoUsuario': usuario.usuario.upper()
-               # 'idEmpCanFunc':idEmpCanFunc
-          }
-
-          token_de_acceso_temp = create_access_token(identity=dataTemp)
-          # token_de_acceso = create_access_token(identity=data)
-
-          encabezados_con_autorizacion = {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer {}'.format(token_de_acceso_temp)
-
-          }
-          response = requests.post(f'http://localhost:5002/company/user',headers=encabezados_con_autorizacion)
-          print("La respuesta del micro de empresas es: ",response.json()['idEmpresa'])
-
-          # Genero Token de acceso
-          # usuario.token = token_de_acceso
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,
                'tipoUsuario': usuario.usuario.upper(),
-               'idEmpCanFunc':response.json()['idEmpresa']
+               'idEmpCanFunc':idEmpCanFunc
           }
 
+          #token_de_acceso_temp = create_access_token(identity=dataTemp)
           token_de_acceso = create_access_token(identity=data)
+
+          # Genero Token de acceso
+          usuario.token = token_de_acceso
 
           # Usuario autenticado
           mensaje:dict = {"id": usuario.id, "tipoUsuario": usuario.tipoUsuario,"token": token_de_acceso}

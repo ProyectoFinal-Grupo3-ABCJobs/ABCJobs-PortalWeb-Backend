@@ -407,7 +407,6 @@ class VistaAsignacionEmpleado(Resource):
             respuesta.status_code = 401
             return respuesta
         
-
 class VistaMotorEmparejamiento(Resource):
     @jwt_required()
     def post(self):
@@ -438,8 +437,7 @@ class VistaMotorEmparejamiento(Resource):
                     return respuesta
                 else:
 
-
-                    
+                   
                     #jsonCandidatos = requests.get(f'{url_candidatos}getAll', headers=encabezados_con_autorizacion)
                     jsonCandidatos = requests.get('http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll', headers=encabezados_con_autorizacion)
                     

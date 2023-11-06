@@ -440,7 +440,7 @@ class VistaMotorEmparejamiento(Resource):
                     respuesta.status_code = 200
                     return respuesta
                 else:
-                    print("La cantidad de perfiles a evaluar son: ",len(datos_json[clave_perfiles]) )
+                    
                     encabezados_con_autorizacion = {
                         "Content-Type": "application/json",
                         "Authorization": encabezado_autorizacion,
@@ -475,13 +475,12 @@ class VistaMotorEmparejamiento(Resource):
 
                             for candidato in lista_candidatos:
 
+                                # Llamado al motor de emparejamiento
+
                                 resultadoEmparejamiento = self.motorEmparejamiento(perfil["descripcion"], candidato['palabrasClave'],candidato['nombre'])
 
                                 if resultadoEmparejamiento:
-                                    print("El cadidato emparejado es: ", candidato['nombre'])
-                                    print("perfil? ", perfil["descripcion"])
-
-
+                                  
                                     # Consulto si el perfil no exite en la tabla
                                     # ficha_existente = (
                                     #     FichaCandidatoEmparejadoPerfil.query.filter(
@@ -502,6 +501,12 @@ class VistaMotorEmparejamiento(Resource):
 
                                     db.session.add(nuevo_candidato_emparejado)
                                     db.session.commit()
+                                    mensaje: dict = {
+                                            "Mensaje 200": "Proceso de emparejamiento realizado correctamente!"
+                                        }
+                                    respuesta = jsonify(mensaje)
+                                    respuesta.status_code = 200
+                                    return respuesta
 
             else:
                 mensaje: dict = {

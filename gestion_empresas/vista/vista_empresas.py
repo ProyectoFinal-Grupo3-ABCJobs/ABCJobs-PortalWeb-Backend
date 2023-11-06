@@ -260,7 +260,7 @@ class VistaEmpladoInterno(Resource):
             ).all()
 
             if len(empleados_empresa) == 0:
-                return "La empresa no tiene proyectos creados", 404
+                return "La empresa no tiene empleados internos asignados", 404
             else:
                 return [empleado_interno_schema.dump(tr) for tr in empleados_empresa]
         else:
@@ -334,9 +334,10 @@ class VistaFicha(Resource):
                         )
                         db.session.add(empleado)
 
+                    print("###################: " + str(data.get("perfiles")))
                     for perfil in data.get("perfiles"):
                         perfil = FichaPerfil(
-                            idFicha=ficha.idFicha, idPerfil=perfil["idPerfil"], nombre=perfil["nombre"], descripcion=perfil["descripcion"]
+                            idFicha=ficha.idFicha, idPerfil=perfil["idPerfil"]
                         )
                         db.session.add(perfil)
                         

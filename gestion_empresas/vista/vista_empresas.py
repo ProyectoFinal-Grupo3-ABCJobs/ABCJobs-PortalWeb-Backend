@@ -421,23 +421,31 @@ class VistaAsignacionEmpleado(Resource):
 
 
 class VistaMotorEmparejamiento(Resource):
-    #@jwt_required()
+    @jwt_required()
     def post(self):
-        return self.motorEmparejamiento()
-        # print("El token es: ")
-        # tokenPayload = get_jwt_identity()
-        # clave_perfiles = "perfiles"
-        # clave_ficha = "idFicha"
-        # if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-        #     encabezado_autorizacion = request.headers.get("Authorization")
+       
+        tokenPayload = get_jwt_identity()
+        clave_perfiles = "perfiles"
+        clave_ficha = "idFicha"
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            encabezado_autorizacion = request.headers.get("Authorization")
 
-        #     datos_json = request.get_json()
+            datos_json = request.get_json()
 
-        #     encabezados_con_autorizacion = {
-        #         "Content-Type": "application/json",
-        #         "Authorization": encabezado_autorizacion,
-        #     }
-        #     url_candidatos = os.getenv("MS_CANDIDATO")
+            encabezados_con_autorizacion = {
+                "Content-Type": "application/json",
+                "Authorization": encabezado_autorizacion,
+            }
+            url_candidatos = os.getenv("MS_CANDIDATO")
+
+# temporal
+            jsonCandidatos = requests.get(f"{url_candidatos}/getAll",
+                        headers=encabezados_con_autorizacion
+                    )
+            #lista_candidatos = jsonCandidatos.json()
+            print("La lista de candidatos",jsonCandidatos.json())
+            return jsonCandidatos.json()
+# Temporal
 
         #     if clave_perfiles in datos_json and clave_ficha in datos_json:
         #         if len(datos_json[clave_perfiles]) == 0:
@@ -542,13 +550,13 @@ class VistaMotorEmparejamiento(Resource):
         #     respuesta.status_code = 401
         #     return respuesta
 
-        # else:
-        #     mensaje: dict = {
-        #         "Mensaje 401": "El token enviado no corresponde al perfil del usuario"
-        #     }
-        #     respuesta = jsonify(mensaje)
-        #     respuesta.status_code = 401
-        #     return respuesta
+        else:
+            mensaje: dict = {
+                "Mensaje 401": "El token enviado no corresponde al perfil del usuario"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
 
     # def motorEmparejamiento(self, perfil, listaPalabras):
     def motorEmparejamiento(self):

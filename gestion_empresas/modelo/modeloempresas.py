@@ -51,8 +51,10 @@ class FichaCandidatoEmparejadoPerfil(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     idFicha = db.Column(db.Integer)
     idCandidato = db.Column(db.Integer)
+    nombreCandidato = db.Column(db.String(100))
     idPerfil = db.Column(db.Integer)
-    scoreEmparejamiento = db.Column(db.Integer)
+    descripcionPerfil = db.Column(db.String(100))
+    estado = db.Column(db.Boolean, default=False)
 
 class EmpresaSchema(SQLAlchemyAutoSchema):
     class Meta:

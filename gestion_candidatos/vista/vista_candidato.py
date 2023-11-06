@@ -78,6 +78,9 @@ class VistaObtenerTodosCandidatos(Resource):
           # tokenPayload = get_jwt_identity()
           # if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
           candidatos = Candidato.query.filter(Candidato.estado == False).all()
+
+          # Nota: Posible logica para convertir los datos de palabasClave a String
+
           return [candidate_schema.dump(tr) for tr in candidatos]
           # else:
           #      mensaje:dict = {'mensaje':"La petición viene de un usuario que no es empresa"}

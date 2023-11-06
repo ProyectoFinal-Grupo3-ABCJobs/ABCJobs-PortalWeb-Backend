@@ -439,7 +439,7 @@ class VistaMotorEmparejamiento(Resource):
             url_candidatos = os.getenv("MS_CANDIDATO")
 
 # temporal
-            jsonCandidatos = requests.get(f"{url_candidatos}/getAll",
+            jsonCandidatos = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll",
                         headers=encabezados_con_autorizacion
                     )
             #lista_candidatos = jsonCandidatos.json()

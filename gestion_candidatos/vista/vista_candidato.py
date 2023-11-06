@@ -73,22 +73,22 @@ class VistaRegistroInfoCandidato(Resource):
 
 
 class VistaObtenerTodosCandidatos(Resource):
-    #@jwt_required()
+    @jwt_required()
     def get(self):
           # tokenPayload = get_jwt_identity()
           # if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
           candidatos = Candidato.query.filter(Candidato.estado == False).all()
           return [candidate_schema.dump(tr) for tr in candidatos]
-     # else:
-     #      mensaje:dict = {'mensaje':"La petición viene de un usuario que no es empresa"}
-     #      respuesta = jsonify(mensaje)
-     #      respuesta.status_code = 400
-     #      return respuesta
+          # else:
+          #      mensaje:dict = {'mensaje':"La petición viene de un usuario que no es empresa"}
+          #      respuesta = jsonify(mensaje)
+          #      respuesta.status_code = 400
+          #      return respuesta
 
 
 
 class VistaObtenerCandidatoPorId(Resource):
-    #@jwt_required()
+    @jwt_required()
     def get(self,id_candidato):
           #tokenPayload = get_jwt_identity()
           #if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
@@ -108,8 +108,6 @@ class VistaObtenerCandidatoPorId(Resource):
                respuesta = jsonify(mensaje)
                respuesta.status_code = 200
                return respuesta
-
-
           # else:
           #      mensaje:dict = {'mensaje':"La petición viene de un usuario que no es empresa"}
           #      respuesta = jsonify(mensaje)

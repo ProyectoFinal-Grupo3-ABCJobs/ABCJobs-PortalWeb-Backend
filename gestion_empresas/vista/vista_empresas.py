@@ -50,7 +50,8 @@ else:
         FichaEmpleadoInternoSchema,
         FichaPerfil,
         FichaPerfilSchema,
-        FichaCandidatoEmparejadoPerfil
+        FichaCandidatoEmparejadoPerfil,
+        FichaCandidatoEmparejadoPerfilSchema
     )
 
 empresa_schema = EmpresaSchema()

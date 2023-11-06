@@ -501,12 +501,12 @@ class VistaMotorEmparejamiento(Resource):
 
                                     db.session.add(nuevo_candidato_emparejado)
                                     db.session.commit()
-                                    mensaje: dict = {
-                                            "Mensaje 200": "Proceso de emparejamiento realizado correctamente!"
-                                        }
-                                    respuesta = jsonify(mensaje)
-                                    respuesta.status_code = 200
-                                    return respuesta
+                    mensaje: dict = {
+                            "Mensaje 200": "Proceso de emparejamiento realizado correctamente!"
+                        }
+                    respuesta = jsonify(mensaje)
+                    respuesta.status_code = 200
+                    return respuesta
 
             else:
                 mensaje: dict = {
@@ -551,3 +551,35 @@ class VistaMotorEmparejamiento(Resource):
                         emparejado = True
                         return emparejado
         return emparejado
+
+
+class VistaResultadoEmparejamientoPorIdFicha(Resource):
+    @jwt_required()
+    def get(self,id_ficha):
+       
+        tokenPayload = get_jwt_identity()
+        clave_perfiles = "perfiles"
+        clave_ficha = "idFicha"
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            print("La ficha es:", id_ficha)
+
+            registros_ficha = (
+                FichaCandidatoEmparejadoPerfil.query.filter(
+                    FichaCandidatoEmparejadoPerfil.idFicha
+                    == id_ficha
+                ).all()
+            )
+
+            if registros_ficha:
+                return [ficha_candidato_emparejado_perfil_schema.dump(tr) for tr in registros_ficha]
+
+         
+            
+            else:
+                mensaje: dict = {
+                    "Mensaje 200": "La ficha no tiene candidatos emparejados"
+                }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 200
+                return respuesta
+            

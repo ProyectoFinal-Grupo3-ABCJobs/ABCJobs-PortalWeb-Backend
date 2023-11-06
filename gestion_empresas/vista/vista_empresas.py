@@ -429,126 +429,87 @@ class VistaMotorEmparejamiento(Resource):
         clave_ficha = "idFicha"
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             encabezado_autorizacion = request.headers.get("Authorization")
-
             datos_json = request.get_json()
 
-            encabezados_con_autorizacion = {
-                "Content-Type": "application/json",
-                "Authorization": encabezado_autorizacion,
-            }
-            url_candidatos = os.getenv("MS_CANDIDATO")
+            if clave_perfiles in datos_json and clave_ficha in datos_json:
+                if len(datos_json[clave_perfiles]) == 0:
+                    mensaje: dict = {
+                        "Mensaje 200": "La peticion no tiene [perfiles] para emparejar"
+                    }
+                    respuesta = jsonify(mensaje)
+                    respuesta.status_code = 200
+                    return respuesta
+                else:
+                    print("La cantidad de perfiles a evaluar son: ",len(datos_json[clave_perfiles]) )
+                    encabezados_con_autorizacion = {
+                        "Content-Type": "application/json",
+                        "Authorization": encabezado_autorizacion,
+                        }
 
-# temporal
-            jsonCandidatos = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll",
-                        headers=encabezados_con_autorizacion
-                    )
-            #lista_candidatos = jsonCandidatos.json()
-            print("La lista de candidatos",jsonCandidatos.json())
-            return jsonCandidatos.json()
-# Temporal
+                    jsonCandidatos = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll",
+                    #jsonCandidatos = requests.get("http://127.0.0.1:5001/candidate/getAll",
+                                                    headers=encabezados_con_autorizacion)
 
-        #     if clave_perfiles in datos_json and clave_ficha in datos_json:
-        #         if len(datos_json[clave_perfiles]) == 0:
-        #             mensaje: dict = {
-        #                 "Mensaje 200": "La peticion no tiene perfiles para emparejar"
-        #             }
-        #             respuesta = jsonify(mensaje)
-        #             respuesta.status_code = 200
-        #             return respuesta
-        #         else:
-        #             # jsonCandidatos = requests.get(f'{url_candidatos}getAll', headers=encabezados_con_autorizacion)
-        #             jsonCandidatos = requests.get(
-        #                 "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll",
-        #                 headers=encabezados_con_autorizacion,
-        #             )
+                    if jsonCandidatos.status_code != 200:
+                        mensaje: dict = {
+                            "Mensaje 401": "El servicio de Candidato en el recurso getAll no esta respondiento"
+                        }
+                        respuesta = jsonify(mensaje)
+                        respuesta.status_code = 401
+                        return respuesta
 
-        #             if jsonCandidatos.status_code != 200:
-        #                 mensaje: dict = {
-        #                     "Mensaje 401": "El servicio de Candidato en el recurso getAll no esta respondiento"
-        #                 }
-        #                 respuesta = jsonify(mensaje)
-        #                 respuesta.status_code = 401
-        #                 return respuesta
+                    if len(jsonCandidatos.json()) == 0:
+                        mensaje: dict = {
+                            "Mensaje 200": "El servicio candidato GetAll restorno sin datos"
+                        }
+                        respuesta = jsonify(mensaje)
+                        respuesta.status_code = 200
+                        return respuesta
+                    else:
+                        # Obtengo la lista de candidatos del requesto
+                        lista_candidatos = jsonCandidatos.json()
 
-        #             if len(jsonCandidatos.json()) == 0:
-        #                 mensaje: dict = {
-        #                     "Mensaje 200": "No hay candidatos en la respuesta"
-        #                 }
-        #                 respuesta = jsonify(mensaje)
-        #                 respuesta.status_code = 200
-        #                 return respuesta
-        #             else:
-        #                 lista_candidatos = jsonCandidatos.json()
+                        listaPalabrasClaves=[]
+                        # Recorro el responde con los perfiles obtenidos
+                        for perfil in datos_json[clave_perfiles]:
 
-        #                 for candidato in lista_candidatos:
-        #                     listaPalabrasClaves = candidato["palabrasClave"].split(",")
+                            for candidato in lista_candidatos:
 
-        #                     # Logica para recorrer la lista de perfiles
-        #                     for perfil in datos_json[clave_perfiles]:
-        #                         porcentajeEmparejamiento = self.motorEmparejamiento(
-        #                             perfil["Descripcion"], listaPalabrasClaves
-        #                         )
+                                resultadoEmparejamiento = self.motorEmparejamiento(perfil["descripcion"], candidato['palabrasClave'],candidato['nombre'])
 
-        #                         if porcentajeEmparejamiento > 10:
-        #                             candidato_perfil_ficha = (
-        #                                 FichaCandidatoEmparejadoPerfil.query.filter(
-        #                                     FichaCandidatoEmparejadoPerfil.idFicha
-        #                                     == datos_json[clave_ficha],
-        #                                     FichaCandidatoEmparejadoPerfil.idCandidato
-        #                                     == candidato["idCandidato"],
-        #                                     FichaCandidatoEmparejadoPerfil.idPerfil
-        #                                     == perfil["idPerfil"],
-        #                                 ).all()
-        #                             )
+                                if resultadoEmparejamiento:
+                                    print("El cadidato emparejado es: ", candidato['nombre'])
+                                    print("perfil? ", perfil["descripcion"])
 
-        #                             # Valida si el persil no exite en la tabla
-        #                             if len(candidato_perfil_ficha) == 0:
-        #                                 nuevo_candidato_emparejado = FichaCandidatoEmparejadoPerfil(
-        #                                     idFicha=datos_json[clave_ficha],
-        #                                     idCandidato=candidato["idCandidato"],
-        #                                     idPerfil=perfil["idPerfil"],
-        #                                     scoreEmparejamiento=porcentajeEmparejamiento,
-        #                                 )
 
-        #                                 db.session.add(nuevo_candidato_emparejado)
-        #                                 db.session.commit()
+                                    # Consulto si el perfil no exite en la tabla
+                                    # ficha_existente = (
+                                    #     FichaCandidatoEmparejadoPerfil.query.filter(
+                                    #         FichaCandidatoEmparejadoPerfil.idFicha
+                                    #         == datos_json[clave_ficha]
+                                    #     ).all()
+                                    # )
 
-        #             # consulto en BD los candidatos emparejados en la ficha_
-        #             candidato_perfil_ficha = (
-        #                 FichaCandidatoEmparejadoPerfil.query.filter(
-        #                     FichaCandidatoEmparejadoPerfil.idFicha
-        #                     == datos_json[clave_ficha]
-        #                 ).all()
-        #             )
+                                    # Valida si el persil no exite en la tabla
 
-        #             # NOTA: Se crea EndPoint para el emparejamiento del candidato
-        #             listaCandidatos = []
-        #             for cand_emparejado in candidato_perfil_ficha:
-        #                 resCandidato = requests.get(
-        #                     f"http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/{cand_emparejado.idCandidato}",
-        #                     headers=encabezados_con_autorizacion,
-        #                 )
+                                    nuevo_candidato_emparejado = FichaCandidatoEmparejadoPerfil(
+                                            idFicha=datos_json[clave_ficha],
+                                            idCandidato=candidato["idCandidato"],
+                                            nombreCandidato=candidato["nombre"],
+                                            idPerfil=perfil["idPerfil"],
+                                            descripcionPerfil=perfil["descripcion"]                           
+                                        )
 
-        #                 jsonCandidato = resCandidato.json()
-        #                 jsonCandidato["idPerfil"] = cand_emparejado.idPerfil
+                                    db.session.add(nuevo_candidato_emparejado)
+                                    db.session.commit()
 
-        #                 listaCandidatos.append(jsonCandidato)
-
-        #             mensaje: dict = {
-        #                 "idFicha": datos_json[clave_ficha],
-        #                 "listadoCandidatos": listaCandidatos,
-        #             }
-        #             respuesta = jsonify(mensaje)
-        #             respuesta.status_code = 200
-        #             return respuesta
-
-        #     else:
-        #         mensaje: dict = {
-        #             "Mensaje 401": "La peticion JSON no tiene Idperfiles o idficha o ambos"
-        #         }
-        #     respuesta = jsonify(mensaje)
-        #     respuesta.status_code = 401
-        #     return respuesta
+            else:
+                mensaje: dict = {
+                    "Mensaje 401": "La peticion JSON no tiene [perfiles] o [idficha]"
+                }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 401
+                return respuesta
 
         else:
             mensaje: dict = {
@@ -559,42 +520,29 @@ class VistaMotorEmparejamiento(Resource):
             return respuesta
 
     # def motorEmparejamiento(self, perfil, listaPalabras):
-    def motorEmparejamiento(self):
+    def motorEmparejamiento(self, descripcionCargo, palabrasclaves, nombreCandidato):
+        listaPalabrasClave = []
+        listaPalabrasClave = palabrasclaves.split(",")
 
-        # Cargar el modelo de lenguaje en español
         nlp = spacy.load("es_core_news_sm")
 
         # Texto de ejemplo en español
-        texto = "Desarrollador fron-end en angular y react"
-
-        # Palabra que deseas buscar
-        palabra_a_buscar = "react"
+        texto = descripcionCargo.upper().strip()
+        lista = []
 
         # Procesar el texto con spaCy
         doc = nlp(texto)
 
         # Inicializar una variable para verificar si la palabra está en el texto
-        encontrada = False
+        emparejado = False
+        
+        # Palabra que deseas buscar
+        for palabra in listaPalabrasClave:
 
         # Iterar a través de las palabras tokenizadas
-        for token in doc:
-            if token.text == palabra_a_buscar:
-                encontrada = True
-                break
-
-        # Verificar si la palabra se encontró en el texto
-        if encontrada:
-            print(f"'{palabra_a_buscar}' se encuentra en el texto.")
-            mensaje: dict = {
-                "Mensaje 200": "Perfil emparejado"
-            }
-            respuesta = jsonify(mensaje)
-            respuesta.status_code = 200
-            return respuesta
-        else:
-            mensaje: dict = {
-                "Mensaje 200": "Perfil no emparejado"
-            }
-            respuesta = jsonify(mensaje)
-            respuesta.status_code = 200
-            return respuesta
+            for token in doc:
+                
+                    if token.text == palabra.upper().strip():
+                        emparejado = True
+                        return emparejado
+        return emparejado

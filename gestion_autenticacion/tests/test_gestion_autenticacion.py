@@ -1,4 +1,5 @@
 import unittest, json, os
+import requests
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
@@ -11,6 +12,20 @@ else:
 
 class TestApp(unittest.TestCase):
     def setUp(self):
+        url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
+        #url = "http://127.0.0.1:5000/users/auth"
+
+        payload = json.dumps({
+        "usuario": "empresa",
+        "contrasena": "empresa"
+        })
+        headers = {
+        'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        self.token = response.json()['token']
+        
         self.app = app.test_client()
     
     def test_response_healthcheck_status_200(self):

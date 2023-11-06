@@ -11,10 +11,11 @@ carpeta_actual = os.path.basename(directorio_actual)
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
      from modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
 else:
-     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
+     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa,EmpresaSchema
 
 user_schema = UsuarioSchema()
-company_schema = EmpresaSchema()
+empresa_schema = EmpresaSchema()
+
 
 class VistaGenerarToken(Resource):
     def post(self):
@@ -54,7 +55,7 @@ class VistaGenerarToken(Resource):
           pwdhasehd = request.json['contrasena'] + saltedword
           hashpwd = hashlib.sha256(pwdhasehd.encode()).hexdigest()
           usuario = Usuario.query.filter(Usuario.usuario == request.json['usuario'], Usuario.contrasena == hashpwd).first()
-          idEmpCanFunc:str='';
+          
           if usuario is None:
                mensaje:dict = {'error 5050':"El usuario no pudo ser autenticado"}
                respuesta = jsonify(mensaje)
@@ -63,10 +64,13 @@ class VistaGenerarToken(Resource):
 
           empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
 
-          if empresa:
+          
+          if empresa is None:
+               idEmpCanFunc:str='';
+          else:
                idEmpCanFunc = empresa.idEmpresa
 
-
+          
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,
@@ -74,7 +78,9 @@ class VistaGenerarToken(Resource):
                'idEmpCanFunc':idEmpCanFunc
           }
 
+          #token_de_acceso_temp = create_access_token(identity=dataTemp)
           token_de_acceso = create_access_token(identity=data)
+
           # Genero Token de acceso
           usuario.token = token_de_acceso
 

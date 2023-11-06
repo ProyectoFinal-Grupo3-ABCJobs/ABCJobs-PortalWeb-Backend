@@ -1,8 +1,9 @@
 from flask_restful import Resource
 from flask import request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import jsonify
 import hashlib, os, json
+
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
@@ -68,6 +69,53 @@ class VistaRegistroInfoCandidato(Resource):
                "nombre": candidato_creado.nombre,
                "identificacion": candidato_creado.identificacion
           }, 201
+
+
+
+class VistaObtenerTodosCandidatos(Resource):
+    #@jwt_required()
+    def get(self):
+          # tokenPayload = get_jwt_identity()
+          # if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+          candidatos = Candidato.query.filter(Candidato.estado == False).all()
+          return [candidate_schema.dump(tr) for tr in candidatos]
+     # else:
+     #      mensaje:dict = {'mensaje':"La petición viene de un usuario que no es empresa"}
+     #      respuesta = jsonify(mensaje)
+     #      respuesta.status_code = 400
+     #      return respuesta
+
+
+
+class VistaObtenerCandidatoPorId(Resource):
+    #@jwt_required()
+    def get(self,id_candidato):
+          #tokenPayload = get_jwt_identity()
+          #if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+          candidato = Candidato.query.filter(Candidato.idCandidato == id_candidato).first()
+
+          if candidato:
+               dicCandidato = {
+                    "idCandidato": candidato.idCandidato,
+                    "nombre": candidato.nombre,
+                    "profesion": candidato.profesion,
+               }
+               respuesta = jsonify(dicCandidato)
+               respuesta.status_code = 200
+               return respuesta
+          else:
+               mensaje:dict = {'mensaje 200':"El candidato no Existe"}
+               respuesta = jsonify(mensaje)
+               respuesta.status_code = 200
+               return respuesta
+
+
+          # else:
+          #      mensaje:dict = {'mensaje':"La petición viene de un usuario que no es empresa"}
+          #      respuesta = jsonify(mensaje)
+          #      respuesta.status_code = 400
+          #      return respuesta
+
 
 class VistaSaludServicio(Resource):
     def get(self):

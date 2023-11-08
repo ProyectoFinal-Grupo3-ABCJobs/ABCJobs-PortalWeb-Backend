@@ -9,7 +9,6 @@ if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
 else:
     from gestion_autenticacion.app import app
 
-
 class TestApp(unittest.TestCase):
     def setUp(self):
         url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"

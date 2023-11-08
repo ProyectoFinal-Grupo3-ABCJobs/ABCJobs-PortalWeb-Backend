@@ -88,8 +88,6 @@ class VistaObtenerTodosCandidatos(Resource):
           #      respuesta.status_code = 400
           #      return respuesta
 
-
-
 class VistaObtenerCandidatoPorId(Resource):
     @jwt_required()
     def get(self,id_candidato):

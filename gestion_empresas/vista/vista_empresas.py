@@ -550,8 +550,7 @@ class VistaMotorEmparPorIdFicha(Resource):
             encabezado_autorizacion = request.headers.get("Authorization")
             datos_json = request.get_json()
 
-            
-
+         
         #     if clave_perfiles in datos_json and clave_ficha in datos_json:
         #         if len(datos_json[clave_perfiles]) == 0:
         #             mensaje: dict = {

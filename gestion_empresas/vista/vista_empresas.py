@@ -148,7 +148,6 @@ class VistaConsultaProyectoPorEmpresa(Resource):
             respuesta.status_code = 401
             return respuesta
 
-
 class VistaConsultaProyectoPorEmpresa(Resource):
     @jwt_required()
     def get(self, id_empresa):
@@ -550,7 +549,7 @@ class VistaMotorEmparPorIdFicha(Resource):
             encabezado_autorizacion = request.headers.get("Authorization")
             datos_json = request.get_json()
 
-         
+      
         #     if clave_perfiles in datos_json and clave_ficha in datos_json:
         #         if len(datos_json[clave_perfiles]) == 0:
         #             mensaje: dict = {

@@ -303,17 +303,13 @@ class VistaConsultaPerfil(Resource):
 class VistaCreacionPerfil(Resource):
     @jwt_required()
     def post(self, id_proyecto):
-        tokenPayload = get_jwt_identity()
-        print("######1")
+        tokenPayload = get_jwt_identity()        
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             proyecto = Proyecto.query.filter(Proyecto.idProyecto == id_proyecto).first()
             if proyecto is None:
-                print("######2")
                 return "El proyecto no existe", 404
             else:
-                print("######3")
                 data = request.get_json()
-                print("DATA: " + str(data))
                 perfil = Perfil(
                     nombre=data.get("nombre"),
                     descripcion=data.get("descripcion"),
@@ -352,7 +348,6 @@ class VistaFicha(Resource):
                         )
                         db.session.add(empleado)
 
-                    print("###################: " + str(data.get("perfiles")))
                     for perfil in data.get("perfiles"):
                         perfil = FichaPerfil(
                             idFicha=ficha.idFicha, idPerfil=perfil["idPerfil"]

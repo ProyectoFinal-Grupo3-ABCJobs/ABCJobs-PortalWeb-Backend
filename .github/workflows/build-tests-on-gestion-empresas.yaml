@@ -4,7 +4,11 @@ name: Python CI
 on:
   push:
     branches:
+      - feature/PA-23
+      - feature/PA-7
+      - feature/PA-13
       - feature/HUS-PA-20
+      - feature/PA-112
  
 # Definir los Jobs
 jobs:

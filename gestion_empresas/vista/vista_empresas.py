@@ -481,15 +481,7 @@ class VistaMotorEmparejamiento(Resource):
 
                                 if resultadoEmparejamiento:
                                   
-                                    # Consulto si el perfil no exite en la tabla
-                                    # ficha_existente = (
-                                    #     FichaCandidatoEmparejadoPerfil.query.filter(
-                                    #         FichaCandidatoEmparejadoPerfil.idFicha
-                                    #         == datos_json[clave_ficha]
-                                    #     ).all()
-                                    # )
-
-                                    # Valida si el persil no exite en la tabla
+                                    # Valida si el perfil no exite en la tabla
 
                                     nuevo_candidato_emparejado = FichaCandidatoEmparejadoPerfil(
                                             idFicha=datos_json[clave_ficha],
@@ -561,8 +553,6 @@ class VistaResultadoEmparejamientoPorIdFicha(Resource):
         clave_perfiles = "perfiles"
         clave_ficha = "idFicha"
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-            print("La ficha es:", id_ficha)
-
             registros_ficha = (
                 FichaCandidatoEmparejadoPerfil.query.filter(
                     FichaCandidatoEmparejadoPerfil.idFicha
@@ -570,10 +560,73 @@ class VistaResultadoEmparejamientoPorIdFicha(Resource):
                 ).all()
             )
 
+            listTemp = []
+            listIdPerfil = []
             if registros_ficha:
-                return [ficha_candidato_emparejado_perfil_schema.dump(tr) for tr in registros_ficha]
+                # print("Estoy aca")
 
-         
+
+                # for ficha in registros_ficha:
+                listaTodosRegistrosFicha = [ficha_candidato_emparejado_perfil_schema.dump(tr) for tr in registros_ficha]
+
+                listTemp = listaTodosRegistrosFicha[:]
+                listaPerfiles = []
+
+                dictDetalleFicha = {}
+
+                listaDescperfiles= []
+
+                listFinalMaster = []
+                listFinalDetalle = []
+                for dicFicha in listaTodosRegistrosFicha:
+                    vlrIdPerfil = dicFicha['idPerfil']
+                    vlrDescPerfil = dicFicha['descripcionPerfil']
+                    for fichaTemp in listTemp:
+                        vlrIdPerfilTmp = fichaTemp['idPerfil']
+
+                        if vlrIdPerfil == vlrIdPerfilTmp:
+
+                            if vlrIdPerfil not in listaPerfiles:
+
+                                listaPerfiles.append(vlrIdPerfil)
+                                listaDescperfiles.append(vlrDescPerfil)
+
+                # Construccion del maestro
+                if len(listaPerfiles) == len(listaDescperfiles):
+                    for index in range(len(listaPerfiles)):
+                        dicFicha = {
+                            "idPerfil":listaPerfiles[index],
+                            "descripcionPerfil":listaDescperfiles[index],
+                            "candidatos": [],
+                        }
+                        listFinalMaster.append(dicFicha)
+
+                # Contruccion del detalle
+                for perfil in range(len(listFinalMaster)):
+                    #print("Perfil", perfil['idPerfil'])
+                   
+                    for candidato in listaTodosRegistrosFicha:
+
+                    
+                        #print("Hola")
+                        if listFinalMaster[perfil]['idPerfil'] == candidato['idPerfil']:
+                            
+                            dicDetalleCandidato = {
+                            "idCandidato": candidato['idCandidato'],
+                            "nombreCandidato": candidato['nombreCandidato'],
+                            "estado": candidato['estado']
+                        }                       
+
+                            listFinalDetalle.append(dicDetalleCandidato)
+
+                    
+                    listFinalMaster[perfil]['candidatos']= listFinalDetalle
+                    listFinalDetalle = []
+
+                
+                return listFinalMaster
+
+                # return [ficha_candidato_emparejado_perfil_schema.dump(tr) for tr in registros_ficha]
             
             else:
                 mensaje: dict = {

@@ -37,6 +37,7 @@ class Perfil(db.Model):
 class Ficha(db.Model):
     idFicha = db.Column(db.Integer, primary_key=True)
     idProyecto = db.Column(db.Integer)
+    estadoEmparejamiento = db.Column(db.Boolean, default=False)
     
 class FichaEmpleadoInterno(db.Model):
     idFicha = db.Column(db.Integer, db.ForeignKey('ficha.idFicha'), primary_key=True)

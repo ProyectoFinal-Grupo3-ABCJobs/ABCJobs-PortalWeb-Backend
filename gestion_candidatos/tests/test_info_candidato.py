@@ -158,7 +158,5 @@ class TestApp(unittest.TestCase):
             
             self.assertEqual(solicitud_nuevo_candidato2.status_code, 400)
 
-
-
 if __name__ == '__main__':
     unittest.main()

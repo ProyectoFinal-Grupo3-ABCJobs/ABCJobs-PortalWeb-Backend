@@ -129,4 +129,3 @@ class VistaRegistroUsuario(Resource):
                "contrasena": usuario_creado.contrasena,
                "tipoUsuario": usuario_creado.tipoUsuario,
           }, 201
-

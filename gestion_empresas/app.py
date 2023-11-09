@@ -11,10 +11,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdFicha, VistaMotorEmparPorIdFicha
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdFicha, VistaMotorEmparejamientoTempFicha
     from modelo import db
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdFicha, VistaMotorEmparPorIdFicha
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdFicha, VistaMotorEmparejamientoTempFicha
     from gestion_empresas.modelo import db
 
 load_dotenv()
@@ -59,7 +59,7 @@ api.add_resource(VistaFicha,'/company/projects/<int:id_proyecto>/files')
 
 # Endpoints de Motor de Emparejamiento
 api.add_resource(VistaMotorEmparejamiento,'/company/motorEmparejamiento')
-api.add_resource(VistaMotorEmparPorIdFicha,'/company/motorEmparejamiento/ficha/<int:id_ficha>')
+api.add_resource(VistaMotorEmparejamientoTempFicha,'/company/motorEmparejamientoTempFicha')
 api.add_resource(VistaResultadoEmparejamientoPorIdFicha,'/company/motorEmparejamiento/ficha/<int:id_ficha>')
 
 

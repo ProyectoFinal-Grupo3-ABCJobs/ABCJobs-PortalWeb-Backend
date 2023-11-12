@@ -13,17 +13,22 @@ if carpeta_actual == "gestion_pruebas" or carpeta_actual == "app":
     from modelo import (
         db,
         Prueba,
+        Entrevista,
         PruebaSchema,
+        EntrevistaSchema
        
     )
 else:
     from gestion_pruebas.modelo import (
         db,
         Prueba,
+        Entrevista,
         PruebaSchema,
+        EntrevistaSchema
     )
 
 pruebas_schema = PruebaSchema()
+entrevista_schema = EntrevistaSchema()
 
 class VistaSaludServicio(Resource):
     def get(self):
@@ -38,6 +43,28 @@ class VistaConsultaPruebasCandidato(Resource):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "CANDIDATO":
             return "Hola"
+        else:
+            mensaje: dict = {
+                "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
+        
+class VistaConsultaEntrevistasCandidato(Resource):
+    @jwt_required()
+    def get(self, id_candidato):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "CANDIDATO":
+            print("Entrevista")
+            entrevistas_candidato = Entrevista.query.filter(
+                Entrevista.idCandidato == id_candidato
+            ).all()
+
+            if len(entrevistas_candidato) == 0:
+                return "El candidato no tiene entrevistas", 404
+            else:
+                return [entrevista_schema.dump(tr) for tr in entrevistas_candidato]
         else:
             mensaje: dict = {
                 "mensaje 1313": "El token enviado no corresponde al perfil del usuario"

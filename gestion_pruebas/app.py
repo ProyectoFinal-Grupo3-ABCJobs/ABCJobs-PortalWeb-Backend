@@ -46,7 +46,5 @@ api.add_resource(VistaConsultaPruebasCandidato,'/test/candidate/<int:id_candidat
 api.add_resource(VistaSaludServicio,'/test/ping')
 
 
-
-
 jwt = JWTManager(app)
 

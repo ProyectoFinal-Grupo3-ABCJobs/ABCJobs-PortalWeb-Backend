@@ -11,10 +11,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_pruebas' or carpeta_actual=='app':
-    from vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato
+    from vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato
     from modelo import db
 else:    
-    from gestion_pruebas.vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato
+    from gestion_pruebas.vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato
     from gestion_pruebas.modelo import db
 
 load_dotenv()
@@ -43,6 +43,7 @@ api = Api(app)
 
 # Endpoints de pruebas
 api.add_resource(VistaConsultaPruebasCandidato,'/test/candidate/<int:id_candidato>')
+api.add_resource(VistaConsultaEntrevistasCandidato,'/test/candidate/<int:id_candidato>/interviews')
 api.add_resource(VistaSaludServicio,'/test/ping')
 
 

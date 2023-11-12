@@ -56,7 +56,15 @@ class VistaConsultaEntrevistasCandidato(Resource):
     def get(self, id_candidato):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "CANDIDATO":
-            return "Entrevista"
+            print("Entrevista")
+            entrevistas_candidato = Entrevista.query.filter(
+                Entrevista.idCandidato == id_candidato
+            ).all()
+
+            if len(entrevistas_candidato) == 0:
+                return "El candidato no tiene entrevistas", 404
+            else:
+                return [entrevista_schema.dump(tr) for tr in entrevistas_candidato]
         else:
             mensaje: dict = {
                 "mensaje 1313": "El token enviado no corresponde al perfil del usuario"

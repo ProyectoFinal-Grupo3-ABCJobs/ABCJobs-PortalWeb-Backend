@@ -7,7 +7,7 @@ db = SQLAlchemy()
 class Prueba(db.Model):
     idPrueba    = db.Column(db.Integer, primary_key=True)
     tipoPrueba  = db.Column(db.String(50))
-    fechaPrueba = db.Column(db.Date)
+    fechaPrueba = db.Column(db.DateTime)
     resultado   = db.Column(db.String(50))
     observaciones = db.Column(db.String(2000))
     estado      = db.Column(db.Boolean)

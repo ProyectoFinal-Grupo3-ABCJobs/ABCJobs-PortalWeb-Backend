@@ -654,17 +654,28 @@ class VistaMotorEmparejamiento(Resource):
                         return emparejado
         return emparejado
 
-
-class VistaResultadoEmparejamientoPorIdFicha(Resource):
+class VistaResultadoEmparejamientoPorIdProyecto(Resource):
     @jwt_required()
-    def get(self,id_ficha):
-       
+    def get(self,id_proyecto):
+      
+        id_ficha = ''
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+
+            ficha = Ficha.query.filter(Ficha.idProyecto == id_proyecto).first()
+
+            if not(ficha):
+                mensaje: dict = {
+                    "Mensaje 200": f'El proyecto {id_proyecto} no tiene ficha asociada '
+                }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 200
+                return respuesta
+
             registros_ficha = (
                 FichaCandidatoEmparejadoPerfil.query.filter(
                     FichaCandidatoEmparejadoPerfil.idFicha
-                    == id_ficha
+                    == ficha.idFicha
                 ).all()
             )
 

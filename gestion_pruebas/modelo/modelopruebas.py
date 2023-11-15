@@ -22,10 +22,11 @@ class Entrevista(db.Model):
     fechaEntrevista = db.Column(db.DateTime)
     cargoAplica     = db.Column(db.String(100))
     resultado       = db.Column(db.String(2000))
-    estado          = db.Column(db.Boolean)
+    estado          = db.Column(db.Boolean, default=False)
     idCandidato     = db.Column(db.Integer)
     idEmpresa       = db.Column(db.Integer)
     idProyecto      = db.Column(db.Integer)
+    aprobado        = db.Column(db.Boolean, default=False)
 
 
 class PruebaSchema(SQLAlchemyAutoSchema):

@@ -11,10 +11,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_pruebas' or carpeta_actual=='app':
-    from vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato
+    from vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoPruebasCandidatosPorIdEmpresa, VistaResultadoEntrevistasCandidatosPorIdEmpresa
     from modelo import db
 else:    
-    from gestion_pruebas.vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato
+    from gestion_pruebas.vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoEntrevistasCandidatosPorIdEmpresa, VistaResultadoPruebasCandidatosPorIdEmpresa
     from gestion_pruebas.modelo import db
 
 load_dotenv()
@@ -46,6 +46,12 @@ api.add_resource(VistaConsultaPruebasCandidato,'/test/candidate/<int:id_candidat
 api.add_resource(VistaConsultaEntrevistasCandidato,'/test/candidate/<int:id_candidato>/interviews')
 api.add_resource(VistaSaludServicio,'/test/ping')
 
+
+# EndPoints resultados Pruebas
+api.add_resource(VistaResultadoPruebasCandidatosPorIdEmpresa,'/test/company/<int:id_empresa>')
+
+# EndPoints resultados Entrevista
+api.add_resource(VistaResultadoEntrevistasCandidatosPorIdEmpresa,'/test/company/<int:id_empresa>/interviews')
 
 jwt = JWTManager(app)
 

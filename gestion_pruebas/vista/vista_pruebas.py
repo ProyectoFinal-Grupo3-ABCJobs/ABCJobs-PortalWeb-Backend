@@ -2,10 +2,9 @@ from flask_restful import Resource
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import jsonify
-import hashlib, os, json, jwt
-from jwt.exceptions import InvalidTokenError
 from datetime import datetime
 import requests
+import os
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
@@ -80,3 +79,25 @@ class VistaConsultaEntrevistasCandidato(Resource):
             respuesta.status_code = 401
             return respuesta
 
+# EndPoint para consumo de empresa
+class VistaResultadoEntrevistasCandidatosPorIdEmpresa(Resource):
+    @jwt_required()
+    def get(self, id_empresa):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            print("Entrevista!!!", id_empresa)
+            # Cambiar Entrevista.estado cuando se ajuste el modelo
+            entrevistas_candidato_empresa = Entrevista.query.filter(
+                Entrevista.idEmpresa == id_empresa, Entrevista.aprobado == True ).all()
+            print("Resultado entrevistas son: ",entrevistas_candidato_empresa)
+
+
+class VistaResultadoPruebasCandidatosPorIdEmpresa(Resource):
+    @jwt_required()
+    def get(self, id_empresa):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            pruebas_candidato_empresa = Prueba.query.filter(
+                Prueba.idEmpresa == id_empresa, Prueba.aprobado == True ).all()
+            if pruebas_candidato_empresa:
+                print("Resultado entrevistas son: ",pruebas_candidato_empresa)

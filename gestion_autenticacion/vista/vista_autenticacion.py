@@ -109,10 +109,16 @@ class VistaRegistroUsuario(Resource):
             Usuario.usuario == request.json["usuario"]).first()          
           if not usuario is None:
             return "No se puede crear el usuario. El correo ya se encuentra registrado", 409
+          
+
+          # Cifrar la contraseña Salt
+          saltedword = os.getenv("SALTEDWORD")
+          pwdhasehd = request.json['contrasena'] + saltedword
+          hashpwd = hashlib.sha256(pwdhasehd.encode()).hexdigest()
      
           nuevo_usuario = Usuario(
                usuario=request.json["usuario"],
-               contrasena=request.json["contrasena"],
+               contrasena=hashpwd,
                tipoUsuario=request.json["tipoUsuario"]
           )
 

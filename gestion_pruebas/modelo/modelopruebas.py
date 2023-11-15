@@ -13,6 +13,9 @@ class Prueba(db.Model):
     estado      = db.Column(db.Boolean)
     idCandidato = db.Column(db.Integer)
     idEmpresa   = db.Column(db.Integer)
+    idProyecto  = db.Column(db.Integer)
+    aprobado    = db.column(db.Boolean)
+
 
 class Entrevista(db.Model):
     idEntrevista    = db.Column(db.Integer, primary_key=True)

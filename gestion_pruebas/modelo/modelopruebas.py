@@ -14,7 +14,7 @@ class Prueba(db.Model):
     idCandidato = db.Column(db.Integer)
     idEmpresa   = db.Column(db.Integer)
     idProyecto  = db.Column(db.Integer)
-    aprobado    = db.column(db.Boolean)
+    aprobado    = db.Column(db.Boolean, default=False)
 
 
 class Entrevista(db.Model):

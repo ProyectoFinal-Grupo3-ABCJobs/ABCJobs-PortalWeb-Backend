@@ -62,6 +62,8 @@ api.add_resource(VistaMotorEmparejamiento,'/company/motorEmparejamiento')
 api.add_resource(VistaMotorEmparejamientoTempFicha,'/company/motorEmparejamientoTempFicha')
 api.add_resource(VistaResultadoEmparejamientoPorIdProyecto,'/company/motorEmparejamiento/proyectos/<int:id_proyecto>')
 
+# EndPoints Contratación de Candidatos:
+
 
 jwt = JWTManager(app)
 

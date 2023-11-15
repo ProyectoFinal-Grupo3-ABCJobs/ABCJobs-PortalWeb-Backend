@@ -20,16 +20,21 @@ class Prueba(db.Model):
 class Entrevista(db.Model):
     idEntrevista    = db.Column(db.Integer, primary_key=True)
     fechaEntrevista = db.Column(db.DateTime)
-    cargoDesc       = db.Column(db.String(100))
-    idCargo         = db.Column(db.Integer)
+    idEmpresa       = db.Column(db.Integer)
+    empresaNombre   = db.Column(db.String(100))
+    idCandidato     = db.Column(db.Integer)
+    candidatoNombre = db.Column(db.String(100))
+    idProyecto      = db.Column(db.Integer)
+    proyectoNombre  = db.Column(db.String(100))
+    idPerfil         = db.Column(db.Integer)
+    perfilDescripcion = db.Column(db.String(100))
     detalles        = db.Column(db.String(2000))
     estado          = db.Column(db.Boolean, default=False)
-    candidatoNombre = db.Column(db.String(100))
-    idCandidato     = db.Column(db.Integer)
-    empresaNombre   = db.Column(db.String(100))
-    idEmpresa       = db.Column(db.Integer)
-    proyectoNombre  = db.Column(db.String(100))
-    idProyecto      = db.Column(db.Integer)
+
+
+
+
+
     aprobado        = db.Column(db.Boolean, default=False)
 
 

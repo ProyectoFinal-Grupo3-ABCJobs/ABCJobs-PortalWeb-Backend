@@ -51,6 +51,10 @@ class FichaPerfil(db.Model):
 class FichaCandidatoEmparejadoPerfil(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     idFicha = db.Column(db.Integer)
+    idProyecto = db.Column(db.Integer)
+    nombreProyecto = db.Column(db.String(100))
+    idEmpresa = db.Column(db.Integer)
+    nombreEmpresa = db.Column(db.String(100))
     idCandidato = db.Column(db.Integer)
     nombreCandidato = db.Column(db.String(100))
     idPerfil = db.Column(db.Integer)

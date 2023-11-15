@@ -79,25 +79,42 @@ class VistaConsultaEntrevistasCandidato(Resource):
             respuesta.status_code = 401
             return respuesta
 
-# EndPoint para consumo de empresa
+# EndPoint para consumo desde empresa
 class VistaResultadoEntrevistasCandidatosPorIdEmpresa(Resource):
     @jwt_required()
     def get(self, id_empresa):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-            print("Entrevista!!!", id_empresa)
-            # Cambiar Entrevista.estado cuando se ajuste el modelo
             entrevistas_candidato_empresa = Entrevista.query.filter(
                 Entrevista.idEmpresa == id_empresa, Entrevista.aprobado == True ).all()
             print("Resultado entrevistas son: ",entrevistas_candidato_empresa)
 
 
-class VistaResultadoPruebasCandidatosPorIdEmpresa(Resource):
+
+# EndPoint para consumo desde empresa - Proceso para cargar la tabla de Entrevista
+class VistaAdicionarCandidatosEmparejadosAEntrevista(Resource):
     @jwt_required()
-    def get(self, id_empresa):
+    def post(self):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-            pruebas_candidato_empresa = Prueba.query.filter(
-                Prueba.idEmpresa == id_empresa, Prueba.aprobado == True ).all()
-            if pruebas_candidato_empresa:
-                print("Resultado entrevistas son: ",pruebas_candidato_empresa)
+            
+            nuevo_entrevista_emparejado = Entrevista(
+                idProyecto = request.json['idProyecto'],
+                proyectoNombre = request.json['nombreProyecto'],
+                empresaNombre = request.json['nombreEmpresa'],
+                idEmpresa = request.json['idEmpresa'],
+                idCandidato=request.json['idCandidato'],
+                candidatoNombre =request.json['nombreCandidato'],
+                idPerfil=request.json['idPerfil'],
+                perfilDescripcion =request.json['descripcionPerfil'])
+            
+            db.session.add(nuevo_entrevista_emparejado)                                    
+            db.session.commit()
+            
+            mensaje: dict = {
+                "mensaje 201": "Entrevista registraa correctamente"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 201
+            return respuesta
+            

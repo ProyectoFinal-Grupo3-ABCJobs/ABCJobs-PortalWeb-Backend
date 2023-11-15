@@ -405,7 +405,7 @@ class VistaAsignacionEmpleado(Resource):
 class VistaMotorEmparejamientoTempFicha(Resource):
     @jwt_required()
     def post(self):
-        
+
         encabezado_autorizacion = request.headers.get("Authorization")
         motor_emparejamiento = VistaMotorEmparejamientoInterno()
         respuesta = motor_emparejamiento.ejecutarEmparejamiento(encabezado_autorizacion)
@@ -451,6 +451,7 @@ class VistaMotorEmparejamientoInterno(Resource):
                 respuesta.status_code = 200
                 return respuesta
             else:
+                dic_candidatos_emparejados:dict = {}
                 # Obtengo la lista de candidatos del requesto
                 lista_candidatos = jsonCandidatos.json()
 
@@ -471,18 +472,79 @@ class VistaMotorEmparejamientoInterno(Resource):
                                 resultadoEmparejamiento = self.motorEmparejamiento(descripcionPerfiles.descripcion, candidato['palabrasClave'])
                                 if resultadoEmparejamiento:
                                   
-                                    # Valida si el perfil no exite en la tabla
+                                    # Busco en Ficha el idProyecto
+                                    ficha_proyecto = Ficha.query.filter(Ficha.idFicha == ficha.idFicha).first()
+                                    if not(ficha):
+                                        mensaje: dict = {
+                                        "Mensaje 200": f'La ficha {ficha.idFicha} no tiene proyecto asociado '
+                                        }
+                                        respuesta = jsonify(mensaje)
+                                        respuesta.status_code = 200
+                                        return respuesta
+                                    
+                                    # Busco en [Proyecto] el idEmpresa, adicional tomo el nombre del proyecto
+                                    proyecto = Proyecto.query.filter(Proyecto.idProyecto == ficha_proyecto.idProyecto).first()
+                                    if not(ficha):
+                                        mensaje: dict = {
+                                        "Mensaje 200": f'El proyecto: {ficha_proyecto.idProyecto} - no existe'
+                                        }
+                                        respuesta = jsonify(mensaje)
+                                        respuesta.status_code = 200
+                                        return respuesta
+                                    
+
+                                    # Busco en [Empresa] con el idEmpresa, el nombre de la empresa
+                                    empresa = Empresa.query.filter(Empresa.idEmpresa == proyecto.empresa_id).first()
+                                    if not(ficha):
+                                        mensaje: dict = {
+                                        "Mensaje 200": f'La empresa: {proyecto.empresa_id} - no existe'
+                                        }
+                                        respuesta = jsonify(mensaje)
+                                        respuesta.status_code = 200
+                                        return respuesta
+
                                     nuevo_candidato_emparejado = FichaCandidatoEmparejadoPerfil(
                                             idFicha=ficha.idFicha,
+                                            idProyecto = ficha_proyecto.idProyecto,
+                                            nombreProyecto = proyecto.nombreProyecto,
+                                            nombreEmpresa = empresa.razonSocial,
+                                            idEmpresa = proyecto.empresa_id,
                                             idCandidato=candidato["idCandidato"],
                                             nombreCandidato=candidato["nombre"],
                                             idPerfil=idperfil['idPerfil'],
                                             descripcionPerfil=descripcionPerfiles.descripcion                           
                                         )
 
-                                    db.session.add(nuevo_candidato_emparejado)
+                                    dic_candidatos_emparejados = {
+                                            "idFicha":ficha.idFicha,
+                                            "idProyecto" : ficha_proyecto.idProyecto,
+                                            "nombreProyecto" : proyecto.nombreProyecto,
+                                            "nombreEmpresa" : empresa.razonSocial,
+                                            "idEmpresa" : proyecto.empresa_id,
+                                            "idCandidato":candidato["idCandidato"],
+                                            "nombreCandidato":candidato["nombre"],
+                                            "idPerfil":idperfil['idPerfil'],
+                                            "descripcionPerfil":descripcionPerfiles.descripcion
+                                    }
+
+                                    db.session.add(nuevo_candidato_emparejado)                                    
                                     db.session.commit()
-                    
+
+                                    # llamo al MS de pruebas y entrevista:
+                                    #jsonEntrevistas = requests.post("http://127.0.0.1:5003/test/interviews",
+                                    #                                            headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
+                                    jsonEntrevistas = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
+                                                                                headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
+
+                                    if jsonEntrevistas.status_code != 201:
+                                        mensaje: dict = {
+                                            "mensaje 402": "El servicio de Candidato en el recurso /test/interviews no esta respondiendo"
+                                        }
+                                        respuesta = jsonify(mensaje)
+                                        respuesta.status_code = 401
+                                        return respuesta
+
+
                     # Actualizar el estado de la ficha
                     db.session.query(Ficha).filter(Ficha.idFicha == ficha.idFicha).update({Ficha.estadoEmparejamiento: True})
                     db.session.commit()

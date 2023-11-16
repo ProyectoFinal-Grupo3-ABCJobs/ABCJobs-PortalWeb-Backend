@@ -85,17 +85,95 @@ class VistaResultadoEntrevistasCandidatosPorIdEmpresa(Resource):
     def get(self, id_empresa):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-            entrevistas_candidato_empresa = Entrevista.query.filter(
+            candidatos_aprobados_entrevista = Entrevista.query.filter(
                 Entrevista.idEmpresa == id_empresa, Entrevista.aprobado == True ).all()
-            print("Resultado entrevistas son: ",entrevistas_candidato_empresa)
+            
+            if candidatos_aprobados_entrevista:
+                listaTempCandidatosAprobados = []
+                listaProyectos = []
+                listaNombreProyectos= []
+                listFinalMaster = []
+                vlrIdProyecto = ''
+                vlrNombreProyecto = ''
+                vlrIdproyectoTmp = ''
+                listaCandidatosAprobados = [entrevista_schema.dump(tr) for tr in candidatos_aprobados_entrevista]
+                listaTempCandidatosAprobados = listaCandidatosAprobados[:]
+                
+                for dicCandidatosAprobados in listaCandidatosAprobados:
+                    vlrIdProyecto = dicCandidatosAprobados['idProyecto']
+                    vlrNombreProyecto = dicCandidatosAprobados['proyectoNombre']
+                    for candidatosTemp in listaTempCandidatosAprobados:
+                        vlrIdproyectoTmp = candidatosTemp['idProyecto']
+                
+                        if vlrIdProyecto == vlrIdproyectoTmp:
 
+                            if vlrIdProyecto not in listaProyectos:
 
+                                listaProyectos.append(vlrIdProyecto)
+                                listaNombreProyectos.append(vlrNombreProyecto)
+
+                # Construccion del maestro 1 - Proyectos Encabezado
+                if len(listaProyectos) == len(listaNombreProyectos):
+                    for index in range(len(listaProyectos)):
+                        dicFicha = {
+                            "idProyecto":listaProyectos[index],
+                            "proyectoNombre":listaNombreProyectos[index],
+                            "perfiles": [],
+                        }
+                        listFinalMaster.append(dicFicha)               
+                #print("El encabezado de la peticion es:: ", listFinalMaster)
+                listaPerfiles = []
+                dicDetallePerfiles = {}
+                for idx in range(len(listFinalMaster)):
+                    perfiles_proyecto = (
+                        db.session.query(Entrevista.idPerfil,Entrevista.perfilDescripcion)
+                        .filter(Entrevista.idProyecto == listFinalMaster[idx]['idProyecto'])
+                        .distinct()
+                        .all())
+
+                    for perfil in perfiles_proyecto:
+                        dicDetallePerfiles = {
+                            "idperfil": perfil[0],
+                            "perfilNombre": perfil[1],
+                            "candidatos":[]
+                        }
+
+                        listaPerfiles.append(dicDetallePerfiles)
+
+                    listFinalMaster[idx]['perfiles']=listaPerfiles
+                    listaPerfiles=[]
+                listaPerfilesDepurados = []
+                listarCandidatos = []
+                dicDetalleCandidatos = {}
+                for idx2 in range(len(listFinalMaster)):
+                    listaPerfilesDepurados = listFinalMaster[idx2]['perfiles']
+                    for idx3 in range(len(listaPerfilesDepurados)):
+                        candidatos_aprobados = Entrevista.query.filter(
+                            Entrevista.idProyecto==listFinalMaster[idx2]['idProyecto'], Entrevista.idPerfil == listaPerfilesDepurados[idx3]['idperfil'],Entrevista.aprobado == True ).all()
+                        for cand in candidatos_aprobados:
+                            dicDetalleCandidatos = {
+                            "idCandidato": cand.idCandidato,
+                            "nombreCandidato": cand.candidatoNombre,
+                            }
+                            listarCandidatos.append(dicDetalleCandidatos)
+
+                        listFinalMaster[idx2]['perfiles'][idx3]['candidatos'] = listarCandidatos
+                        listarCandidatos = []
+                #respuesta = jsonify(listFinalMaster)
+                #listFinalMaster.status_code = 200
+                return listFinalMaster
+            else:
+                mensaje: dict = {
+                    "mensaje 200": "La empresa no tiene candidatos a contratar"
+                }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 200
+                return respuesta
 
 # EndPoint para consumo desde empresa - Proceso para cargar la tabla de Entrevista
 class VistaAdicionarCandidatosEmparejadosAEntrevista(Resource):
     @jwt_required()
     def post(self):
-        print("Hoal desde pruebas endpont Entrevista")
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             

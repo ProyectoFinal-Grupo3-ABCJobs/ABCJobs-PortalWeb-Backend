@@ -535,10 +535,10 @@ class VistaMotorEmparejamientoInterno(Resource):
                                     #                                            headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
                                     jsonEntrevistas = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
                                                                                 headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
-
+                                    print("Hola desde empresa")
                                     if jsonEntrevistas.status_code != 201:
                                         mensaje: dict = {
-                                            "mensaje 402": "El servicio de Candidato en el recurso /test/interviews no esta respondiendo"
+                                            "mensaje 401": "El servicio de Candidato en el recurso /test/interviews no esta respondiendo"
                                         }
                                         respuesta = jsonify(mensaje)
                                         respuesta.status_code = 401

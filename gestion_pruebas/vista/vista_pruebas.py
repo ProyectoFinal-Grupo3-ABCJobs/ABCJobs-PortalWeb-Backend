@@ -95,6 +95,7 @@ class VistaResultadoEntrevistasCandidatosPorIdEmpresa(Resource):
 class VistaAdicionarCandidatosEmparejadosAEntrevista(Resource):
     @jwt_required()
     def post(self):
+        print("Hoal desde pruebas endpont Entrevista")
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             

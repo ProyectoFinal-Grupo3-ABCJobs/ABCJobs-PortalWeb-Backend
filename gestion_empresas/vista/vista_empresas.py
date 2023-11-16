@@ -533,7 +533,7 @@ class VistaMotorEmparejamientoInterno(Resource):
                                     # llamo al MS de pruebas y entrevista:
                                     #jsonEntrevistas = requests.post("http://127.0.0.1:5003/test/interviews",
                                     #                                            headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
-                                    jsonEntrevistas = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
+                                    jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
                                                                                 headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
                                     print("Hola desde empresa")
                                     if jsonEntrevistas.status_code != 201:

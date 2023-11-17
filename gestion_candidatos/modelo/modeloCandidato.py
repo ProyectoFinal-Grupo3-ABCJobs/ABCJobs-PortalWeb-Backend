@@ -27,6 +27,7 @@ class Candidato(db.Model):
     anioRetiro          = db.Column(db.Integer)
     estado              = db.Column(db.Boolean, default=False)
     palabrasClave       = db.Column(db.String(300))
+    idUsuario           = db.Column(db.Integer)
 
 class CandidatoSchema(SQLAlchemyAutoSchema):
     class Meta:

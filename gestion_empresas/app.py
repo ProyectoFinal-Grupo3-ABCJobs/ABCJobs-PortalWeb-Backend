@@ -11,10 +11,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaMotorEmparejamientoTempFicha
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaMotorEmparejamientoTempFicha, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato
     from modelo import db
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaMotorEmparejamientoTempFicha
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaMotorEmparejamientoTempFicha, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato
     from gestion_empresas.modelo import db
 
 load_dotenv()
@@ -57,13 +57,15 @@ api.add_resource(VistaConsultaPerfil,'/company/projects/<int:id_proyecto>/profil
 api.add_resource(VistaCreacionPerfil,'/company/projects/<int:id_proyecto>/profiles')
 api.add_resource(VistaFicha,'/company/projects/<int:id_proyecto>/files')
 
+
 # Endpoints de Motor de Emparejamiento
 api.add_resource(VistaMotorEmparejamiento,'/company/motorEmparejamiento')
 api.add_resource(VistaMotorEmparejamientoTempFicha,'/company/motorEmparejamientoTempFicha')
 api.add_resource(VistaResultadoEmparejamientoPorIdProyecto,'/company/motorEmparejamiento/proyectos/<int:id_proyecto>')
+api.add_resource(VistaEliminarCandidatoMotorPorIdProyecto,'/company/motorEmparejamiento/proyectos/<int:id_proyecto>/candidatos/<int:id_candidato>')
 
-# EndPoints Contratación de Candidatos:
-
+# Endpoints de contratacion
+api.add_resource(VistaContratoCandidato,'/company/contratoCandidato')
 
 jwt = JWTManager(app)
 

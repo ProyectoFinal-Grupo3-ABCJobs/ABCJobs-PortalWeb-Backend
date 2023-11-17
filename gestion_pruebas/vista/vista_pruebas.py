@@ -197,3 +197,25 @@ class VistaAdicionarCandidatosEmparejadosAEntrevista(Resource):
             respuesta.status_code = 201
             return respuesta
             
+
+class VistaEliminarCandidatoTblEntrevistaPorIds(Resource):
+    @jwt_required()
+    def delete(self,id_proyecto,id_candidato,id_empresa):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            # encabezado_autorizacion = request.headers.get("Authorization")
+            # datos_json = request.get_json()
+
+            res_candidato_entrevista = Entrevista.query.filter(Entrevista.idProyecto == id_proyecto,Entrevista.idCandidato == id_candidato,Entrevista.idEmpresa == id_empresa).first()
+
+            if res_candidato_entrevista:
+                
+                db.session.delete(res_candidato_entrevista)
+                db.session.commit()
+
+                mensaje: dict = {
+                        "Mensaje 204": "Candidato eliminado de la tabla emparejamiento-perfil"
+                    }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 204
+                return respuesta

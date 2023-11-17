@@ -122,3 +122,29 @@ class VistaSaludServicio(Resource):
           respuesta = jsonify(mensaje)
           respuesta.status_code = 200
           return respuesta
+
+
+class VistaModificarEstadoCandidato(Resource):
+    @jwt_required()
+    def put(self,id_candidato):
+          tokenPayload = get_jwt_identity()
+          if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+               candidato = Candidato.query.filter(Candidato.idCandidato == id_candidato).first()
+               
+               if candidato:
+                    candidato.estado = True
+                    db.session.commit()
+                    dicCandidato = {
+                         "idCandidato": candidato.idCandidato,
+                         "nombre": candidato.nombre,
+                         "profesion": candidato.profesion,
+                         "estado":candidato.estado
+                         }
+                    respuesta = jsonify(dicCandidato)
+                    respuesta.status_code = 200
+                    return respuesta
+               else:
+                    mensaje:dict = {'mensaje 200':"El candidato no Existe"}
+                    respuesta = jsonify(mensaje)
+                    respuesta.status_code = 200
+                    return respuesta

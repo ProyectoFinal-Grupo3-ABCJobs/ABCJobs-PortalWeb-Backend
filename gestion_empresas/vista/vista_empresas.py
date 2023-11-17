@@ -31,6 +31,8 @@ if carpeta_actual == "gestion_empresas" or carpeta_actual == "app":
         FichaPerfilSchema,
         FichaCandidatoEmparejadoPerfil,
         FichaCandidatoEmparejadoPerfilSchema,
+        Contrato,
+        ContratoSchema
     )
 else:
     from gestion_empresas.modelo import (
@@ -50,8 +52,11 @@ else:
         FichaPerfilSchema,
         FichaCandidatoEmparejadoPerfil,
         FichaCandidatoEmparejadoPerfilSchema,
+        Contrato,
+        ContratoSchema
     )
 
+contrato_schema = ContratoSchema()
 empresa_schema = EmpresaSchema()
 proyecto_schema = ProyectoSchema()
 empleado_interno_schema = EmpleadoInternoSchema()
@@ -805,4 +810,48 @@ class VistaResultadoEmparejamientoPorIdProyecto(Resource):
                 respuesta = jsonify(mensaje)
                 respuesta.status_code = 200
                 return respuesta
-            
+
+
+
+
+class VistaEliminarCandidatoMotorPorIdProyecto(Resource):
+    @jwt_required()
+    def delete(self,id_proyecto,id_candidato):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            res_ficha_candidato_perfil = FichaCandidatoEmparejadoPerfil.query.filter(FichaCandidatoEmparejadoPerfil.idProyecto == id_proyecto,FichaCandidatoEmparejadoPerfil.idCandidato == id_candidato).first()
+
+            if res_ficha_candidato_perfil:
+                
+                db.session.delete(res_ficha_candidato_perfil)
+                db.session.commit()
+
+                mensaje: dict = {
+                        "Mensaje 204": "Candidato eliminado de la tabla emparejamiento-perfil"
+                    }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 204
+                return respuesta
+
+
+class VistaContratoCandidato(Resource):
+    @jwt_required()
+    def post(self):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+
+            nuevo_contrato = Contrato(
+               numeroContrato=request.json["numeroContrato"],
+               idCandidato=request.json["idCandidato"],
+               idEmpresa=request.json["idEmpresa"],
+               idProyecto=request.json["idProyecto"],
+               idCargo=request.json["idCargo"])
+            db.session.add(nuevo_contrato)
+            db.session.commit()
+
+            mensaje: dict = {
+                        "Mensaje 201": "Contrato almacenado correctamente"
+                    }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 201
+            return respuesta

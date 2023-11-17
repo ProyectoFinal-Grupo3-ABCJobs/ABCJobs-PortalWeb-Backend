@@ -11,10 +11,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_pruebas' or carpeta_actual=='app':
-    from vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoEntrevistasCandidatosPorIdEmpresa, VistaAdicionarCandidatosEmparejadosAEntrevista
+    from vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoEntrevistasCandidatosPorIdEmpresa, VistaAdicionarCandidatosEmparejadosAEntrevista, VistaEliminarCandidatoTblEntrevistaPorIds
     from modelo import db
 else:    
-    from gestion_pruebas.vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoEntrevistasCandidatosPorIdEmpresa, VistaAdicionarCandidatosEmparejadosAEntrevista
+    from gestion_pruebas.vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoEntrevistasCandidatosPorIdEmpresa, VistaAdicionarCandidatosEmparejadosAEntrevista, VistaEliminarCandidatoTblEntrevistaPorIds
     from gestion_pruebas.modelo import db
 
 load_dotenv()
@@ -50,6 +50,7 @@ api.add_resource(VistaSaludServicio,'/test/ping')
 # EndPoints resultados Entrevista
 api.add_resource(VistaResultadoEntrevistasCandidatosPorIdEmpresa,'/test/company/<int:id_empresa>/interviews')
 api.add_resource(VistaAdicionarCandidatosEmparejadosAEntrevista,'/test/interviews')
+api.add_resource(VistaEliminarCandidatoTblEntrevistaPorIds,'/test/proyectos/<int:id_proyecto>/candidatos/<int:id_candidato>/empresas/<int:id_empresa>')
 
 jwt = JWTManager(app)
 

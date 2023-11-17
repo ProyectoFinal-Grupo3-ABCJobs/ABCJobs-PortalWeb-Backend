@@ -61,6 +61,22 @@ class FichaCandidatoEmparejadoPerfil(db.Model):
     descripcionPerfil = db.Column(db.String(100))
     estado = db.Column(db.Boolean, default=False)
 
+
+class Contrato(db.Model):
+    idContrato = db.Column(db.Integer, primary_key=True)
+    numeroContrato = db.Column(db.Integer)
+    idCandidato = db.Column(db.Integer)
+    idEmpresa = db.Column(db.Integer)
+    idProyecto = db.Column(db.Integer)
+    idCargo = db.Column(db.Integer)
+
+
+class ContratoSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Contrato
+        load_instance = True
+
+
 class EmpresaSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Empresa

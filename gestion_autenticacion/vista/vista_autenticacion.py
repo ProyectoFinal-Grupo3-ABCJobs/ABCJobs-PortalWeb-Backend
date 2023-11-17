@@ -9,13 +9,13 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
-     from modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
+     from modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema, Candidato, CandidatoSchema
 else:
-     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa,EmpresaSchema
+     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa,EmpresaSchema, Candidato, CandidatoSchema
 
 user_schema = UsuarioSchema()
 empresa_schema = EmpresaSchema()
-
+candidato_schema = CandidatoSchema()
 
 class VistaGenerarToken(Resource):
     def post(self):
@@ -63,14 +63,20 @@ class VistaGenerarToken(Resource):
                return respuesta
 
           empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
-
           
           if empresa is None:
                idEmpCanFunc:str='';
           else:
                idEmpCanFunc = empresa.idEmpresa
 
+          candidato = Candidato.query.filter(Candidato.idUsuario == usuario.id).first()
           
+          if candidato is None:
+               idEmpCanFunc:str='';
+          else:
+               idEmpCanFunc = candidato.idCandidato
+
+         
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,

@@ -9,6 +9,7 @@ on:
       - feature/PA-13
       - feature/HUS-PA-20
       - feature/PA-112
+      - feature/PA-42
  
 # Definir los Jobs
 jobs:

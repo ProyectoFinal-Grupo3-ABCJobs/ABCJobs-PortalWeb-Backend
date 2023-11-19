@@ -11,10 +11,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaMotorEmparejamientoTempFicha, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaMotorEmparejamientoTempFicha, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado
     from modelo import db
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaMotorEmparejamientoTempFicha, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaMotorEmparejamiento, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaMotorEmparejamientoTempFicha, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado
     from gestion_empresas.modelo import db
 
 load_dotenv()
@@ -66,6 +66,9 @@ api.add_resource(VistaEliminarCandidatoMotorPorIdProyecto,'/company/motorEmparej
 
 # Endpoints de contratacion
 api.add_resource(VistaContratoCandidato,'/company/contratoCandidato')
+
+# Endpoints de Evaluación Desempeño Empleado
+api.add_resource(VistaCreacionDesempenoEmpleado,'/company/desempenoCandidato')
 
 jwt = JWTManager(app)
 

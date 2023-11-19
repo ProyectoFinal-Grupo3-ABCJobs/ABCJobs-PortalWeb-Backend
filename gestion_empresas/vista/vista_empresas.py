@@ -32,7 +32,9 @@ if carpeta_actual == "gestion_empresas" or carpeta_actual == "app":
         FichaCandidatoEmparejadoPerfil,
         FichaCandidatoEmparejadoPerfilSchema,
         Contrato,
-        ContratoSchema
+        ContratoSchema,
+        DesempenoEmpleado,
+        DesempenoEmpleadoSchema
     )
 else:
     from gestion_empresas.modelo import (
@@ -53,7 +55,9 @@ else:
         FichaCandidatoEmparejadoPerfil,
         FichaCandidatoEmparejadoPerfilSchema,
         Contrato,
-        ContratoSchema
+        ContratoSchema,
+        DesempenoEmpleado,
+        DesempenoEmpleadoSchema
     )
 
 contrato_schema = ContratoSchema()
@@ -64,6 +68,7 @@ perfil_schema = PerfilSchema()
 ficha_schema = FichaSchema()
 ficha_candidato_emparejado_perfil_schema = FichaCandidatoEmparejadoPerfilSchema()
 ficha_perfil_schema = FichaPerfilSchema()
+desempenoEmpleado_schema = DesempenoEmpleadoSchema
 
 class VistaSaludServicio(Resource):
     def get(self):
@@ -854,4 +859,49 @@ class VistaContratoCandidato(Resource):
                     }
             respuesta = jsonify(mensaje)
             respuesta.status_code = 201
+            return respuesta
+
+
+class VistaCreacionDesempenoEmpleado(Resource):
+    @jwt_required()
+    def post(self, id_empleado):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            try:
+                if (
+                    len(request.json["calificacion"].strip()) == 0
+                    or len(str(request.json["aspectosResaltar"]).strip()) == 0
+                    or len(str(request.json["aspectosMejorar"]).strip()) == 0
+                ):
+                    return "Code 400: Hay campos obligatorios vacíos", 400
+            except:
+                return "Code 400: Hay campos obligatorios vacíos", 400
+
+            nuevo_desempenoEmpleado = DesempenoEmpleado(
+                idEmpleado=id_empleado,
+                calificacion=request.json["calificacion"],
+                aspectosResaltar=request.json["aspectosResaltar"],
+                aspectosMejorar=request.json["aspectosMejorar"]
+            )
+
+            db.session.add(nuevo_desempenoEmpleado)
+            db.session.commit()
+
+            desempenoEmpleado_creado = DesempenoEmpleado.query.filter(
+                DesempenoEmpleado.idEmpleado == id_empleado
+            ).first()
+
+            return {
+                "id": desempenoEmpleado_creado.idDesempeno,
+                "calificacion": desempenoEmpleado_creado.calificacion,
+                "aspectosResaltar": desempenoEmpleado_creado.aspectosResaltar,
+                "aspectosMejorar": desempenoEmpleado_creado.aspectosMejorar,
+            }, 201
+
+        else:
+            mensaje: dict = {
+                "mensaje": "El token enviado no corresponde al perfil del usuario"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
             return respuesta

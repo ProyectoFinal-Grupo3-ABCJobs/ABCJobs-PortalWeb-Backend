@@ -19,7 +19,7 @@ candidato_schema = CandidatoSchema()
 
 class VistaGenerarToken(Resource):
     def post(self):
-          
+          idEmpCanFunc=''
           if not request.data:
                mensaje:dict = {'error 1010':"Solicitud sin datos"}
                respuesta = jsonify(mensaje)
@@ -62,19 +62,15 @@ class VistaGenerarToken(Resource):
                respuesta.status_code = 400
                return respuesta
 
-          empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
-          
-          if empresa is None:
-               idEmpCanFunc:str='';
-          else:
-               idEmpCanFunc = empresa.idEmpresa
+          if usuario.tipoUsuario.upper() == 'EMPRESA':
+               empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
+               if empresa:
+                    idEmpCanFunc = empresa.idEmpresa
 
-          candidato = Candidato.query.filter(Candidato.idUsuario == usuario.id).first()
-          
-          if candidato is None:
-               idEmpCanFunc:str='';
-          else:
-               idEmpCanFunc = candidato.idCandidato
+          if usuario.tipoUsuario.upper() == 'CANDIDATO':
+               candidato = Candidato.query.filter(Candidato.idUsuario == usuario.id).first()
+               if candidato:
+                    idEmpCanFunc = candidato.idCandidato
 
          
           data = {

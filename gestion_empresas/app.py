@@ -68,7 +68,7 @@ api.add_resource(VistaEliminarCandidatoMotorPorIdProyecto,'/company/motorEmparej
 api.add_resource(VistaContratoCandidato,'/company/contratoCandidato')
 
 # Endpoints de Evaluación Desempeño Empleado
-api.add_resource(VistaCreacionDesempenoEmpleado,'/company/desempenoCandidato')
+api.add_resource(VistaCreacionDesempenoEmpleado,'/company/desempenoEmpleado')
 
 jwt = JWTManager(app)
 

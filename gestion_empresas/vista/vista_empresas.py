@@ -180,6 +180,49 @@ class VistaConsultaProyectoPorEmpresa(Resource):
             respuesta.status_code = 401
             return respuesta
 
+class VistaListaProyectosSinFichaPorIdEmpresa(Resource):
+    @jwt_required()
+    def get(self, id_empresa):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            proyectos_empresa = Proyecto.query.filter(
+                Proyecto.empresa_id == id_empresa
+            ).all()
+
+            if len(proyectos_empresa) == 0:
+                mensaje: dict = {
+                    "mensaje 1212": "La empresa no tiene proyectos creados"
+                }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 200
+                return respuesta
+            else:
+                dicProyectoSinFicha = {}
+                listaProyectoSinFicha = []
+                for proyecto in proyectos_empresa:
+                    ficha_proyecto = Ficha.query.filter(Ficha.idProyecto == proyecto.idProyecto).all()
+                    if not(ficha_proyecto):
+                        dicProyectoSinFicha = {
+                            "idProyecto": proyecto.idProyecto,
+                            "nombreProyecto": proyecto.nombreProyecto,
+                            "numeroColaboradores": proyecto.numeroColaboradores,
+                            "fechaInicio":proyecto.fechaInicio.strftime("%Y-%m-%d"),
+                            "empresa_id": proyecto.empresa_id
+                        }
+                        listaProyectoSinFicha.append(dicProyectoSinFicha)
+                print("Estos son los proyectos a listar para crear ficha: ", listaProyectoSinFicha)
+                # return [proyecto_schema.dump(tr) for tr in proyectos_empresa]
+                return listaProyectoSinFicha
+        else:
+            mensaje: dict = {
+                "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
+
+
+
 class VistaObtenerEmpresaPorIdUsuario(Resource):
     @jwt_required()
     def post(self):

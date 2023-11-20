@@ -75,7 +75,6 @@ class DesempenoEmpleado(db.Model):
     idDesempeno = db.Column(db.Integer, primary_key=True)
     idEmpleado = db.Column(db.Integer)
     calificacion = db.Column(db.String(100))
-    calificacion = db.Column(db.String(100))
     aspectosResaltar = db.Column(db.String(2000)) 
     aspectosMejorar = db.Column(db.String(2000))
 

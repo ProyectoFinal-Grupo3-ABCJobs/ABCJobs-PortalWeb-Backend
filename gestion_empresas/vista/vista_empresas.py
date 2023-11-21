@@ -468,23 +468,6 @@ class VistaAsignacionEmpleado(Resource):
             respuesta.status_code = 401
             return respuesta
 
-# class VistaMotorEmparejamientoTempFicha(Resource):
-#     def post(self):
-#         encabezado_autorizacion = request.headers.get("Authorization")
-#         if encabezado_autorizacion:
-                                  
-#             motor_emparejamiento = VistaMotorEmparejamientoInterno()
-#             respuesta = motor_emparejamiento.ejecutarEmparejamiento(encabezado_autorizacion)
-#             return respuesta
-#         else:
-#             mensaje: dict = {
-#                 "mensaje": "No se ha enviado token al motor de emparejamiento"
-#             }
-#             respuesta = jsonify(mensaje)
-#             respuesta.status_code = 200
-#             return respuesta
-
-
 class VistaMotorEmparejamientoInterno(Resource):    
     #def ejecutarEmparejamiento(self,token):
     #@jwt_required()
@@ -764,9 +747,6 @@ class VistaResultadoEmparejamientoPorIdProyecto(Resource):
                 respuesta.status_code = 200
                 return respuesta
 
-
-
-
 class VistaEliminarCandidatoMotorPorIdProyecto(Resource):
     @jwt_required()
     def delete(self,id_proyecto,id_candidato):
@@ -785,7 +765,6 @@ class VistaEliminarCandidatoMotorPorIdProyecto(Resource):
                 respuesta = jsonify(mensaje)
                 respuesta.status_code = 204
                 return respuesta
-
 
 class VistaContratoCandidato(Resource):
     @jwt_required()
@@ -808,7 +787,6 @@ class VistaContratoCandidato(Resource):
             respuesta = jsonify(mensaje)
             respuesta.status_code = 201
             return respuesta
-
 
 class VistaCreacionDesempenoEmpleado(Resource):
     @jwt_required()

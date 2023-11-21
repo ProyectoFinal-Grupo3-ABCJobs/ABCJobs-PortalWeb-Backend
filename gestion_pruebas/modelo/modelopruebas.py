@@ -10,11 +10,16 @@ class Prueba(db.Model):
     fechaPrueba = db.Column(db.DateTime)
     resultado   = db.Column(db.String(50))
     observaciones = db.Column(db.String(2000))
-    estado      = db.Column(db.Boolean)
-    idCandidato = db.Column(db.Integer)
-    idEmpresa   = db.Column(db.Integer)
-    idProyecto  = db.Column(db.Integer)
+    idEmpresa       = db.Column(db.Integer)
+    empresaNombre   = db.Column(db.String(100))
+    idCandidato     = db.Column(db.Integer)
+    candidatoNombre = db.Column(db.String(100))
+    idProyecto      = db.Column(db.Integer)
+    proyectoNombre  = db.Column(db.String(100))
+    idPerfil         = db.Column(db.Integer)
+    perfilDescripcion = db.Column(db.String(100))
     aprobado    = db.Column(db.Boolean, default=False)
+    estado      = db.Column(db.Boolean)
 
 
 class Entrevista(db.Model):
@@ -30,11 +35,6 @@ class Entrevista(db.Model):
     perfilDescripcion = db.Column(db.String(100))
     detalles        = db.Column(db.String(2000))
     estado          = db.Column(db.Boolean, default=False)
-
-
-
-
-
     aprobado        = db.Column(db.Boolean, default=False)
 
 

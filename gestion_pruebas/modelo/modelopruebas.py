@@ -22,12 +22,12 @@ class Prueba(db.Model):
     aprobado    = db.Column(db.Boolean, default=False)
     estado      = db.Column(db.Boolean)
 
-def two_days_from_now_at_8_am():
-    return (datetime.now() + timedelta(days=2)).replace(hour=8, minute=0, second=0, microsecond=0)
+def two_days_from_now():
+    return (datetime.now() + timedelta(days=2))
 
 class Entrevista(db.Model):
     idEntrevista    = db.Column(db.Integer, primary_key=True)
-    fechaEntrevista = db.Column(db.DateTime, default=two_days_from_now_at_8_am)
+    fechaEntrevista = db.Column(db.Date, default=two_days_from_now)
     idEmpresa       = db.Column(db.Integer)
     empresaNombre   = db.Column(db.String(100))
     idCandidato     = db.Column(db.Integer)

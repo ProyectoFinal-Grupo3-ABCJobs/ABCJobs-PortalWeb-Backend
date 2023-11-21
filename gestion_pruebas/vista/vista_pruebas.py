@@ -172,30 +172,56 @@ class VistaResultadoEntrevistasCandidatosPorIdEmpresa(Resource):
 
 # EndPoint para consumo desde empresa - Proceso para cargar la tabla de Entrevista
 class VistaAdicionarCandidatosEmparejadosAEntrevista(Resource):
-    @jwt_required()
+    #@jwt_required()
     def post(self):
-        tokenPayload = get_jwt_identity()
-        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+        #tokenPayload = get_jwt_identity()
+        #if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             
-            nuevo_entrevista_emparejado = Entrevista(
-                idProyecto = request.json['idProyecto'],
-                proyectoNombre = request.json['nombreProyecto'],
-                empresaNombre = request.json['nombreEmpresa'],
-                idEmpresa = request.json['idEmpresa'],
-                idCandidato=request.json['idCandidato'],
-                candidatoNombre =request.json['nombreCandidato'],
-                idPerfil=request.json['idPerfil'],
-                perfilDescripcion =request.json['descripcionPerfil'])
-            
-            db.session.add(nuevo_entrevista_emparejado)                                    
+        nuevo_entrevista_emparejado = Entrevista(
+            idProyecto = request.json['idProyecto'],
+            proyectoNombre = request.json['nombreProyecto'],
+            empresaNombre = request.json['nombreEmpresa'],
+            idEmpresa = request.json['idEmpresa'],
+            idCandidato=request.json['idCandidato'],
+            candidatoNombre =request.json['nombreCandidato'],
+            idPerfil=request.json['idPerfil'],
+            perfilDescripcion =request.json['descripcionPerfil'])
+        
+        db.session.add(nuevo_entrevista_emparejado)                                    
+        db.session.commit()
+        
+        mensaje: dict = {
+            "mensaje 201": "Entrevista registrada correctamente"
+        }
+        respuesta = jsonify(mensaje)
+        respuesta.status_code = 201
+
+        tipoPrueba = ['TECNICA', 'IDIOMA', 'HABILIDADES_BLANDAS', 'PERSONALIDAD']
+    
+        for i in range(4):
+            nuevo_prueba_emparejado = Prueba(
+            idProyecto = request.json['idProyecto'],
+            tipoPrueba = tipoPrueba[i],
+            proyectoNombre = request.json['nombreProyecto'],
+            empresaNombre = request.json['nombreEmpresa'],
+            idEmpresa = request.json['idEmpresa'],
+            idCandidato=request.json['idCandidato'],
+            candidatoNombre =request.json['nombreCandidato'],
+            idPerfil=request.json['idPerfil'],
+            perfilDescripcion =request.json['descripcionPerfil'])
+        
+            db.session.add(nuevo_prueba_emparejado)                                    
             db.session.commit()
             
             mensaje: dict = {
-                "mensaje 201": "Entrevista registraa correctamente"
+                "mensaje 201": "Pruebas registrada correctamente"
             }
             respuesta = jsonify(mensaje)
             respuesta.status_code = 201
-            return respuesta
+        
+        return respuesta
+
+
             
 
 class VistaEliminarCandidatoTblEntrevistaPorIds(Resource):

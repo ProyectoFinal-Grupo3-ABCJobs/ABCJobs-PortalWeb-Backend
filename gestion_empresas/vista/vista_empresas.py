@@ -343,6 +343,22 @@ class VistaConsultaPerfil(Resource):
         else:
             return "El token enviado no corresponde al perfil del usuario", 401
 
+
+class VistaConsultaTodosPerfiles(Resource):
+    @jwt_required()
+    def get(self):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            perfiles_proyecto = Perfil.query.filter(              
+            ).all()
+
+            if len(perfiles_proyecto) == 0:
+                return "El proyecto no tiene perfiles asociados", 404
+            else:
+                return [perfil_schema.dump(tr) for tr in perfiles_proyecto]
+        else:
+            return "El token enviado no corresponde al perfil del usuario", 401
+
 class VistaCreacionPerfil(Resource):
     @jwt_required()
     def post(self, id_proyecto):

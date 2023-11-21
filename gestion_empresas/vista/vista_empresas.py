@@ -602,16 +602,16 @@ class VistaMotorEmparejamientoInterno(Resource):
                                     # llamo al MS de pruebas y entrevista:
                                     #jsonEntrevistas = requests.post("http://127.0.0.1:5003/test/interviews",
                                     #                                            headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
-                                    jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
-                                                                                headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
+                                    # jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
+                                    #                                             headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
 
-                                    if jsonEntrevistas.status_code != 201:
-                                        mensaje: dict = {
-                                            "mensaje 401": "El servicio de Candidato en el recurso /test/interviews no esta respondiendo"
-                                        }
-                                        respuesta = jsonify(mensaje)
-                                        respuesta.status_code = 401
-                                        return respuesta
+                                    # if jsonEntrevistas.status_code != 201:
+                                    #     mensaje: dict = {
+                                    #         "mensaje 401": "El servicio de Candidato en el recurso /test/interviews no esta respondiendo"
+                                    #     }
+                                    #     respuesta = jsonify(mensaje)
+                                    #     respuesta.status_code = 401
+                                    #     return respuesta
 
 
                     # Actualizar el estado de la ficha

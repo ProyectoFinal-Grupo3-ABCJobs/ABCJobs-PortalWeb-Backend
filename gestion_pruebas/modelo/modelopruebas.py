@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sqlalchemy import Date
+from datetime import datetime, timedelta
 
 db = SQLAlchemy()
 
@@ -21,10 +22,12 @@ class Prueba(db.Model):
     aprobado    = db.Column(db.Boolean, default=False)
     estado      = db.Column(db.Boolean)
 
+def two_days_from_now_at_8_am():
+    return (datetime.now() + timedelta(days=2)).replace(hour=8, minute=0, second=0, microsecond=0)
 
 class Entrevista(db.Model):
     idEntrevista    = db.Column(db.Integer, primary_key=True)
-    fechaEntrevista = db.Column(db.DateTime)
+    fechaEntrevista = db.Column(db.DateTime, default=two_days_from_now_at_8_am)
     idEmpresa       = db.Column(db.Integer)
     empresaNombre   = db.Column(db.String(100))
     idCandidato     = db.Column(db.Integer)
@@ -33,7 +36,7 @@ class Entrevista(db.Model):
     proyectoNombre  = db.Column(db.String(100))
     idPerfil         = db.Column(db.Integer)
     perfilDescripcion = db.Column(db.String(100))
-    detalles        = db.Column(db.String(2000))
+    detalles        = db.Column(db.String(2000), default="El candidato ha demostrado ser apto para el trabajo en equipo y tiene un buen manejo de las herramientas de desarrollo.")
     estado          = db.Column(db.Boolean, default=False)
     aprobado        = db.Column(db.Boolean, default=False)
 

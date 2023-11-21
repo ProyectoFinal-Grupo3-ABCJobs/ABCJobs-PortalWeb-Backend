@@ -5,10 +5,13 @@ from datetime import datetime, timedelta
 
 db = SQLAlchemy()
 
+def two_days_from_now():
+    return (datetime.now() + timedelta(days=2))
+
 class Prueba(db.Model):
     idPrueba    = db.Column(db.Integer, primary_key=True)
     tipoPrueba  = db.Column(db.String(50))
-    fechaPrueba = db.Column(db.DateTime)
+    fechaPrueba = db.Column(db.DateTime, default=two_days_from_now)
     resultado   = db.Column(db.String(50))
     observaciones = db.Column(db.String(2000))
     idEmpresa       = db.Column(db.Integer)
@@ -22,12 +25,13 @@ class Prueba(db.Model):
     aprobado    = db.Column(db.Boolean, default=False)
     estado      = db.Column(db.Boolean)
 
-def two_days_from_now():
-    return (datetime.now() + timedelta(days=2))
+def three_days_from_now():
+    return (datetime.now() + timedelta(days=3))
 
 class Entrevista(db.Model):
     idEntrevista    = db.Column(db.Integer, primary_key=True)
-    fechaEntrevista = db.Column(db.Date, default=two_days_from_now)
+    fechaEntrevista = db.Column(db.Date, default=three_days_from_now)
+    horaEntrevista  = db.Column(db.String(10), default='10:00 am')
     idEmpresa       = db.Column(db.Integer)
     empresaNombre   = db.Column(db.String(100))
     idCandidato     = db.Column(db.Integer)

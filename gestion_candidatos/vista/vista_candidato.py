@@ -73,20 +73,15 @@ class VistaRegistroInfoCandidato(Resource):
 
 
 class VistaObtenerTodosCandidatos(Resource):
-    @jwt_required()
     def get(self):
-          # tokenPayload = get_jwt_identity()
-          # if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+#          token = request.headers.get("Authorization")
+
           candidatos = Candidato.query.filter(Candidato.estado == False).all()
 
           # Nota: Posible logica para convertir los datos de palabasClave a String
 
           return [candidate_schema.dump(tr) for tr in candidatos]
-          # else:
-          #      mensaje:dict = {'mensaje':"La petición viene de un usuario que no es empresa"}
-          #      respuesta = jsonify(mensaje)
-          #      respuesta.status_code = 400
-          #      return respuesta
+
 
 class VistaObtenerCandidatoPorId(Resource):
     @jwt_required()

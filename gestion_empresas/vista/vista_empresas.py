@@ -210,8 +210,6 @@ class VistaListaProyectosSinFichaPorIdEmpresa(Resource):
                             "empresa_id": proyecto.empresa_id
                         }
                         listaProyectoSinFicha.append(dicProyectoSinFicha)
-                # print("Estos son los proyectos a listar para crear ficha: ", listaProyectoSinFicha)
-                # return [proyecto_schema.dump(tr) for tr in proyectos_empresa]
                 return listaProyectoSinFicha
         else:
             mensaje: dict = {
@@ -470,25 +468,33 @@ class VistaAsignacionEmpleado(Resource):
             respuesta.status_code = 401
             return respuesta
 
-class VistaMotorEmparejamientoTempFicha(Resource):
-    def post(self):
-        encabezado_autorizacion = request.headers.get("Authorization")
-        if encabezado_autorizacion:
+# class VistaMotorEmparejamientoTempFicha(Resource):
+#     def post(self):
+#         encabezado_autorizacion = request.headers.get("Authorization")
+#         if encabezado_autorizacion:
                                   
-            motor_emparejamiento = VistaMotorEmparejamientoInterno()
-            respuesta = motor_emparejamiento.ejecutarEmparejamiento(encabezado_autorizacion)
-            return respuesta
-        else:
-            mensaje: dict = {
-                "mensaje": "No se ha enviado token al motor de emparejamiento"
-            }
-            respuesta = jsonify(mensaje)
-            respuesta.status_code = 200
-            return respuesta
+#             motor_emparejamiento = VistaMotorEmparejamientoInterno()
+#             respuesta = motor_emparejamiento.ejecutarEmparejamiento(encabezado_autorizacion)
+#             return respuesta
+#         else:
+#             mensaje: dict = {
+#                 "mensaje": "No se ha enviado token al motor de emparejamiento"
+#             }
+#             respuesta = jsonify(mensaje)
+#             respuesta.status_code = 200
+#             return respuesta
 
 
-class VistaMotorEmparejamientoInterno(Resource):
-    def ejecutarEmparejamiento(self,token):
+class VistaMotorEmparejamientoInterno(Resource):    
+    #def ejecutarEmparejamiento(self,token):
+    #@jwt_required()
+    def post(self):
+        token = request.headers.get("Authorization")
+        #tokenPayload = get_jwt_identity()
+        #clave_perfiles = "perfiles"
+        #clave_ficha = "idFicha"
+        #if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+        
         fichasEmparejadas = Ficha.query.filter(Ficha.estadoEmparejamiento == True).all()
 
         if fichasEmparejadas:
@@ -499,8 +505,8 @@ class VistaMotorEmparejamientoInterno(Resource):
                     db.session.commit()
 
         fichasSinEmparejar = Ficha.query.filter(Ficha.estadoEmparejamiento == False).all()
+        
         if fichasSinEmparejar:
-
             encabezados_con_autorizacion = {
                             "Content-Type": "application/json",
                             "Authorization": token,
@@ -604,20 +610,20 @@ class VistaMotorEmparejamientoInterno(Resource):
 
                                     db.session.add(nuevo_candidato_emparejado)                                    
                                     db.session.commit()
-
+                                    print("Aca estoy para cada uno candidato emparejado")
                                     # llamo al MS de pruebas y entrevista:
                                     #jsonEntrevistas = requests.post("http://127.0.0.1:5003/test/interviews",
-                                    #                                            headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
-                                    # jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
-                                    #                                             headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
+                                    #                                           headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
+                                    jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
+                                                                                headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
 
-                                    # if jsonEntrevistas.status_code != 201:
-                                    #     mensaje: dict = {
-                                    #         "mensaje 401": "El servicio de Candidato en el recurso /test/interviews no esta respondiendo"
-                                    #     }
-                                    #     respuesta = jsonify(mensaje)
-                                    #     respuesta.status_code = 401
-                                    #     return respuesta
+                                    if jsonEntrevistas.status_code != 201:
+                                        mensaje: dict = {
+                                            "mensaje 401": "El servicio de Candidato en el recurso /test/interviews no esta respondiendo"
+                                        }
+                                        respuesta = jsonify(mensaje)
+                                        respuesta.status_code = 401
+                                        return respuesta
 
 
                     # Actualizar el estado de la ficha
@@ -667,129 +673,6 @@ class VistaMotorEmparejamientoInterno(Resource):
                         return emparejado
         return emparejado
 
-class VistaMotorEmparejamiento(Resource):
-    @jwt_required()
-    def post(self):
-       
-        tokenPayload = get_jwt_identity()
-        clave_perfiles = "perfiles"
-        clave_ficha = "idFicha"
-        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-            encabezado_autorizacion = request.headers.get("Authorization")
-            datos_json = request.get_json()
-
-            if clave_perfiles in datos_json and clave_ficha in datos_json:
-                if len(datos_json[clave_perfiles]) == 0:
-                    mensaje: dict = {
-                        "Mensaje 200": "La peticion no tiene [perfiles] para emparejar"
-                    }
-                    respuesta = jsonify(mensaje)
-                    respuesta.status_code = 200
-                    return respuesta
-                else:
-                    
-                    encabezados_con_autorizacion = {
-                        "Content-Type": "application/json",
-                        "Authorization": encabezado_autorizacion,
-                        }
-
-                    jsonCandidatos = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll",
-                    #jsonCandidatos = requests.get("http://127.0.0.1:5001/candidate/getAll",
-                                                    headers=encabezados_con_autorizacion)
-
-                    if jsonCandidatos.status_code != 200:
-                        mensaje: dict = {
-                            "Mensaje 401": "El servicio de Candidato en el recurso getAll no esta respondiento"
-                        }
-                        respuesta = jsonify(mensaje)
-                        respuesta.status_code = 401
-                        return respuesta
-
-                    if len(jsonCandidatos.json()) == 0:
-                        mensaje: dict = {
-                            "Mensaje 200": "El servicio candidato GetAll restorno sin datos"
-                        }
-                        respuesta = jsonify(mensaje)
-                        respuesta.status_code = 200
-                        return respuesta
-                    else:
-                        # Obtengo la lista de candidatos del requesto
-                        lista_candidatos = jsonCandidatos.json()
-
-                        listaPalabrasClaves=[]
-                        # Recorro el responde con los perfiles obtenidos
-                        for perfil in datos_json[clave_perfiles]:
-
-                            for candidato in lista_candidatos:
-
-                                # Llamado al motor de emparejamiento
-
-                                resultadoEmparejamiento = self.motorEmparejamiento(perfil["descripcion"], candidato['palabrasClave'])
-
-                                if resultadoEmparejamiento:
-                                  
-                                    # Valida si el perfil no exite en la tabla
-
-                                    nuevo_candidato_emparejado = FichaCandidatoEmparejadoPerfil(
-                                            idFicha=datos_json[clave_ficha],
-                                            idCandidato=candidato["idCandidato"],
-                                            nombreCandidato=candidato["nombre"],
-                                            idPerfil=perfil["idPerfil"],
-                                            descripcionPerfil=perfil["descripcion"]                           
-                                        )
-
-                                    db.session.add(nuevo_candidato_emparejado)
-                                    db.session.commit()
-                    mensaje: dict = {
-                            "Mensaje 200": "Proceso de emparejamiento realizado correctamente!"
-                        }
-                    respuesta = jsonify(mensaje)
-                    respuesta.status_code = 200
-                    return respuesta
-
-            else:
-                mensaje: dict = {
-                    "Mensaje 401": "La peticion JSON no tiene [perfiles] o [idficha]"
-                }
-                respuesta = jsonify(mensaje)
-                respuesta.status_code = 401
-                return respuesta
-
-        else:
-            mensaje: dict = {
-                "Mensaje 401": "El token enviado no corresponde al perfil del usuario"
-            }
-            respuesta = jsonify(mensaje)
-            respuesta.status_code = 401
-            return respuesta
-
-    # def motorEmparejamiento(self, perfil, listaPalabras):
-    def motorEmparejamiento(self, descripcionCargo, palabrasclaves):
-        listaPalabrasClave = []
-        listaPalabrasClave = palabrasclaves.split(",")
-
-        nlp = spacy.load("es_core_news_sm")
-
-        # Texto de ejemplo en español
-        texto = descripcionCargo.upper().strip()
-        lista = []
-
-        # Procesar el texto con spaCy
-        doc = nlp(texto)
-
-        # Inicializar una variable para verificar si la palabra está en el texto
-        emparejado = False
-        
-        # Palabra que deseas buscar
-        for palabra in listaPalabrasClave:
-
-        # Iterar a través de las palabras tokenizadas
-            for token in doc:
-                
-                    if token.text == palabra.upper().strip():
-                        emparejado = True
-                        return emparejado
-        return emparejado
 
 class VistaResultadoEmparejamientoPorIdProyecto(Resource):
     @jwt_required()

@@ -19,7 +19,7 @@ class VistaRegistroInfoCandidato(Resource):
     def post(self):
 
           try:
-                if len(request.json["tipoIdentificacion"].strip())==0 or len(request.json["identificacion"].strip())==0 or len(request.json["nombre"].strip())==0 or len(request.json["direccion"].strip())==0 or len(request.json["telefono"].strip())==0 or len(request.json["profesion"].strip())==0 or len(request.json["aniosExperiencia"].strip())==0 or len(request.json["idCiudad"].strip())==0 or len(request.json["idDepartamento"].strip())==0 or len(request.json["idPais"].strip())==0 or len(request.json["ultimoEstudio"].strip())==0 or len(request.json["institucion"].strip())==0 or len(request.json["anioGrado"].strip())==0 or len(request.json["idCiudadInst"].strip())==0 or len(request.json["idDepartamentoInst"].strip())==0 or len(request.json["cargoUltimoEmpleo"].strip())==0 or len(request.json["empresa"].strip())==0 or len(request.json["anioIngreso"].strip())==0 or len(request.json["palabrasClave"].strip())==0:
+                if len(request.json["tipoIdentificacion"].strip())==0 or len(request.json["identificacion"].strip())==0 or len(request.json["nombre"].strip())==0 or len(request.json["direccion"].strip())==0 or len(request.json["telefono"].strip())==0 or len(request.json["profesion"].strip())==0 or len(request.json["aniosExperiencia"].strip())==0 or len(request.json["idCiudad"].strip())==0 or len(request.json["idDepartamento"].strip())==0 or len(request.json["idPais"].strip())==0 or len(request.json["ultimoEstudio"].strip())==0 or len(request.json["institucion"].strip())==0 or len(request.json["anioGrado"].strip())==0 or len(request.json["idCiudadInst"].strip())==0 or len(request.json["idDepartamentoInst"].strip())==0 or len(request.json["cargoUltimoEmpleo"].strip())==0 or len(request.json["empresa"].strip())==0 or len(request.json["anioIngreso"].strip())==0 or len(request.json["palabrasClave"].strip())==0 or len(request.json["idUsuario"].strip())==0:
                     return "Code 400: Hay campos obligatorios vacíos", 400
           except:
                 return "Code 400: Hay campos obligatorios vacíos", 400
@@ -55,6 +55,7 @@ class VistaRegistroInfoCandidato(Resource):
                anioRetiro=request.json["anioRetiro"],
                palabrasClave=request.json["palabrasClave"],
                estado=False,
+               idUsuario= request.json["idUsuario"],
           )
 
           db.session.add(nuevo_candidato)

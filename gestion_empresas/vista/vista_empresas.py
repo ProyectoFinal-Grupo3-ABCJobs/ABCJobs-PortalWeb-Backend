@@ -210,7 +210,7 @@ class VistaListaProyectosSinFichaPorIdEmpresa(Resource):
                             "empresa_id": proyecto.empresa_id
                         }
                         listaProyectoSinFicha.append(dicProyectoSinFicha)
-                print("Estos son los proyectos a listar para crear ficha: ", listaProyectoSinFicha)
+                # print("Estos son los proyectos a listar para crear ficha: ", listaProyectoSinFicha)
                 # return [proyecto_schema.dump(tr) for tr in proyectos_empresa]
                 return listaProyectoSinFicha
         else:
@@ -424,7 +424,6 @@ class VistaAsignacionEmpleado(Resource):
     def post(self, id_empresa):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-            print("La empresa tiene empleados")
             try:
                 if (
                     len(request.json["tipoIdentificacion"].strip()) == 0
@@ -472,17 +471,24 @@ class VistaAsignacionEmpleado(Resource):
             return respuesta
 
 class VistaMotorEmparejamientoTempFicha(Resource):
-    @jwt_required()
     def post(self):
-
         encabezado_autorizacion = request.headers.get("Authorization")
-        motor_emparejamiento = VistaMotorEmparejamientoInterno()
-        respuesta = motor_emparejamiento.ejecutarEmparejamiento(encabezado_autorizacion)
-        return respuesta
+        if encabezado_autorizacion:
+                                  
+            motor_emparejamiento = VistaMotorEmparejamientoInterno()
+            respuesta = motor_emparejamiento.ejecutarEmparejamiento(encabezado_autorizacion)
+            return respuesta
+        else:
+            mensaje: dict = {
+                "mensaje": "No se ha enviado token al motor de emparejamiento"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 200
+            return respuesta
+
 
 class VistaMotorEmparejamientoInterno(Resource):
     def ejecutarEmparejamiento(self,token):
-
         fichasEmparejadas = Ficha.query.filter(Ficha.estadoEmparejamiento == True).all()
 
         if fichasEmparejadas:

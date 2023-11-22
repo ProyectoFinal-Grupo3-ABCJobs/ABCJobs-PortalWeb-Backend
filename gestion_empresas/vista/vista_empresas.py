@@ -832,3 +832,13 @@ class VistaCreacionDesempenoEmpleado(Resource):
             respuesta = jsonify(mensaje)
             respuesta.status_code = 401
             return respuesta
+        
+class VistaObtenerContratosPorEmpresa(Resource):
+    @jwt_required()
+    def get(self, id_empresa):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            contratos = Contrato.query.filter(Contrato.idEmpresa == id_empresa).all()
+
+            return [contrato_schema.dump(tr) for tr in contratos]
+            

@@ -66,6 +66,7 @@ class Contrato(db.Model):
     idContrato = db.Column(db.Integer, primary_key=True)
     numeroContrato = db.Column(db.Integer)
     idCandidato = db.Column(db.Integer)
+    nombreCandidato = db.Column(db.String(100))
     idEmpresa = db.Column(db.Integer)
     idProyecto = db.Column(db.Integer)
     idCargo = db.Column(db.Integer)
@@ -73,7 +74,7 @@ class Contrato(db.Model):
 
 class DesempenoEmpleado(db.Model):
     idDesempeno = db.Column(db.Integer, primary_key=True)
-    idEmpleado = db.Column(db.Integer)
+    idContrato = db.Column(db.Integer)
     calificacion = db.Column(db.String(100))
     aspectosResaltar = db.Column(db.String(2000)) 
     aspectosMejorar = db.Column(db.String(2000))

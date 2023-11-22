@@ -11,10 +11,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado, VistaListaProyectosSinFichaPorIdEmpresa,VistaConsultaTodosPerfiles, VistaMotorEmparejamientoInterno
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado, VistaListaProyectosSinFichaPorIdEmpresa,VistaConsultaTodosPerfiles, VistaMotorEmparejamientoInterno, VistaObtenerContratosPorEmpresa
     from modelo import db
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado, VistaListaProyectosSinFichaPorIdEmpresa,VistaConsultaTodosPerfiles, VistaMotorEmparejamientoInterno
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado, VistaListaProyectosSinFichaPorIdEmpresa,VistaConsultaTodosPerfiles, VistaMotorEmparejamientoInterno, VistaObtenerContratosPorEmpresa
     from gestion_empresas.modelo import db
 
 load_dotenv()
@@ -69,6 +69,7 @@ api.add_resource(VistaEliminarCandidatoMotorPorIdProyecto,'/company/motorEmparej
 
 # Endpoints de contratacion
 api.add_resource(VistaContratoCandidato,'/company/contratoCandidato')
+api.add_resource(VistaObtenerContratosPorEmpresa,'/company/<int:id_empresa>/contratos')
 
 # Endpoints de Evaluación Desempeño Empleado
 api.add_resource(VistaCreacionDesempenoEmpleado,'/company/desempenoEmpleado')

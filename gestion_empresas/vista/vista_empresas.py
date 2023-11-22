@@ -776,6 +776,7 @@ class VistaContratoCandidato(Resource):
             nuevo_contrato = Contrato(
                numeroContrato=request.json["numeroContrato"],
                idCandidato=request.json["idCandidato"],
+               nombreCandidato=request.json["nombreCandidato"],
                idEmpresa=request.json["idEmpresa"],
                idProyecto=request.json["idProyecto"],
                idCargo=request.json["idCargo"])
@@ -791,7 +792,7 @@ class VistaContratoCandidato(Resource):
 
 class VistaCreacionDesempenoEmpleado(Resource):
     @jwt_required()
-    def post(self, id_empleado):
+    def post(self, id_contrato):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             try:
@@ -805,7 +806,7 @@ class VistaCreacionDesempenoEmpleado(Resource):
                 return "Code 400: Hay campos obligatorios vacíos", 400
 
             nuevo_desempenoEmpleado = DesempenoEmpleado(
-                idEmpleado=id_empleado,
+                idContrato=id_contrato,
                 calificacion=request.json["calificacion"],
                 aspectosResaltar=request.json["aspectosResaltar"],
                 aspectosMejorar=request.json["aspectosMejorar"]
@@ -815,7 +816,7 @@ class VistaCreacionDesempenoEmpleado(Resource):
             db.session.commit()
 
             desempenoEmpleado_creado = DesempenoEmpleado.query.filter(
-                DesempenoEmpleado.idEmpleado == id_empleado
+                DesempenoEmpleado.idContrato == id_contrato
             ).first()
 
             return {
@@ -832,3 +833,13 @@ class VistaCreacionDesempenoEmpleado(Resource):
             respuesta = jsonify(mensaje)
             respuesta.status_code = 401
             return respuesta
+        
+class VistaObtenerContratosPorEmpresa(Resource):
+    @jwt_required()
+    def get(self, id_empresa):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            contratos = Contrato.query.filter(Contrato.idEmpresa == id_empresa).all()
+
+            return [contrato_schema.dump(tr) for tr in contratos]
+            

@@ -66,6 +66,7 @@ class Contrato(db.Model):
     idContrato = db.Column(db.Integer, primary_key=True)
     numeroContrato = db.Column(db.Integer)
     idCandidato = db.Column(db.Integer)
+    nombreCandidato = db.Column(db.String(100))
     idEmpresa = db.Column(db.Integer)
     idProyecto = db.Column(db.Integer)
     idCargo = db.Column(db.Integer)

@@ -776,6 +776,7 @@ class VistaContratoCandidato(Resource):
             nuevo_contrato = Contrato(
                numeroContrato=request.json["numeroContrato"],
                idCandidato=request.json["idCandidato"],
+               nombreCandidato=request.json["nombreCandidato"],
                idEmpresa=request.json["idEmpresa"],
                idProyecto=request.json["idProyecto"],
                idCargo=request.json["idCargo"])

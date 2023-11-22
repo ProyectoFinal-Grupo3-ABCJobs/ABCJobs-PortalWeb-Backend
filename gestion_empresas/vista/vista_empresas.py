@@ -113,7 +113,7 @@ class VistaRegistroEmpresa(Resource):
             direccion=request.json["direccion"],
             telefono=request.json["telefono"],
             idCiudad=request.json["idCiudad"],
-            idUsuario=request.json["idusuario"],
+            idUsuario=request.json["idUsuario"],
         )
 
         db.session.add(nueva_empresa)

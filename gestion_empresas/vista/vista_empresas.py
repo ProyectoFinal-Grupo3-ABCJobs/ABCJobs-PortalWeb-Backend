@@ -839,6 +839,20 @@ class VistaObtenerContratosPorEmpresa(Resource):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             contratos = Contrato.query.filter(Contrato.idEmpresa == id_empresa).all()
-
-            return [contrato_schema.dump(tr) for tr in contratos]
+            if len(contratos) == 0:
+                mensaje: dict = {
+                    "mensaje_1212": "La empresa no tiene contratos"
+                }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 200
+                return respuesta
+            else:
+                return [contrato_schema.dump(tr) for tr in contratos]
+        else:
+            mensaje: dict = {
+                "mensaje": "El token enviado no corresponde al perfil del usuario"
+            }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
             

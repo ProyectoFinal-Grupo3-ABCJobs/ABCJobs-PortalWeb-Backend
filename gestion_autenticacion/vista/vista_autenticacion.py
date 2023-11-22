@@ -76,7 +76,7 @@ class VistaGenerarToken(Resource):
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,
-               'tipoUsuario': usuario.usuario.upper(),
+               'tipoUsuario': usuario.tipoUsuario.upper(),
                'idEmpCanFunc':idEmpCanFunc
           }
 

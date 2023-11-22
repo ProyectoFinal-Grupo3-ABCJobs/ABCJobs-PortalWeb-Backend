@@ -792,7 +792,7 @@ class VistaContratoCandidato(Resource):
 
 class VistaCreacionDesempenoEmpleado(Resource):
     @jwt_required()
-    def post(self, id_empleado):
+    def post(self, id_contrato):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
             try:
@@ -806,7 +806,7 @@ class VistaCreacionDesempenoEmpleado(Resource):
                 return "Code 400: Hay campos obligatorios vacíos", 400
 
             nuevo_desempenoEmpleado = DesempenoEmpleado(
-                idEmpleado=id_empleado,
+                idContrato=id_contrato,
                 calificacion=request.json["calificacion"],
                 aspectosResaltar=request.json["aspectosResaltar"],
                 aspectosMejorar=request.json["aspectosMejorar"]
@@ -816,7 +816,7 @@ class VistaCreacionDesempenoEmpleado(Resource):
             db.session.commit()
 
             desempenoEmpleado_creado = DesempenoEmpleado.query.filter(
-                DesempenoEmpleado.idEmpleado == id_empleado
+                DesempenoEmpleado.idContrato == id_contrato
             ).first()
 
             return {

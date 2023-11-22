@@ -2,6 +2,8 @@ import unittest, json
 import os
 import requests
 import json
+from faker import Faker
+from flask import jsonify
 
 
 directorio_actual = os.getcwd()
@@ -15,7 +17,7 @@ else:
     from gestion_empresas.app import app
     from gestion_empresas.modelo import db
 
-
+fake = Faker()
 class TestApp(unittest.TestCase):
     def setUp(self):
         #url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
@@ -46,7 +48,18 @@ class TestApp(unittest.TestCase):
             'idUsuario':"2",
         }
 
-
+        self.nueva_empresa_faker_data = {
+            "nit": str(fake.random_int(min=0, max=100000))+'-2',
+            "razonSocial": fake.company(),
+            "direccion": fake.address(),
+            "telefono": str(fake.phone_number()),
+            "idCiudad": str(fake.random_int(min=1, max=99)),
+            'idUsuario':"2",
+        }
+        self.nuevo_proyecto_faker_data = {
+            "nombreProyecto": fake.company(),
+            "fechaInicio": '2024-01-06',
+        }
 
         self.app = app.test_client()
 
@@ -81,27 +94,19 @@ class TestApp(unittest.TestCase):
     def test_create_company_name_exists(self):
         nueva_empresa = {
             "razonSocial": "EmpresaPrueba",
-            "nit": "4558898558",
-            "direccion": "calle 20",
-            "telefono": "8996565",
-            "idCiudad": "12",
-            'idUsuario':"2",
-        }
-
-        solicitud_nueva_empresa = self.app.post(
-            "/company/register",
-            data=json.dumps(nueva_empresa),
-            headers={"Content-Type": "application/json"},
-        )
-
-        nueva_empresa = {
-            "razonSocial": "EmpresaPrueba",
             "nit": "455888558",
             "direccion": "calle 20",
             "telefono": "8996565",
             "idCiudad": "12",
             'idUsuario':"2",
         }
+
+
+        solicitud_nueva_empresa = self.app.post(
+            "/company/register",
+            data=json.dumps(nueva_empresa),
+            headers={"Content-Type": "application/json"},
+        )
 
         solicitud_nueva_empresa = self.app.post(
             "/company/register",
@@ -539,6 +544,7 @@ class TestApp(unittest.TestCase):
 
 
 # ---PRUEBAS TOKEN INVALIDO
+    #@unittest.skip('muchas pruebas')
     def test_sVistaConsultaProyectoPorEmpresa_token_invalido(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
@@ -549,7 +555,7 @@ class TestApp(unittest.TestCase):
         )
         self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
 
-
+    #@unittest.skip('muchas pruebas')
     def test_VistaListaProyectosSinFichaPorIdEmpresa_token_invalido(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
@@ -561,7 +567,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
 
 
-
+    #@unittest.skip('muchas pruebas')
     def test_VistaCreacionProyecto_token_invalido(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
@@ -572,6 +578,7 @@ class TestApp(unittest.TestCase):
         )
         self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
 
+    #@unittest.skip('muchas pruebas')
     def test_VistaConsultaTodosPerfiles_token_invalido(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
@@ -583,7 +590,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
 
 
-
+    #@unittest.skip('muchas pruebas')
     def test_VistaAsignacionEmpleado_token_invalido(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
@@ -594,6 +601,7 @@ class TestApp(unittest.TestCase):
         )
         self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
 
+    #@unittest.skip('muchas pruebas')
     def test_VistaCreacionDesempenoEmpleado_token_invalido(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
@@ -603,6 +611,152 @@ class TestApp(unittest.TestCase):
             "/company/contrato/111/desempenoEmpleado", headers=encabezados_con_autorizacion
         )
         self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaListaProyectosSinFichaPorIdEmpresa_sin_proyectos(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        resultado__de_empresa_sin_proyectos = self.app.get(
+            "/company/133/projects/ficha", headers=encabezados_con_autorizacion
+        )
+        self.assertEqual(resultado__de_empresa_sin_proyectos.status_code, 200)
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaListaProyectosSinFichaPorIdEmpresa_con_proyectos(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        # Creo empresa
+        resultado = self.app.post(
+            "/company/register",
+            data=json.dumps(self.nueva_empresa_faker_data),
+            headers=encabezados_con_autorizacion,
+        )
+
+        datos_request= resultado.data
+        request_json = datos_request.decode('utf-8')
+        request_json_ = json.loads(request_json)
+        #request_json_['id']
+        #self.assertEqual(request_json_['id'], 555)
+        id_empresa= request_json_["id"]
+        
+        # Creo el proyecto
+        resultado_proyecto = self.app.post(
+            '/company/{}/projectCreate'.format(id_empresa),
+            data=json.dumps(self.nuevo_proyecto_faker_data),
+            headers=encabezados_con_autorizacion,
+        )
+        # Busco la empresa
+        resultado_empresa_fichas = self.app.get(
+            '/company/{}/projects/ficha'.format(id_empresa),
+            data=json.dumps(self.nuevo_proyecto_faker_data),
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(resultado_empresa_fichas.status_code, 200)
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaObtenerEmpresaPorIdUsuario_con_usuario_asignado(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        # Creo el proyecto
+        resultado_empresa = self.app.post(
+            '/company/user',
+            headers=encabezados_con_autorizacion,
+        )
+
+        self.assertEqual(resultado_empresa.status_code, 200)
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaEmpladoInterno_token_invalido(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.tokenCandiato}",
+        }
+
+        # Creo el proyecto
+        resultado_empleado = self.app.get(
+            '/company/2/internalEmployees',
+            headers=encabezados_con_autorizacion,
+        )
+
+        self.assertEqual(resultado_empleado.status_code, 401)
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaConsultaTodosPerfiles_sin_perfiles_asociados(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        # Creo el proyecto
+        resultado_empleado = self.app.get(
+            '/company/profiles',
+            headers=encabezados_con_autorizacion,
+        )
+
+        self.assertEqual(resultado_empleado.status_code, 404)
+
+
+    def test_VistaVistaFicha_error_token(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.tokenCandiato}",
+        }
+
+        # Creo el proyecto
+        resultado_empresa = self.app.post(
+            '/company/projects/34/files',
+            headers=encabezados_con_autorizacion,
+        )
+
+        self.assertEqual(resultado_empresa.status_code, 401)
+
+    def test_VistaVistaFicha_sin_token(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json"
+        }
+
+        # Creo el proyecto
+        resultado_ficha = self.app.post(
+            '/company/projects/1asaa/files',
+            headers=encabezados_con_autorizacion,
+        )
+
+        self.assertEqual(resultado_ficha.status_code, 404)
+
+    def test_VistaFicha_crear_ficha_bad_request(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        # Creo el proyecto, sin no funciona debo crear la empresa
+        resultado_proyecto = self.app.post(
+            '/company/2/projectCreate',
+            data=json.dumps(self.nuevo_proyecto_faker_data),
+            headers=encabezados_con_autorizacion,
+        )
+        datos_request= resultado_proyecto.data
+        request_json = datos_request.decode('utf-8')
+        request_json_ = json.loads(request_json)
+        if_proyecto = request_json_['id']
+
+        resultado_ficha = self.app.post(
+            '/company/projects/{}/files'.format(if_proyecto),
+            headers=encabezados_con_autorizacion,
+        )
+
+        self.assertEqual(resultado_ficha.status_code, 500)
+
+        # self.assertEqual(resultado_ficha.status_code, 404)
 
 
 

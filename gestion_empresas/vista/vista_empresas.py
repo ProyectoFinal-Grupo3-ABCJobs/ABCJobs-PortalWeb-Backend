@@ -254,7 +254,6 @@ class VistaCreacionProyecto(Resource):
     def post(self, id_empresa):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-            print("La empresa tiene proyectos")
             try:
                 if (
                     len(request.json["nombreProyecto"].strip()) == 0
@@ -496,8 +495,8 @@ class VistaMotorEmparejamientoInterno(Resource):
                             "Authorization": token,
                             }
 
-            #jsonCandidatos = requests.get("http://127.0.0.1:5001/candidate/getAll",
-            jsonCandidatos = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll",
+            jsonCandidatos = requests.get("http://127.0.0.1:5001/candidate/getAll",
+            #jsonCandidatos = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll",
                                                         headers=encabezados_con_autorizacion)
 
             if jsonCandidatos.status_code != 200:
@@ -596,10 +595,10 @@ class VistaMotorEmparejamientoInterno(Resource):
                                     db.session.commit()
                                     print("Aca estoy para cada uno candidato emparejado")
                                     # llamo al MS de pruebas y entrevista:
-                                    #jsonEntrevistas = requests.post("http://127.0.0.1:5003/test/interviews",
-                                    #                                           headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
-                                    jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
-                                                                                headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
+                                    jsonEntrevistas = requests.post("http://127.0.0.1:5003/test/interviews",
+                                                                               headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
+                                    #jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
+                                    #                                            headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
 
                                     if jsonEntrevistas.status_code != 201:
                                         mensaje: dict = {
@@ -658,95 +657,95 @@ class VistaMotorEmparejamientoInterno(Resource):
         return emparejado
 
 
-class VistaResultadoEmparejamientoPorIdProyecto(Resource):
-    @jwt_required()
-    def get(self,id_proyecto):
+# class VistaResultadoEmparejamientoPorIdProyecto(Resource):
+#     @jwt_required()
+#     def get(self,id_proyecto):
       
-        id_ficha = ''
-        tokenPayload = get_jwt_identity()
-        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+#         id_ficha = ''
+#         tokenPayload = get_jwt_identity()
+#         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
 
-            ficha = Ficha.query.filter(Ficha.idProyecto == id_proyecto).first()
+#             ficha = Ficha.query.filter(Ficha.idProyecto == id_proyecto).first()
 
-            if not(ficha):
-                mensaje: dict = {
-                    "Mensaje 200": f'El proyecto {id_proyecto} no tiene ficha asociada '
-                }
-                respuesta = jsonify(mensaje)
-                respuesta.status_code = 200
-                return respuesta
+#             if not(ficha):
+#                 mensaje: dict = {
+#                     "Mensaje 200": f'El proyecto {id_proyecto} no tiene ficha asociada '
+#                 }
+#                 respuesta = jsonify(mensaje)
+#                 respuesta.status_code = 200
+#                 return respuesta
 
-            registros_ficha = (
-                FichaCandidatoEmparejadoPerfil.query.filter(
-                    FichaCandidatoEmparejadoPerfil.idFicha
-                    == ficha.idFicha
-                ).all()
-            )
+#             registros_ficha = (
+#                 FichaCandidatoEmparejadoPerfil.query.filter(
+#                     FichaCandidatoEmparejadoPerfil.idFicha
+#                     == ficha.idFicha
+#                 ).all()
+#             )
 
-            listTemp = []
-            listIdPerfil = []
-            if registros_ficha:
+#             listTemp = []
+#             listIdPerfil = []
+#             if registros_ficha:
 
-                listaTodosRegistrosFicha = [ficha_candidato_emparejado_perfil_schema.dump(tr) for tr in registros_ficha]
+#                 listaTodosRegistrosFicha = [ficha_candidato_emparejado_perfil_schema.dump(tr) for tr in registros_ficha]
 
-                listTemp = listaTodosRegistrosFicha[:]
-                listaPerfiles = []
+#                 listTemp = listaTodosRegistrosFicha[:]
+#                 listaPerfiles = []
 
-                listaDescperfiles= []
+#                 listaDescperfiles= []
 
-                listFinalMaster = []
-                listFinalDetalle = []
-                for dicFicha in listaTodosRegistrosFicha:
-                    vlrIdPerfil = dicFicha['idPerfil']
-                    vlrDescPerfil = dicFicha['descripcionPerfil']
-                    for fichaTemp in listTemp:
-                        vlrIdPerfilTmp = fichaTemp['idPerfil']
+#                 listFinalMaster = []
+#                 listFinalDetalle = []
+#                 for dicFicha in listaTodosRegistrosFicha:
+#                     vlrIdPerfil = dicFicha['idPerfil']
+#                     vlrDescPerfil = dicFicha['descripcionPerfil']
+#                     for fichaTemp in listTemp:
+#                         vlrIdPerfilTmp = fichaTemp['idPerfil']
 
-                        if vlrIdPerfil == vlrIdPerfilTmp:
+#                         if vlrIdPerfil == vlrIdPerfilTmp:
 
-                            if vlrIdPerfil not in listaPerfiles:
+#                             if vlrIdPerfil not in listaPerfiles:
 
-                                listaPerfiles.append(vlrIdPerfil)
-                                listaDescperfiles.append(vlrDescPerfil)
+#                                 listaPerfiles.append(vlrIdPerfil)
+#                                 listaDescperfiles.append(vlrDescPerfil)
 
-                # Construccion del maestro
-                if len(listaPerfiles) == len(listaDescperfiles):
-                    for index in range(len(listaPerfiles)):
-                        dicFicha = {
-                            "idPerfil":listaPerfiles[index],
-                            "descripcionPerfil":listaDescperfiles[index],
-                            "candidatos": [],
-                        }
-                        listFinalMaster.append(dicFicha)
+#                 # Construccion del maestro
+#                 if len(listaPerfiles) == len(listaDescperfiles):
+#                     for index in range(len(listaPerfiles)):
+#                         dicFicha = {
+#                             "idPerfil":listaPerfiles[index],
+#                             "descripcionPerfil":listaDescperfiles[index],
+#                             "candidatos": [],
+#                         }
+#                         listFinalMaster.append(dicFicha)
 
-                # Contruccion del detalle
-                for perfil in range(len(listFinalMaster)):
-                    #print("Perfil", perfil['idPerfil'])
+#                 # Contruccion del detalle
+#                 for perfil in range(len(listFinalMaster)):
+#                     #print("Perfil", perfil['idPerfil'])
                    
-                    for candidato in listaTodosRegistrosFicha:
+#                     for candidato in listaTodosRegistrosFicha:
                    
-                        #print("Hola")
-                        if listFinalMaster[perfil]['idPerfil'] == candidato['idPerfil']:
+#                         #print("Hola")
+#                         if listFinalMaster[perfil]['idPerfil'] == candidato['idPerfil']:
                             
-                            dicDetalleCandidato = {
-                            "idCandidato": candidato['idCandidato'],
-                            "nombreCandidato": candidato['nombreCandidato'],
-                            "estado": candidato['estado']
-                        }                       
+#                             dicDetalleCandidato = {
+#                             "idCandidato": candidato['idCandidato'],
+#                             "nombreCandidato": candidato['nombreCandidato'],
+#                             "estado": candidato['estado']
+#                         }                       
 
-                            listFinalDetalle.append(dicDetalleCandidato)
+#                             listFinalDetalle.append(dicDetalleCandidato)
                     
-                    listFinalMaster[perfil]['candidatos']= listFinalDetalle
-                    listFinalDetalle = []
+#                     listFinalMaster[perfil]['candidatos']= listFinalDetalle
+#                     listFinalDetalle = []
                
-                return listFinalMaster
-            else:
-                mensaje: dict = {
-                    "Mensaje 200": "La ficha no tiene candidatos emparejados"
-                }
-                respuesta = jsonify(mensaje)
-                respuesta.status_code = 200
-                return respuesta
+#                 return listFinalMaster
+#             else:
+#                 mensaje: dict = {
+#                     "Mensaje 200": "La ficha no tiene candidatos emparejados"
+#                 }
+#                 respuesta = jsonify(mensaje)
+#                 respuesta.status_code = 200
+#                 return respuesta
 
 class VistaEliminarCandidatoMotorPorIdProyecto(Resource):
     @jwt_required()

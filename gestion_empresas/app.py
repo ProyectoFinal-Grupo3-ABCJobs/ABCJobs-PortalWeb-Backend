@@ -11,10 +11,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_empresas' or carpeta_actual=='app':
-    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado, VistaListaProyectosSinFichaPorIdEmpresa,VistaConsultaTodosPerfiles, VistaMotorEmparejamientoInterno, VistaObtenerContratosPorEmpresa
+    from vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaObtenerEmpresaPorIdUsuario, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado, VistaListaProyectosSinFichaPorIdEmpresa,VistaConsultaTodosPerfiles, VistaMotorEmparejamientoInterno, VistaObtenerContratosPorEmpresa
     from modelo import db
 else:    
-    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaObtenerEmpresaPorIdUsuario,VistaResultadoEmparejamientoPorIdProyecto, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado, VistaListaProyectosSinFichaPorIdEmpresa,VistaConsultaTodosPerfiles, VistaMotorEmparejamientoInterno, VistaObtenerContratosPorEmpresa
+    from gestion_empresas.vista.vista_empresas import VistaSaludServicio,VistaRegistroEmpresa,VistaConsultaProyectoPorEmpresa, VistaCreacionProyecto, VistaEmpladoInterno, VistaConsultaPerfil, VistaCreacionPerfil, VistaFicha, VistaAsignacionEmpleado, VistaObtenerEmpresaPorIdUsuario, VistaEliminarCandidatoMotorPorIdProyecto, VistaContratoCandidato, VistaCreacionDesempenoEmpleado, VistaListaProyectosSinFichaPorIdEmpresa,VistaConsultaTodosPerfiles, VistaMotorEmparejamientoInterno, VistaObtenerContratosPorEmpresa
     from gestion_empresas.modelo import db
 
 load_dotenv()
@@ -64,7 +64,7 @@ api.add_resource(VistaFicha,'/company/projects/<int:id_proyecto>/files')
 #api.add_resource(VistaMotorEmparejamiento,'/company/motorEmparejamiento')
 #api.add_resource(VistaMotorEmparejamientoTempFicha,'/company/motorEmparejamientoTempFicha')
 api.add_resource(VistaMotorEmparejamientoInterno,'/company/motorEmparejamientoTempFicha')
-api.add_resource(VistaResultadoEmparejamientoPorIdProyecto,'/company/motorEmparejamiento/proyectos/<int:id_proyecto>')
+# api.add_resource(VistaResultadoEmparejamientoPorIdProyecto,'/company/motorEmparejamiento/proyectos/<int:id_proyecto>')
 api.add_resource(VistaEliminarCandidatoMotorPorIdProyecto,'/company/motorEmparejamiento/proyectos/<int:id_proyecto>/candidatos/<int:id_candidato>')
 
 # Endpoints de contratacion
@@ -72,7 +72,7 @@ api.add_resource(VistaContratoCandidato,'/company/contratoCandidato')
 api.add_resource(VistaObtenerContratosPorEmpresa,'/company/<int:id_empresa>/contratos')
 
 # Endpoints de Evaluación Desempeño Empleado
-api.add_resource(VistaCreacionDesempenoEmpleado,'/company/desempenoEmpleado')
+api.add_resource(VistaCreacionDesempenoEmpleado,'/company/contrato/<int:id_contrato>/desempenoEmpleado')
 
 jwt = JWTManager(app)
 

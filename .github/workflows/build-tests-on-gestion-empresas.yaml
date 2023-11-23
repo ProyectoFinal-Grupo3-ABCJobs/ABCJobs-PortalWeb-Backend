@@ -32,7 +32,6 @@ jobs:
 
     # - name: Ejecutar pruebas unitarias
     #   run: python -m unittest discover gestion_empresas/tests
-
     - name: Ejecutar pruebas unitarias con covertura
       run: |
         coverage run -m unittest discover -s gestion_empresas/tests -p 'test_*.py'

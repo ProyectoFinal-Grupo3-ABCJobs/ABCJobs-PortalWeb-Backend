@@ -129,31 +129,31 @@ class VistaRegistroEmpresa(Resource):
             "nit": empresa_creada.nit,
         }, 201
 
-class VistaConsultaProyectoPorEmpresa(Resource):
-    @jwt_required()
-    def get(self, id_empresa):
-        tokenPayload = get_jwt_identity()
-        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
-            proyectos_empresa = Proyecto.query.filter(
-                Proyecto.empresa_id == id_empresa
-            ).all()
+# class VistaConsultaProyectoPorEmpresa(Resource):
+#     @jwt_required()
+#     def get(self, id_empresa):
+#         tokenPayload = get_jwt_identity()
+#         if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+#             proyectos_empresa = Proyecto.query.filter(
+#                 Proyecto.empresa_id == id_empresa
+#             ).all()
 
-            if len(proyectos_empresa) == 0:
-                mensaje: dict = {
-                    "mensaje_1212": "La empresa no tiene proyectos creados"
-                }
-                respuesta = jsonify(mensaje)
-                respuesta.status_code = 200
-                return respuesta
-            else:
-                return [proyecto_schema.dump(tr) for tr in proyectos_empresa]
-        else:
-            mensaje: dict = {
-                "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
-            }
-            respuesta = jsonify(mensaje)
-            respuesta.status_code = 401
-            return respuesta
+#             if len(proyectos_empresa) == 0:
+#                 mensaje: dict = {
+#                     "mensaje_1212": "La empresa no tiene proyectos creados"
+#                 }
+#                 respuesta = jsonify(mensaje)
+#                 respuesta.status_code = 200
+#                 return respuesta
+#             else:
+#                 return [proyecto_schema.dump(tr) for tr in proyectos_empresa]
+#         else:
+#             mensaje: dict = {
+#                 "mensaje 1313": "El token enviado no corresponde al perfil del usuario"
+#             }
+#             respuesta = jsonify(mensaje)
+#             respuesta.status_code = 401
+#             return respuesta
 
 class VistaConsultaProyectoPorEmpresa(Resource):
     @jwt_required()
@@ -596,7 +596,6 @@ class VistaMotorEmparejamientoInterno(Resource):
                                     print("Aca estoy para cada uno candidato emparejado")
                                     # llamo al MS de pruebas y entrevista:
                                     #jsonEntrevistas = requests.post("http://127.0.0.1:5003/test/interviews",
-                                    #                                           headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
                                     jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
                                                                                 headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
 

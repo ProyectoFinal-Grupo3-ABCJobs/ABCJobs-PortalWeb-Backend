@@ -98,6 +98,46 @@ class TestApp(unittest.TestCase):
         )
         self.assertEqual(solicitud_nueva_empresa.status_code, 201)
 
+
+    #@unittest.skip('muchas pruebas')
+    def test_create_company_sin_campos_obligatorios(self):
+
+        self.nueva_empresa_faker_data = {
+            "direccionwa": fake.address(),
+            "telefono": str(fake.phone_number()),
+            "idCiudad": str(fake.random_int(min=1, max=99)),
+            'idUsuario':"2",
+        }
+
+
+        solicitud_nueva_empresa = self.app.post(
+            "/company/register",
+            data=json.dumps(self.nueva_empresa_faker_data),
+            headers={"Content-Type": "application/json"},
+        )
+        self.assertEqual(solicitud_nueva_empresa.status_code, 400)
+
+    #@unittest.skip('muchas pruebas')
+    def test_create_company_campos_obligatorios_vacios(self):
+
+        self.nueva_empresa_faker_data = {
+            "razonSocial": "",
+            "nit": "",
+            "direccion": "",
+            "telefono": "",
+            "idCiudad": "",
+            'idUsuario':"2",
+        }
+
+
+        solicitud_nueva_empresa = self.app.post(
+            "/company/register",
+            data=json.dumps(self.nueva_empresa_faker_data),
+            headers={"Content-Type": "application/json"},
+        )
+        self.assertEqual(solicitud_nueva_empresa.status_code, 400)
+
+
     #@unittest.skip('muchas pruebas')
     def test_create_company_name_exists(self):
         nueva_empresa = {
@@ -553,7 +593,7 @@ class TestApp(unittest.TestCase):
 
 # ---PRUEBAS TOKEN INVALIDO
     #@unittest.skip('muchas pruebas')
-    def test_sVistaConsultaProyectoPorEmpresa_token_invalido(self):
+    def test_VistaConsultaProyectoPorEmpresa_token_invalido(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.tokenCandiato}",
@@ -562,6 +602,17 @@ class TestApp(unittest.TestCase):
             "/company/416/projects", headers=encabezados_con_autorizacion
         )
         self.assertEqual(resultado_proyectos_de_empresa.status_code, 401)
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaConsultaProyectoPorEmpresa_sin_proyecto(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+        resultado_proyectos_de_empresa = self.app.get(
+            "/company/416/projects", headers=encabezados_con_autorizacion
+        )
+        self.assertEqual(resultado_proyectos_de_empresa.status_code, 200)
 
     #@unittest.skip('muchas pruebas')
     def test_VistaListaProyectosSinFichaPorIdEmpresa_token_invalido(self):
@@ -698,6 +749,22 @@ class TestApp(unittest.TestCase):
         self.assertEqual(resultado_empleado.status_code, 401)
 
     #@unittest.skip('muchas pruebas')
+    def test_VistaEmpladoInterno_sin_empresa(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        # Creo el proyecto
+        resultado_empleado = self.app.get(
+            '/company/2/internalEmployees',
+            headers=encabezados_con_autorizacion,
+        )
+
+        self.assertEqual(resultado_empleado.status_code, 404)
+
+
+    #@unittest.skip('muchas pruebas')
     def test_VistaConsultaTodosPerfiles_sin_perfiles_asociados(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
@@ -767,7 +834,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(resultado_ficha.status_code, 500)
 
 
-    @unittest.skip('muchas pruebas')
+    #@unittest.skip('muchas pruebas')
     def test_VistaMotorEmparejamientoInterno_sin_fichas(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",

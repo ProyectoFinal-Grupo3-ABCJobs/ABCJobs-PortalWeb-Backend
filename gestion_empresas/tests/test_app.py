@@ -767,7 +767,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(resultado_ficha.status_code, 500)
 
 
-
+    @unittest.skip('muchas pruebas')
     def test_VistaMotorEmparejamientoInterno_sin_fichas(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",

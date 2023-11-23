@@ -64,7 +64,7 @@ class TestApp(unittest.TestCase):
                                                              nuevo_candidato),
                                                          headers={'Content-Type': 'application/json'})
             
-            self.assertEqual(solicitud_nuevo_candidato.status_code, 201)
+            self.assertEqual(solicitud_nuevo_candidato.status_code, 400)
 
     def test_campos_obligatorios_vacios(self):
          

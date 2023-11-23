@@ -62,7 +62,6 @@ class VistaConsultaEntrevistasCandidato(Resource):
     def get(self, id_candidato):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "CANDIDATO":
-            print("Entrevista")
             entrevistas_candidato = Entrevista.query.filter(
                 Entrevista.idCandidato == id_candidato
             ).all()
@@ -220,9 +219,6 @@ class VistaAdicionarCandidatosEmparejadosAEntrevista(Resource):
             respuesta.status_code = 201
         
         return respuesta
-
-
-            
 
 class VistaEliminarCandidatoTblEntrevistaPorIds(Resource):
     @jwt_required()

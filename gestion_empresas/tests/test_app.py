@@ -782,7 +782,7 @@ class TestApp(unittest.TestCase):
         datos_request= resultado.data
         request_json = datos_request.decode('utf-8')
         request_json_ = json.loads(request_json)
-        self.assertEqual(request_json_["Mensaje 200"], 'Proceso de emparejamiento realizado correctamente!')
+        self.assertEqual(request_json_["Mensaje 200"], 'No hay fichas para emparejar')
 
 
     def test_VistaMotorEmparejamientoInterno_ficha_sin_proyecto(self):

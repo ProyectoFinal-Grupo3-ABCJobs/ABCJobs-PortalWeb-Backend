@@ -1,4 +1,5 @@
 import unittest, json, os
+import requests
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
@@ -11,9 +12,23 @@ else:
     from gestion_candidatos.modelo import db
 
 
-
 class TestApp(unittest.TestCase):
     def setUp(self):
+        #url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
+
+        url = "http://127.0.0.1:5000/users/auth"
+
+        payloadCandidato = json.dumps(
+            {"usuario": "candidato", "contrasena": "candidato"}
+        )
+        headers = {"Content-Type": "application/json"}
+
+        responseCandidato = requests.request(
+            "POST", url, headers=headers, data=payloadCandidato
+        )
+        self.tokenCandiato = responseCandidato.json()["token"]
+
+
         self.app = app.test_client()
 
     def tearDown(self):
@@ -25,6 +40,9 @@ class TestApp(unittest.TestCase):
         response = self.app.get('/candidate/ping')
         self.assertEqual(response.status_code, 200)
 
+    def test_obtener_todos_candidatos(self):
+        response = self.app.get('/candidate/getAll')
+        self.assertEqual(response.status_code, 200)
 
     def test_response_json(self):
         response = self.app.get('/candidate/ping')
@@ -157,6 +175,21 @@ class TestApp(unittest.TestCase):
                                                             headers={'Content-Type': 'application/json'})
             
             self.assertEqual(solicitud_nuevo_candidato2.status_code, 400)
+
+
+    def test_VistaObtenerCandidatoPorId_ok(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.tokenCandiato}",
+        }
+
+        # Creo el proyecto, sin no funciona debo crear la empresa
+        resultado_proyecto = self.app.get(
+            '/candidate/12',
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(resultado_proyecto.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()

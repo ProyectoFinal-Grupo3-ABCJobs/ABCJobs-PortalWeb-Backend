@@ -27,7 +27,7 @@ jobs:
     - name: Ejecutar pruebas unitarias con covertura
       run: |
         coverage run -m unittest discover -s gestion_pruebas/tests -p 'test_*.py'
-        coverage report -m --fail-under=60
+        coverage report -m --fail-under=80
 
     - name: Finalizar flujo de trabajo
       run: echo "El flujo de trabajo se ha completado exitosamente."

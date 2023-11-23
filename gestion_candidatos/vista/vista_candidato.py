@@ -78,9 +78,7 @@ class VistaObtenerTodosCandidatos(Resource):
 #          token = request.headers.get("Authorization")
 
           candidatos = Candidato.query.filter(Candidato.estado == False).all()
-
           # Nota: Posible logica para convertir los datos de palabasClave a String
-
           return [candidate_schema.dump(tr) for tr in candidatos]
 
 

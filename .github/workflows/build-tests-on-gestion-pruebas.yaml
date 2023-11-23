@@ -6,7 +6,6 @@ on:
     branches:
       - feature/PA-38
       - feature/PA-53
-      - feature/PA-115
  
 # Definir los Jobs
 jobs:
@@ -24,9 +23,6 @@ jobs:
 
     - name: Instalar dependencias
       run: pip install -r gestion_pruebas/requirements.txt
-
-    - name: Ejecutar pruebas unitarias
-      run: python -m unittest discover gestion_pruebas/tests
 
     - name: Ejecutar pruebas unitarias con covertura
       run: |

@@ -495,8 +495,8 @@ class VistaMotorEmparejamientoInterno(Resource):
                             "Authorization": token,
                             }
 
-            jsonCandidatos = requests.get("http://127.0.0.1:5001/candidate/getAll",
-            #jsonCandidatos = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll",
+            #jsonCandidatos = requests.get("http://127.0.0.1:5001/candidate/getAll",
+            jsonCandidatos = requests.get("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5001/candidate/getAll",
                                                         headers=encabezados_con_autorizacion)
 
             if jsonCandidatos.status_code != 200:
@@ -595,10 +595,10 @@ class VistaMotorEmparejamientoInterno(Resource):
                                     db.session.commit()
                                     print("Aca estoy para cada uno candidato emparejado")
                                     # llamo al MS de pruebas y entrevista:
-                                    jsonEntrevistas = requests.post("http://127.0.0.1:5003/test/interviews",
-                                                                               headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
-                                    #jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
-                                    #                                            headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
+                                    #jsonEntrevistas = requests.post("http://127.0.0.1:5003/test/interviews",
+                                    #                                           headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
+                                    jsonEntrevistas = requests.post("http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5003/test/interviews",
+                                                                                headers=encabezados_con_autorizacion, json=dic_candidatos_emparejados)
 
                                     if jsonEntrevistas.status_code != 201:
                                         mensaje: dict = {

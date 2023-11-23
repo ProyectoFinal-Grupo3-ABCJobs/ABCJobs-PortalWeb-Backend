@@ -20,9 +20,9 @@ else:
 fake = Faker()
 class TestApp(unittest.TestCase):
     def setUp(self):
-        #url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
+        url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
 
-        url = "http://127.0.0.1:5000/users/auth"
+        #url = "http://127.0.0.1:5000/users/auth"
 
         payload = json.dumps({"usuario": "empresa", "contrasena": "empresa"})
         headers = {"Content-Type": "application/json"}
@@ -60,7 +60,15 @@ class TestApp(unittest.TestCase):
             "nombreProyecto": fake.company(),
             "fechaInicio": '2024-01-06',
         }
-
+        
+        self.nuevo_contrato_faker_data = {
+            "numeroContrato": str(fake.random_int(min=1, max=99)),
+            "idCandidato": str(fake.random_int(min=1, max=99)),
+            "nombreCandidato": fake.name(),
+            "idProyecto": str(fake.random_int(min=1, max=99)),
+            "idCargo": str(fake.random_int(min=1, max=99)),
+            "idEmpresa":str(fake.random_int(min=1, max=99)),
+        }
         self.app = app.test_client()
 
     def tearDown(self):
@@ -458,8 +466,8 @@ class TestApp(unittest.TestCase):
 
         nuevo_empleado = {
             "tipoIdentificacion": "CC",
-            "identificacion": "154365",
-            "nombre": "Pedro Pérez",
+            "identificacion": str(fake.random_int(min=1, max=999)),
+            "nombre": fake.company(),
             "cargo": "Ingeniero de Sistemas",
         }
 
@@ -704,7 +712,7 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(resultado_empleado.status_code, 404)
 
-
+    #@unittest.skip('muchas pruebas')
     def test_VistaVistaFicha_error_token(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
@@ -719,6 +727,7 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(resultado_empresa.status_code, 401)
 
+    #@unittest.skip('muchas pruebas')
     def test_VistaVistaFicha_sin_token(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json"
@@ -732,6 +741,7 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(resultado_ficha.status_code, 404)
 
+    #@unittest.skip('muchas pruebas')
     def test_VistaFicha_crear_ficha_bad_request(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
@@ -756,7 +766,111 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(resultado_ficha.status_code, 500)
 
-        # self.assertEqual(resultado_ficha.status_code, 404)
+
+
+    def test_VistaMotorEmparejamientoInterno_sin_fichas(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        resultado = self.app.post(
+            "/company/motorEmparejamientoTempFicha",
+            headers=encabezados_con_autorizacion,
+        )
+
+        datos_request= resultado.data
+        request_json = datos_request.decode('utf-8')
+        request_json_ = json.loads(request_json)
+        self.assertEqual(request_json_["Mensaje 200"], 'Proceso de emparejamiento realizado correctamente!')
+
+
+    def test_VistaMotorEmparejamientoInterno_ficha_sin_proyecto(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        # Creo el proyecto, sin no funciona debo crear la empresa
+        resultado_proyecto = self.app.post(
+            '/company/2/projectCreate',
+            data=json.dumps(self.nuevo_proyecto_faker_data),
+            headers=encabezados_con_autorizacion,
+        )
+        datos_request= resultado_proyecto.data
+        request_json = datos_request.decode('utf-8')
+        request_json_ = json.loads(request_json)
+        id_proyecto = request_json_['id']
+
+
+        resultado_ficha = self.app.post(
+            f'/company/projects/{id_proyecto}/files',
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(resultado_ficha.status_code, 500)
+
+
+
+    def test_VistaContratoCandidato_ok(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        # Creo el contrato, sin no funciona debo crear la empresa
+        resultado_proyecto = self.app.post(
+            '/company/contratoCandidato',
+            data=json.dumps(self.nuevo_contrato_faker_data),
+            headers=encabezados_con_autorizacion,
+        )
+
+        self.assertEqual(resultado_proyecto.status_code, 201)
+
+
+    def test_VistaCreacionDesempenoEmpleado_campos_vacios(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        data = {
+            "calificacion":str(fake.random_int(min=1, max=99)),
+        }
+        # Creo el proyecto, sin no funciona debo crear la empresa
+        resultado_proyecto = self.app.post(
+            '/company/contrato/231/desempenoEmpleado',
+            data=json.dumps(data),
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(resultado_proyecto.status_code, 400)
+
+
+
+    def test_VistaObtenerContratosPorEmpresa_token_invalido(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.tokenCandiato}",
+        }
+
+        # Creo el proyecto, sin no funciona debo crear la empresa
+        resultado_proyecto = self.app.get(
+            '/company/123/contratos',
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(resultado_proyecto.status_code, 401)
+
+    def test_VistaObtenerContratosPorEmpresa_ok(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+
+        # Creo el proyecto, sin no funciona debo crear la empresa
+        resultado_proyecto = self.app.get(
+            '/company/123/contratos',
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(resultado_proyecto.status_code, 200)
 
 
 

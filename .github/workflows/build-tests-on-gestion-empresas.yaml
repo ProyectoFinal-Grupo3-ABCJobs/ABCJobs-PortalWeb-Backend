@@ -29,7 +29,6 @@ jobs:
 
     - name: Instalar dependencias
       run: pip install -r gestion_empresas/requirements.txt
-
     # - name: Ejecutar pruebas unitarias
     #   run: python -m unittest discover gestion_empresas/tests
     - name: Ejecutar pruebas unitarias con covertura

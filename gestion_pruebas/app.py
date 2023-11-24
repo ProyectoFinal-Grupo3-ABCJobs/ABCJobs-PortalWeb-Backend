@@ -11,10 +11,10 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_pruebas' or carpeta_actual=='app':
-    from vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoEntrevistasCandidatosPorIdEmpresa, VistaAdicionarCandidatosEmparejadosAEntrevista, VistaEliminarCandidatoTblEntrevistaPorIds, VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado
+    from vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoEntrevistasCandidatosPorIdEmpresa, VistaAdicionarCandidatosEmparejadosAEntrevista, VistaEliminarCandidatoTblEntrevistaPorIds, VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado, VistaObtenerPerfilesPorIdProyectoIdEmpresa
     from modelo import db
 else:    
-    from gestion_pruebas.vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoEntrevistasCandidatosPorIdEmpresa, VistaAdicionarCandidatosEmparejadosAEntrevista, VistaEliminarCandidatoTblEntrevistaPorIds, VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado
+    from gestion_pruebas.vista.vista_pruebas import VistaSaludServicio,VistaConsultaPruebasCandidato,VistaConsultaEntrevistasCandidato, VistaResultadoEntrevistasCandidatosPorIdEmpresa, VistaAdicionarCandidatosEmparejadosAEntrevista, VistaEliminarCandidatoTblEntrevistaPorIds, VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado, VistaObtenerPerfilesPorIdProyectoIdEmpresa
     from gestion_pruebas.modelo import db
 
 load_dotenv()
@@ -45,7 +45,9 @@ api.add_resource(VistaConsultaEntrevistasCandidato,'/test/candidate/<int:id_cand
 api.add_resource(VistaSaludServicio,'/test/ping')
 
 # Endpoint para consumo Empresa
+api.add_resource(VistaObtenerPerfilesPorIdProyectoIdEmpresa,'/test/proyectos/<int:id_proyecto>/empresas/<int:id_empresa>')
 api.add_resource(VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado,'/test/proyectos/<int:id_proyecto>/candidatos/<int:id_candidato>/empresas/<int:id_empresa>/perfiles/<int:id_perfil>/pruebatecnica')
+
 
 # EndPoints resultados Entrevista
 api.add_resource(VistaResultadoEntrevistasCandidatosPorIdEmpresa,'/test/company/<int:id_empresa>/interviews')

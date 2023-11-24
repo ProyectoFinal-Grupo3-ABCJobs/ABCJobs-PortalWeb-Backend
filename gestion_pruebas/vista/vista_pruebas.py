@@ -295,4 +295,39 @@ class VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado(Resource):
             respuesta = jsonify(mensaje)
             respuesta.status_code = 401
             return respuesta
-                
+
+
+
+
+class VistaObtenerPerfilesPorIdProyectoIdEmpresa(Resource):
+    @jwt_required()
+    def get(self,id_proyecto,id_empresa):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            # encabezado_autorizacion = request.headers.get("Authorization")
+            # datos_json = request.get_json()
+            pruebaTecnica='TECNICA'
+            res_perfiles_proyecto = Prueba.query.filter(Prueba.idProyecto == id_proyecto,Prueba.idEmpresa == id_empresa,Prueba.tipoPrueba == pruebaTecnica).all()
+            
+            listaPerfiles = []
+            lista_diccionarios_unicos = []
+            dicPerfiles = {}
+            for res_perfil in res_perfiles_proyecto:
+                dicPerfiles = {
+                    "idPerfil": res_perfil.idPerfil,
+                    "perfilDescripcion": res_perfil.perfilDescripcion
+                }
+                listaPerfiles.append(dicPerfiles)
+            
+            if len(listaPerfiles)>0:
+                conjunto_diccionarios_unicos = {tuple(sorted(dic.items())) for dic in listaPerfiles}
+                lista_diccionarios_unicos = [dict(tupla) for tupla in conjunto_diccionarios_unicos]
+            print("Los perfiles del proyecto: ",lista_diccionarios_unicos)
+            return lista_diccionarios_unicos
+        else:
+            mensaje = {
+                    "menaje":"Token invalido"
+                }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta

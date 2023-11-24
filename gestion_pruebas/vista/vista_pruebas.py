@@ -307,10 +307,11 @@ class VistaObtenerPerfilesPorIdProyectoIdEmpresa(Resource):
             # encabezado_autorizacion = request.headers.get("Authorization")
             # datos_json = request.get_json()
             pruebaTecnica='TECNICA'
+            # id_empresa= 1000
             res_perfiles_proyecto = Prueba.query.filter(Prueba.idProyecto == id_proyecto,Prueba.idEmpresa == id_empresa,Prueba.tipoPrueba == pruebaTecnica).all()
             
             listaPerfiles = []
-            lista_diccionarios_unicos = []
+            lista_perfiles_unicos = []
             dicPerfiles = {}
             for res_perfil in res_perfiles_proyecto:
                 dicPerfiles = {
@@ -321,9 +322,44 @@ class VistaObtenerPerfilesPorIdProyectoIdEmpresa(Resource):
             
             if len(listaPerfiles)>0:
                 conjunto_diccionarios_unicos = {tuple(sorted(dic.items())) for dic in listaPerfiles}
-                lista_diccionarios_unicos = [dict(tupla) for tupla in conjunto_diccionarios_unicos]
-            print("Los perfiles del proyecto: ",lista_diccionarios_unicos)
-            return lista_diccionarios_unicos
+                lista_perfiles_unicos = [dict(tupla) for tupla in conjunto_diccionarios_unicos]
+            
+            # return lista_perfiles_unicos
+
+            listaPrincipalPerfiles = []
+            dicMaestroPerfil ={    
+                "idPerfil":"",
+                "perfilDescripcion":"",
+                "candidatos":[]     
+            } 
+
+            dicDetalleCandidatos ={    
+                "idCandidato":"",
+                "candidatoNombre":"",
+            } 
+            listaDetalleCandidatos = []
+
+            # Buscar los candidatos por perfil
+            for perfil_unico in lista_perfiles_unicos:
+
+                res_candidatos_perfiles = Prueba.query.filter(Prueba.idProyecto == id_proyecto,Prueba.idEmpresa == id_empresa,Prueba.idPerfil == perfil_unico['idPerfil'],Prueba.tipoPrueba == pruebaTecnica).all()
+                for res_candidato_perfil in res_candidatos_perfiles:
+                    dicDetalleCandidatos ={    
+                        "idCandidato":res_candidato_perfil.idCandidato,
+                        "candidatoNombre":res_candidato_perfil.candidatoNombre,
+                    } 
+                    listaDetalleCandidatos.append(dicDetalleCandidatos)
+                dicMaestroPerfil ={
+                    "idPerfil":perfil_unico['idPerfil'],
+                    "perfilDescripcion":perfil_unico['perfilDescripcion'],
+                    "candidatos":listaDetalleCandidatos
+                }
+                listaDetalleCandidatos = []
+                listaPrincipalPerfiles.append(dicMaestroPerfil)
+
+            # print("El id del perfil a evaluar es: ", perfil_unico['idPerfil'])
+            return listaPrincipalPerfiles
+
         else:
             mensaje = {
                     "menaje":"Token invalido"

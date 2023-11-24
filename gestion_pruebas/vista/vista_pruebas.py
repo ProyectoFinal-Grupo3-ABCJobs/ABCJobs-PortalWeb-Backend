@@ -260,7 +260,7 @@ class VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado(Resource):
             if res_candidato_pruebas_tecnica:
                 res_candidato_pruebas_tecnica.resultado = request.json['resultado']
                 res_candidato_pruebas_tecnica.observaciones = request.json['observaciones']
-                res_candidato_pruebas_tecnica.aprobado = request.json['aprobado']
+                res_candidato_pruebas_tecnica.aprobado = bool(request.json['aprobado'])
                 db.session.commit()
                 dicCandidato = {
                          "idPrueba": res_candidato_pruebas_tecnica.idPrueba,

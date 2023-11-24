@@ -62,6 +62,7 @@ class VistaConsultaEntrevistasCandidato(Resource):
     def get(self, id_candidato):
         tokenPayload = get_jwt_identity()
         if tokenPayload["tipoUsuario"].upper() == "CANDIDATO":
+
             entrevistas_candidato = Entrevista.query.filter(
                 Entrevista.idCandidato == id_candidato
             ).all()
@@ -220,6 +221,9 @@ class VistaAdicionarCandidatosEmparejadosAEntrevista(Resource):
         
         return respuesta
 
+
+            
+
 class VistaEliminarCandidatoTblEntrevistaPorIds(Resource):
     @jwt_required()
     def delete(self,id_proyecto,id_candidato,id_empresa):
@@ -241,3 +245,54 @@ class VistaEliminarCandidatoTblEntrevistaPorIds(Resource):
                 respuesta = jsonify(mensaje)
                 respuesta.status_code = 204
                 return respuesta
+            
+
+class VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado(Resource):
+    @jwt_required()
+    def put(self,id_proyecto,id_candidato,id_empresa,id_perfil):
+        tokenPayload = get_jwt_identity()
+        if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+            # encabezado_autorizacion = request.headers.get("Authorization")
+            # datos_json = request.get_json()
+            pruebaTecnica='TECNICA'
+            res_candidato_pruebas_tecnica = Prueba.query.filter(Prueba.idProyecto == id_proyecto,Prueba.idCandidato == id_candidato,Prueba.idEmpresa == id_empresa,Prueba.tipoPrueba == pruebaTecnica,Prueba.idPerfil == id_perfil).first()
+            
+            if res_candidato_pruebas_tecnica:
+                res_candidato_pruebas_tecnica.resultado = request.json['resultado']
+                res_candidato_pruebas_tecnica.observaciones = request.json['observaciones']
+                res_candidato_pruebas_tecnica.aprobado = request.json['aprobado']
+                db.session.commit()
+                dicCandidato = {
+                         "idPrueba": res_candidato_pruebas_tecnica.idPrueba,
+                         "tipoPrueba": res_candidato_pruebas_tecnica.tipoPrueba,
+                         "fechaPrueba": res_candidato_pruebas_tecnica.fechaPrueba,
+                         "resultado":res_candidato_pruebas_tecnica.resultado,
+                         "observaciones": res_candidato_pruebas_tecnica.observaciones,
+                         "idCandidato": res_candidato_pruebas_tecnica.idCandidato,
+                         "candidatoNombre": res_candidato_pruebas_tecnica.candidatoNombre,
+                         "idProyecto":res_candidato_pruebas_tecnica.idProyecto,
+                         "proyectoNombre": res_candidato_pruebas_tecnica.proyectoNombre,
+                         "idPerfil": res_candidato_pruebas_tecnica.idPerfil,
+                         "perfilDescripcion":res_candidato_pruebas_tecnica.perfilDescripcion,
+                         "aprobado": res_candidato_pruebas_tecnica.aprobado,
+                         "candidatoNombre": res_candidato_pruebas_tecnica.candidatoNombre,
+                         "estado":res_candidato_pruebas_tecnica.estado
+                         }
+                respuesta = jsonify(dicCandidato)
+                respuesta.status_code = 200
+                return respuesta
+            else:
+                mensaje = {
+                    "menaje":"El candidato no tiene prueba tecnica"
+                }
+                respuesta = jsonify(mensaje)
+                respuesta.status_code = 200
+                return respuesta
+        else:
+            mensaje = {
+                    "menaje":"Token invalido"
+                }
+            respuesta = jsonify(mensaje)
+            respuesta.status_code = 401
+            return respuesta
+                

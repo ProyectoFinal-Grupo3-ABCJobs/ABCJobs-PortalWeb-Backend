@@ -20,9 +20,9 @@ else:
 fake = Faker()
 class TestApp(unittest.TestCase):
     def setUp(self):
-        url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
+        #url = "http://loadbalancerproyectoabc-735612126.us-east-2.elb.amazonaws.com:5000/users/auth"
 
-        #url = "http://127.0.0.1:5000/users/auth"
+        url = "http://127.0.0.1:5000/users/auth"
 
         payload = json.dumps({"usuario": "empresa", "contrasena": "empresa"})
         headers = {"Content-Type": "application/json"}
@@ -213,7 +213,7 @@ class TestApp(unittest.TestCase):
         )
 
         nuevo_proyecto = {
-            "nombreProyecto": "ProyectoTest1",
+            "nombreProyecto": fake.name(),
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
             "empresa_id": "235",
@@ -939,7 +939,18 @@ class TestApp(unittest.TestCase):
         )
         self.assertEqual(resultado_proyecto.status_code, 200)
 
+    def test_VistaResultadoEmparejamientoPorIdProyecto_sin_ficha(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
 
+        # Creo el proyecto, sin no funciona debo crear la empresa
+        resultado_proyecto = self.app.get(
+            '/company/motorEmparejamiento/proyectos/123',
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(resultado_proyecto.status_code, 200)
 
 if __name__ == "__main__":
     unittest.main()

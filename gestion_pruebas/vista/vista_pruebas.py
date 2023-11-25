@@ -255,8 +255,16 @@ class VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado(Resource):
             # encabezado_autorizacion = request.headers.get("Authorization")
             # datos_json = request.get_json()
             pruebaTecnica='TECNICA'
-            res_candidato_pruebas_tecnica = Prueba.query.filter(Prueba.idProyecto == id_proyecto,Prueba.idCandidato == id_candidato,Prueba.idEmpresa == id_empresa,Prueba.tipoPrueba == pruebaTecnica,Prueba.idPerfil == id_perfil).first()
             
+
+            # Codigo para validación entrevista y cambio de estado
+            res_candidato_entrevista = Entrevista.query.filter(Entrevista.idProyecto == id_proyecto,Entrevista.idCandidato == id_candidato,Entrevista.idEmpresa == id_empresa,Entrevista.idPerfil == id_perfil).first()
+            if res_candidato_entrevista and bool(request.json['aprobado']) == True:
+                res_candidato_entrevista.aprobado = True
+                db.session.commit()
+
+            res_candidato_pruebas_tecnica = Prueba.query.filter(Prueba.idProyecto == id_proyecto,Prueba.idCandidato == id_candidato,Prueba.idEmpresa == id_empresa,Prueba.tipoPrueba == pruebaTecnica,Prueba.idPerfil == id_perfil).first()
+           
             if res_candidato_pruebas_tecnica:
                 res_candidato_pruebas_tecnica.resultado = request.json['resultado']
                 res_candidato_pruebas_tecnica.observaciones = request.json['observaciones']

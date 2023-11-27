@@ -45,7 +45,7 @@ class TestApp(unittest.TestCase):
             "direccion": "calle 20",
             "telefono": "8996565",
             "idCiudad": "12",
-            'idUsuario':"2",
+            'idUsuario':"102",
         }
 
         self.nueva_empresa_faker_data = {
@@ -146,7 +146,7 @@ class TestApp(unittest.TestCase):
             "direccion": "calle 20",
             "telefono": "8996565",
             "idCiudad": "12",
-            'idUsuario':"2",
+            'idUsuario':"102",
         }
 
 
@@ -172,7 +172,7 @@ class TestApp(unittest.TestCase):
             "direccion": "calle 20",
             "telefono": "8996565",
             "idCiudad": "12",
-            'idUsuario':"2",
+            'idUsuario':"102",
         }
 
         solicitud_nueva_empresa = self.app.post(
@@ -187,7 +187,7 @@ class TestApp(unittest.TestCase):
             "direccion": "calle 20",
             "telefono": "8996565",
             "idCiudad": "12",
-            'idUsuario':"2",
+            'idUsuario':"102",
         }
 
         solicitud_nueva_empresa = self.app.post(
@@ -244,7 +244,7 @@ class TestApp(unittest.TestCase):
             "nombreProyecto": "ProyectoPrueba22",
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
-            "empresa_id": "1",
+            "empresa_id": "2",
         }
 
         self.app.post(
@@ -257,7 +257,7 @@ class TestApp(unittest.TestCase):
             "nombreProyecto": "ProyectoPrueba22",
             "numeroColaboradores": "",
             "fechaInicio": "2020-01-01",
-            "empresa_id": "1",
+            "empresa_id": "2",
         }
 
         solicitud_nuevo_proyecto2 = self.app.post(
@@ -719,7 +719,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(resultado_empresa_fichas.status_code, 200)
 
     #@unittest.skip('muchas pruebas')
-    def test_VistaObtenerEmpresaPorIdUsuario_con_usuario_asignado(self):
+    def test_VistaObtenerEmpresaPorIdUsuario_sin_usuario_asignado(self):
         encabezados_con_autorizacion = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.token}",
@@ -730,8 +730,53 @@ class TestApp(unittest.TestCase):
             '/company/user',
             headers=encabezados_con_autorizacion,
         )
-
         self.assertEqual(resultado_empresa.status_code, 200)
+
+
+    # @unittest.skip('muchas pruebas')
+    def test_VistaObtenerEmpresaPorIdUsuario_con_usuario_asignado(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+        # Creo la empresa
+
+        self.nueva_empresa_faker_data = {
+            "razonSocial": fake.name(),
+            "nit": str(fake.random_int(min=1, max=99)),
+            "direccion": fake.address(),
+            "telefono": str(fake.phone_number()),
+            "idCiudad": str(fake.random_int(min=1, max=99)),
+            'idUsuario':"2",
+        }
+
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaCreacionPerfil_sin_proyecto(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
+        }
+        # Creo la empresa
+
+        self.nueva_proyecto_faker_data = {
+            "nombre": fake.name(),
+            "descripcion": fake.address(),
+            "idProyecto": str(fake.phone_number()),
+        }
+
+
+        solicitud_nuevo_proyecto = self.app.post(
+            "/company/projects/123/profiles",
+            data=json.dumps(self.nueva_proyecto_faker_data),
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(solicitud_nuevo_proyecto.status_code, 404)
+
+
+
+
+
 
     #@unittest.skip('muchas pruebas')
     def test_VistaEmpladoInterno_token_invalido(self):

@@ -9,16 +9,17 @@ directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual=='gestion_autenticacion' or carpeta_actual=='app':
-     from modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
+     from modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema, Candidato, CandidatoSchema
 else:
-     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa, EmpresaSchema
+     from gestion_autenticacion.modelo import Usuario, UsuarioSchema, db, Empresa,EmpresaSchema, Candidato, CandidatoSchema
 
 user_schema = UsuarioSchema()
-company_schema = EmpresaSchema()
+empresa_schema = EmpresaSchema()
+candidato_schema = CandidatoSchema()
 
 class VistaGenerarToken(Resource):
     def post(self):
-          
+          idEmpCanFunc=''
           if not request.data:
                mensaje:dict = {'error 1010':"Solicitud sin datos"}
                respuesta = jsonify(mensaje)
@@ -54,27 +55,34 @@ class VistaGenerarToken(Resource):
           pwdhasehd = request.json['contrasena'] + saltedword
           hashpwd = hashlib.sha256(pwdhasehd.encode()).hexdigest()
           usuario = Usuario.query.filter(Usuario.usuario == request.json['usuario'], Usuario.contrasena == hashpwd).first()
-          idEmpCanFunc:str='';
+          
           if usuario is None:
                mensaje:dict = {'error 5050':"El usuario no pudo ser autenticado"}
                respuesta = jsonify(mensaje)
                respuesta.status_code = 400
                return respuesta
 
-          empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
+          if usuario.tipoUsuario.upper() == 'EMPRESA':
+               empresa = Empresa.query.filter(Empresa.idUsuario == usuario.id).first()
+               if empresa:
+                    idEmpCanFunc = empresa.idEmpresa
 
-          if empresa:
-               idEmpCanFunc = empresa.idEmpresa
+          if usuario.tipoUsuario.upper() == 'CANDIDATO':
+               candidato = Candidato.query.filter(Candidato.idUsuario == usuario.id).first()
+               if candidato:
+                    idEmpCanFunc = candidato.idCandidato
 
-
+         
           data = {
                'idUsuario': usuario.id,
                'usuario':usuario.usuario,
-               'tipoUsuario': usuario.usuario.upper(),
+               'tipoUsuario': usuario.tipoUsuario.upper(),
                'idEmpCanFunc':idEmpCanFunc
           }
 
+          #token_de_acceso_temp = create_access_token(identity=dataTemp)
           token_de_acceso = create_access_token(identity=data)
+
           # Genero Token de acceso
           usuario.token = token_de_acceso
 
@@ -103,10 +111,16 @@ class VistaRegistroUsuario(Resource):
             Usuario.usuario == request.json["usuario"]).first()          
           if not usuario is None:
             return "No se puede crear el usuario. El correo ya se encuentra registrado", 409
+          
+
+          # Cifrar la contraseña Salt
+          saltedword = os.getenv("SALTEDWORD")
+          pwdhasehd = request.json['contrasena'] + saltedword
+          hashpwd = hashlib.sha256(pwdhasehd.encode()).hexdigest()
      
           nuevo_usuario = Usuario(
                usuario=request.json["usuario"],
-               contrasena=request.json["contrasena"],
+               contrasena=hashpwd,
                tipoUsuario=request.json["tipoUsuario"]
           )
 
@@ -123,4 +137,3 @@ class VistaRegistroUsuario(Resource):
                "contrasena": usuario_creado.contrasena,
                "tipoUsuario": usuario_creado.tipoUsuario,
           }, 201
-

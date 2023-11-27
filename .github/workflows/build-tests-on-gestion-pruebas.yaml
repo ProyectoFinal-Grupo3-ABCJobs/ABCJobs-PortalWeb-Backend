@@ -4,7 +4,9 @@ name: Python CI
 on:
   push:
     branches:
-      - feature/PA-7
+      - feature/PA-38
+      - feature/PA-53
+      - feature/PA-115
  
 # Definir los Jobs
 jobs:
@@ -21,18 +23,12 @@ jobs:
         python-version: 3.9
 
     - name: Instalar dependencias
-      run: pip install -r requirements.txt
-
-    - name: Ejecutar pruebas unitarias
-      run: python -m unittest discover gestion_empresas/tests
+      run: pip install -r gestion_pruebas/requirements.txt
 
     - name: Ejecutar pruebas unitarias con covertura
       run: |
-        coverage run -m unittest discover -s gestion_empresas/tests -p 'test_*.py'
-        coverage report -m --fail-under=90
-
-    - name: Ver reporte de coverage
-      run: coverage report -m 
+        coverage run -m unittest discover -s gestion_pruebas/tests -p 'test_*.py'
+        coverage report -m --fail-under=80
 
     - name: Finalizar flujo de trabajo
       run: echo "El flujo de trabajo se ha completado exitosamente."

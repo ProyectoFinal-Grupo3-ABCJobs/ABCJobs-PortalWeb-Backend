@@ -1,8 +1,9 @@
 from flask_restful import Resource
 from flask import request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import jsonify
 import hashlib, os, json
+
 
 directorio_actual = os.getcwd()
 carpeta_actual = os.path.basename(directorio_actual)
@@ -18,7 +19,7 @@ class VistaRegistroInfoCandidato(Resource):
     def post(self):
 
           try:
-                if len(request.json["tipoIdentificacion"].strip())==0 or len(request.json["identificacion"].strip())==0 or len(request.json["nombre"].strip())==0 or len(request.json["direccion"].strip())==0 or len(request.json["telefono"].strip())==0 or len(request.json["profesion"].strip())==0 or len(request.json["aniosExperiencia"].strip())==0 or len(request.json["idCiudad"].strip())==0 or len(request.json["idDepartamento"].strip())==0 or len(request.json["idPais"].strip())==0 or len(request.json["ultimoEstudio"].strip())==0 or len(request.json["institucion"].strip())==0 or len(request.json["anioGrado"].strip())==0 or len(request.json["idCiudadInst"].strip())==0 or len(request.json["idDepartamentoInst"].strip())==0 or len(request.json["cargoUltimoEmpleo"].strip())==0 or len(request.json["empresa"].strip())==0 or len(request.json["anioIngreso"].strip())==0 or len(request.json["palabrasClave"].strip())==0:
+                if len(request.json["tipoIdentificacion"].strip())==0 or len(request.json["identificacion"].strip())==0 or len(request.json["nombre"].strip())==0 or len(request.json["direccion"].strip())==0 or len(request.json["telefono"].strip())==0 or len(request.json["profesion"].strip())==0 or len(request.json["aniosExperiencia"].strip())==0 or len(request.json["idCiudad"].strip())==0 or len(request.json["idDepartamento"].strip())==0 or len(request.json["idPais"].strip())==0 or len(request.json["ultimoEstudio"].strip())==0 or len(request.json["institucion"].strip())==0 or len(request.json["anioGrado"].strip())==0 or len(request.json["idCiudadInst"].strip())==0 or len(request.json["idDepartamentoInst"].strip())==0 or len(request.json["cargoUltimoEmpleo"].strip())==0 or len(request.json["empresa"].strip())==0 or len(request.json["anioIngreso"].strip())==0 or len(request.json["palabrasClave"].strip())==0 or len(request.json["idUsuario"].strip())==0:
                     return "Code 400: Hay campos obligatorios vacíos", 400
           except:
                 return "Code 400: Hay campos obligatorios vacíos", 400
@@ -54,6 +55,7 @@ class VistaRegistroInfoCandidato(Resource):
                anioRetiro=request.json["anioRetiro"],
                palabrasClave=request.json["palabrasClave"],
                estado=False,
+               idUsuario= request.json["idUsuario"],
           )
 
           db.session.add(nuevo_candidato)
@@ -69,9 +71,74 @@ class VistaRegistroInfoCandidato(Resource):
                "identificacion": candidato_creado.identificacion
           }, 201
 
+
+
+class VistaObtenerTodosCandidatos(Resource):
+    def get(self):
+#          token = request.headers.get("Authorization")
+
+          candidatos = Candidato.query.filter(Candidato.estado == False).all()
+          # Nota: Posible logica para convertir los datos de palabasClave a String
+          return [candidate_schema.dump(tr) for tr in candidatos]
+
+
+class VistaObtenerCandidatoPorId(Resource):
+    @jwt_required()
+    def get(self,id_candidato):
+          #tokenPayload = get_jwt_identity()
+          #if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+          candidato = Candidato.query.filter(Candidato.idCandidato == id_candidato).first()
+
+          if candidato:
+               dicCandidato = {
+                    "idCandidato": candidato.idCandidato,
+                    "nombre": candidato.nombre,
+                    "profesion": candidato.profesion,
+               }
+               respuesta = jsonify(dicCandidato)
+               respuesta.status_code = 200
+               return respuesta
+          else:
+               mensaje:dict = {'mensaje 200':"El candidato no Existe"}
+               respuesta = jsonify(mensaje)
+               respuesta.status_code = 200
+               return respuesta
+          # else:
+          #      mensaje:dict = {'mensaje':"La petición viene de un usuario que no es empresa"}
+          #      respuesta = jsonify(mensaje)
+          #      respuesta.status_code = 400
+          #      return respuesta
+
+
 class VistaSaludServicio(Resource):
     def get(self):
           mensaje:dict = {'mensaje':"healthcheck OK"}
           respuesta = jsonify(mensaje)
           respuesta.status_code = 200
           return respuesta
+
+
+class VistaModificarEstadoCandidato(Resource):
+    @jwt_required()
+    def put(self,id_candidato):
+          tokenPayload = get_jwt_identity()
+          if tokenPayload["tipoUsuario"].upper() == "EMPRESA":
+               candidato = Candidato.query.filter(Candidato.idCandidato == id_candidato).first()
+               
+               if candidato:
+                    candidato.estado = True
+                    db.session.commit()
+                    dicCandidato = {
+                         "idCandidato": candidato.idCandidato,
+                         "nombre": candidato.nombre,
+                         "profesion": candidato.profesion,
+                         "estado":candidato.estado
+                         }
+                    respuesta = jsonify(dicCandidato)
+                    respuesta.status_code = 200
+                    return respuesta
+               else:
+                    mensaje:dict = {'mensaje 200':"El candidato no Existe"}
+                    respuesta = jsonify(mensaje)
+                    respuesta.status_code = 200
+                    return respuesta

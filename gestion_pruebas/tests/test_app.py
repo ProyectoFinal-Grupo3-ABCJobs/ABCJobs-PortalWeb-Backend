@@ -9,10 +9,13 @@ carpeta_actual = os.path.basename(directorio_actual)
 
 if carpeta_actual == "gestion_pruebas" or carpeta_actual == "app":
     from app import app
-    from modelo import db
+    from modelo import db, PruebaSchema, EntrevistaSchema, Prueba, Entrevista
 else:
     from gestion_pruebas.app import app
-    from gestion_pruebas.modelo import db
+    from gestion_pruebas.modelo import db, PruebaSchema, EntrevistaSchema, Prueba, Entrevista
+
+pruebas_schema = PruebaSchema()
+entrevista_schema = EntrevistaSchema()
 
 fake = Faker()
 class TestApp(unittest.TestCase):
@@ -199,6 +202,65 @@ class TestApp(unittest.TestCase):
         )
 
         self.assertEqual(resultado_eliminar.status_code, 204)
+
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaRegistroResultadoPruebaTecnicaCandidatoEmparejado_token_invalido(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.tokenCandiato}",
+        }
+
+
+        solicitud_nuevo_proyecto = self.app.put(
+            "/test/proyectos/1/candidatos/1/empresas/1/perfiles/1/pruebatecnica",
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(solicitud_nuevo_proyecto.status_code, 401)
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaObtenerPerfilesPorIdProyectoIdEmpresa_token_invalido(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.tokenCandiato}",
+        }
+
+
+        solicitud_nuevo_proyecto = self.app.get(
+            "/test/proyectos/1/empresas/2",
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(solicitud_nuevo_proyecto.status_code, 401)
+
+    #@unittest.skip('muchas pruebas')
+    def test_VistaObtenerPerfilesPorIdProyectoIdEmpresa_registro_resultado_prueba_tecnica(self):
+        encabezados_con_autorizacion = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.tokenEmpresa}",
+        }
+        registro_nueva_prueba = Prueba(
+            idPrueba = 100,
+            tipoPrueba = 'TECNICA',
+            resultado = fake.name(),
+            idEmpresa = 2,
+            empresaNombre = fake.name(),
+            idCandidato = 3,
+            candidatoNombre = fake.name(),
+            idProyecto = 100,
+            proyectoNombre = fake.name(),
+            idPerfil = 5,
+            perfilDescripcion=fake.name()
+        )
+        db.session.add(registro_nueva_prueba)
+        db.session.commit()
+        
+  
+        solicitud_nuevo_prueba = self.app.get(
+            "/test/proyectos/100/empresas/2",
+            headers=encabezados_con_autorizacion,
+        )
+        self.assertEqual(solicitud_nuevo_prueba.status_code, 200)
+
 
 
 if __name__ == "__main__":

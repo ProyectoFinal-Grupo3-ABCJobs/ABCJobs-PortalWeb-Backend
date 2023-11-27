@@ -10,7 +10,6 @@ on:
       - feature/HUS-PA-20
       - feature/PA-112
       - feature/PA-42
-      - feature/PA-115
       - feature/PA-39
  
 # Definir los Jobs

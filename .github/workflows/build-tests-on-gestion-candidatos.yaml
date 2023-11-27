@@ -6,7 +6,7 @@ on:
     branches:
       - feature/PA-9
       - feature/PA-116
-      - feature/PA-115
+
  
 # Definir los Jobs
 jobs:
